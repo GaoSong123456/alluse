@@ -1,0 +1,12 @@
+@Override
+@Transactional(readOnly = false)
+public void saveRiskAccPoolInfo(ImpBatchInfo impBatchInfo, List<TbRiskAccPool> tbRiskAccPoolList) {
+    riskAccPoolMapper.saveImpBatchInfo(impBatchInfo); //保存数据导入表信息
+    SqlSession sqlSession=sqlSessionFactory.openSession(ExecutorType.BATCH,false);
+    RiskAccPoolMapper riskAccPoolMapperNew=sqlSession.getMapper(RiskAccPoolMapper.class);
+    //保存风险账户防控池信息
+    tbRiskAccPoolList.stream().forEach(tbRiskAccPool -> riskAccPoolMapperNew.saveRiskAccPool(impBatchInfo,tbRiskAccPool));
+    sqlSession.commit();
+    sqlSession.clearCache();
+    sqlSession.close();
+}
