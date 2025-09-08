@@ -1,0 +1,1822 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routdata.consumemanage.svc.report.dao.ReportDao">
+	<resultMap id="BaseResultMap" type="com.routdata.consumemanage.api.report.dto.ReportExpand">
+		<result column="N_DEVICE_INFO" jdbcType="NUMERIC" property="nDeviceInfo" />
+		<result column="N_NAME_ID" jdbcType="NUMERIC" property="nNameId" />
+		<result column="N_CLASS_ID" jdbcType="NUMERIC" property="nDclassCode" />
+		<result column="V_CLASS_NAME" jdbcType="VARCHAR" property="nDclassName" />
+		<result column="V_NAME" jdbcType="VARCHAR" property="nDeviceName" />
+		<result column="V_DECICE_CODE" jdbcType="VARCHAR" property="vDeciceCode" />
+		<result column="N_DEVICE_TYPE" jdbcType="NUMERIC" property="nDeviceType" />
+		<result column="V_BAR_CODE" jdbcType="VARCHAR" property="vBarCode" />
+		<result column="V_MODEL" jdbcType="VARCHAR" property="vModel" />
+		<result column="N_PRICE" jdbcType="NUMERIC" property="nPrice" />
+		<result column="D_BUY_DATE" jdbcType="DATE" property="dBuyDate" />
+		<result column="D_IN_TIME" jdbcType="DATE" property="dInTime" />
+		<result column="N_DEPRECIATION" jdbcType="NUMERIC" property="nDepreciation" />
+		<result column="N_SUPPLIER_INFO" jdbcType="NUMERIC" property="nSupplierInfo" />
+		<result column="V_RFID_LABLE" jdbcType="VARCHAR" property="vRfidLable" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="nState" />
+		<result column="V_PURPOSE" jdbcType="VARCHAR" property="vPurpose" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="vCreateOpt" />
+		<result column="PERSON_NAME" jdbcType="VARCHAR" property="vDcreateOptName" />
+		<result column="V_CREATE_DEPT" jdbcType="VARCHAR" property="vCreateDept" />
+		
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="dCreateTime" />
+		<result column="D_MODIFY_OPT" jdbcType="VARCHAR" property="dModifyOpt" />
+		<result column="V_MODIFY_DEPT" jdbcType="VARCHAR" property="vModifyDept" />
+		<result column="D_MODIFY_TIME" jdbcType="DATE" property="dModifyTime" />
+		<result column="N_USE_STATE" jdbcType="NUMERIC" property="nUseState" />
+		<result column="V_SPECIFICATIONS" jdbcType="VARCHAR" property="vSpecifications" />
+		<result column="D_CREATE_DATE" jdbcType="DATE" property="dCreateDate" />
+		<result column="V_REMARKS" jdbcType="VARCHAR" property="vRemarks" />
+		
+		<result column="V_BRAND" jdbcType="VARCHAR" property="vBrand" />
+		<result column="D_GUARANTEE" jdbcType="DATE" property="dGuarantee" />
+		<result column="V_CARD_NUM" jdbcType="VARCHAR" property="vCardNum" />
+		
+		<result column="V_SUPPLIER_NAME" jdbcType="VARCHAR" property="nDsupplierName" />
+		<result column="N_PLACE_ID" jdbcType="NUMERIC" property="nDplaceId" />
+		<result column="V_PLACE_NAME" jdbcType="VARCHAR" property="nDplaceName" />
+		<result column="DEPT_NAME" jdbcType="VARCHAR" property="nDeviceDeptName" />
+		<result column="D_IN_OPT_NAME" jdbcType="VARCHAR" property="vDinStockOptName" />
+		<result column="D_INSTOCK_TIME" jdbcType="DATE" property="vDInStockTime" />
+		
+		<result column="BLONG_DEPT_CODE" jdbcType="VARCHAR" property="repBelDeptCode" />
+		<result column="BLONG_TREE_NO" jdbcType="VARCHAR" property="repBelTreeNo" />
+		<result column="BLONG_DEPT_NAME" jdbcType="VARCHAR" property="repBelDeptName" />
+		<result column="AMOUNT" jdbcType="NUMERIC" property="repAmount" />
+		<result column="INIT_PRICE" jdbcType="NUMERIC" property="repInitPrice" />
+		<result column="DEPRECIATION_VAL" jdbcType="NUMERIC" property="repDepreciationVal" />
+		<result column="REAL_PRICE" jdbcType="NUMERIC" property="repRealPrice" />
+		<result column="BORROW_OPT_NAME" jdbcType="VARCHAR" property="repBorrowOptName" />
+		<result column="D_RECEIVE_TIME" jdbcType="DATE" property="repBorrowTime" />
+		<result column="D_RETURN_DATE" jdbcType="DATE" property="repRevertDate" />
+		<result column="D_ACT_RETURN_DATE" jdbcType="DATE" property="repActualDate" />
+		<result column="REVERT_STATUS" jdbcType="VARCHAR" property="repRevertStatus" />
+		<result column="REPAIR_COUNTS" jdbcType="NUMERIC" property="repRepairCounts" />
+		<result column="REPAIR_COST" jdbcType="NUMERIC" property="repRepairCost" />
+		<result column="FAULT_AMOUNT" jdbcType="NUMERIC" property="repFaultAmount" />
+		<result column="SCRAP_AMOUNT" jdbcType="NUMERIC" property="repScrapAmount" />
+		<result column="USE_AMOUNT" jdbcType="NUMERIC" property="repUseAmount" />
+		<result column="LDLE_AMOUNT" jdbcType="NUMERIC" property="repLdleAmount" />
+		
+		<result column="DEVICE_TYPE_WORDS" jdbcType="VARCHAR" property="repDevTypeWords" />
+		<result column="DEV_STATE_WORDS" jdbcType="VARCHAR" property="repDevStateWords" />
+		<result column="IS_USE_WORDS" jdbcType="VARCHAR" property="repIsUseWords" />
+		<result column="USE_STATE_WORDS" jdbcType="VARCHAR" property="repUseStateWords" />
+		
+		<result column="REP_REPAIR_REG" jdbcType="NUMERIC" property="repRepairKey" />
+		<result column="REP_REG_TIME" jdbcType="DATE" property="repRegTime" />
+		<result column="REP_REPAIR_TIME" jdbcType="DATE" property="repRepairTime" />
+		<result column="REP_REG_OPT_NAME" jdbcType="VARCHAR" property="repRegOptName" />
+		<result column="REP_REPAIR_NAME" jdbcType="VARCHAR" property="repRepairName" />
+		<result column="REP_REG_REMARKS" jdbcType="VARCHAR" property="repRegRemarks" />
+		
+		<result column="REP_ISDOWN_SEARCH" jdbcType="VARCHAR" property="repIsDownSerach" />
+		<result column="N_LEDGER_ACCOUNT" jdbcType="VARCHAR" property="nLedgerAccount" />
+		<result column="REP_IS_TRANSFERING" jdbcType="VARCHAR" property="repIsTrasfering" />
+		<result column="V_CREATE_OPT_NAME" jdbcType="VARCHAR" property="vCreateOptName" />
+		<result column="V_SOURCE" jdbcType="VARCHAR" property="vSource" />
+		<result column="V_UNDER_DEPT_NAME" jdbcType="VARCHAR" property="repUnderDeptName" />
+		<result column="V_UNDER_DEPT" jdbcType="VARCHAR" property="repUnderDeptCode" />
+		<result column="V_PNAME" jdbcType="VARCHAR" property="vPname" />
+		<result column="V_PF_NO" jdbcType="VARCHAR" property="vPfno" />
+	</resultMap>
+	
+	<resultMap id="ClassInfoMap" type="com.routdata.consumemanage.api.baseinfo.dto.TbClassInfo">
+		<result column="N_CLASS_ID" jdbcType="NUMERIC" property="classKey" />
+		<result column="N_PARENT_ID" jdbcType="VARCHAR" property="parentKey" />
+		<result column="V_CLASS_NAME" jdbcType="VARCHAR" property="className" />
+		<result column="TB_CLASS_CODE" jdbcType="VARCHAR" property="classCode" />
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="createTime" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="createOpt" />
+	</resultMap>
+	
+	<resultMap id="NameInfoMap" type="com.routdata.consumemanage.api.baseinfo.dto.TbNameInfo">
+		<result column="N_NAME_ID" jdbcType="NUMERIC" property="nameKey" />
+		<result column="V_NAME" jdbcType="VARCHAR" property="deviceName" />
+		<result column="V_NAME_CODE" jdbcType="VARCHAR" property="deviceNameCode" />
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="createTime" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="createOpt" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="state" />
+		<result column="N_CLASS_ID" jdbcType="NUMERIC" property="classInfoKey" />
+		<result column="N_DEP_YEAR" jdbcType="NUMERIC" property="depYear" />
+	</resultMap>
+	
+	<resultMap id="orgTreeMap" type="com.routdata.consumemanage.api.transfer.dto.OrgTree">
+		<result column="DEPT_ID" jdbcType="NUMERIC" property="vDeptZid" />
+		<result column="PARENT_ID" jdbcType="NUMERIC" property="vDeptFid" />
+		<result column="TREE_NO" jdbcType="VARCHAR" property="vDeptTreeNo" />
+		<result column="DEPT_CODE" jdbcType="VARCHAR" property="vDeptZcode" />
+		<result column="PARENT_DEPT_CODE" jdbcType="VARCHAR" property="vDeptFcode" />
+		<result column="DEPT_NAME" jdbcType="VARCHAR" property="vDeptNodeName" />
+	</resultMap>
+	
+	<resultMap id="DeviceFlowMap" type="com.routdata.consumemanage.api.stock.dto.TbDeviceFlow">
+		<result column="N_DEVICE_FLOW" jdbcType="NUMERIC" property="nDeviceFlow" />
+		<result column="D_FLOW_TIME" jdbcType="TIMESTAMP" property="dFlowTime" />
+		<result column="V_FLOW_TYPE" jdbcType="NUMERIC" property="vFlowType" />
+		<result column="V_SOURCE_DEPT" jdbcType="VARCHAR" property="vSourceDept" />
+		<result column="N_PLACE_ID" jdbcType="NUMERIC" property="nPlaceId" />
+		<result column="V_DEST_DEPT" jdbcType="VARCHAR" property="vDestDept" />
+		<result column="N_DEST_PLACE_ID" jdbcType="NUMERIC" property="nDestPlaceId" />
+		<result column="D_CREATE_OPT" jdbcType="VARCHAR" property="dCreateOpt" />
+		<result column="V_OPT_DEPT" jdbcType="VARCHAR" property="vOptDept" />
+		<result column="V_RECEIVE_PERSON" jdbcType="VARCHAR" property="vReceivePerson" />
+		<result column="N_DEVICE_INFO" jdbcType="NUMERIC" property="nDeviceInfo" />
+		<result column="V_RECEIVE_DEPT" jdbcType="VARCHAR" property="vReceiveDept" />
+		<result column="FLOW_TYPE_NAME" jdbcType="VARCHAR" property="flowTypeName" />
+		<result column="FLOW_SOURCE_DEPT_NAME" jdbcType="VARCHAR" property="flowSourceDept" />
+		<result column="FLOW_PLACE_NAME" jdbcType="VARCHAR" property="flowPlaceName" />
+		<result column="FLOW_DEST_DEPT_NAME" jdbcType="VARCHAR" property="flowDestDeptName" />
+		<result column="FLOW_DEST_PLACE_NAME" jdbcType="VARCHAR" property="flowDestPlaceName" />
+		<result column="FLOW_OPT_NAME" jdbcType="VARCHAR" property="flowOptName" />
+		<result column="FLOW_OPT_DEPT_NAME" jdbcType="VARCHAR" property="flowOptDeptName" />
+		<result column="FLOW_RECEIVE_DEPT_NAME" jdbcType="VARCHAR" property="flowReceiveDeptName" />
+	</resultMap>
+	
+	<resultMap id="DeviceReportApplyMap" type="com.routdata.consumemanage.api.report.dto.TbDeviceReportApply">
+		<result column="N_REPORT_APPLY" jdbcType="NUMERIC" property="nReportApply" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="vCreateOpt" />
+		<result column="V_CREATE_DEPT" jdbcType="VARCHAR" property="vCreateDept" />
+		<result column="D_CREATE_TIME" jdbcType="TIMESTAMP" property="dCreateTime" />
+		<result column="V_DSJ_CODE" jdbcType="VARCHAR" property="vDsjCode" />
+		<result column="V_DSJ_TREE_NO" jdbcType="VARCHAR" property="vDsjTreeNo" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="nState" />
+		<result column="V_EXC_NAME" jdbcType="VARCHAR" property="vExcName" />
+		<result column="V_CREATE_OPT_NAME" jdbcType="VARCHAR" property="vCreateOptName" />
+		<result column="V_CREATE_DEPT_NAME" jdbcType="VARCHAR" property="vCreateDeptName" />
+		<result column="N_STATE_WORDS" jdbcType="VARCHAR" property="nStateWords" />
+	</resultMap>
+	
+	<!-- 设备成本统计 -->
+	<select id="findListForDeviceCostReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		with sql_org as (select d.dept_code,
+		       d.dept_name as dept_name, 
+		       r.tree_no,
+		       substr(r.tree_no,
+		              0,
+		              (select length(r.tree_no) + 3
+		                 from org_deprelation r, org_department d
+		                where r.org_child = d.recid
+		                  and d.dept_code = #{repBelDeptCode}
+		                  and r.relation_type = '0')) tree_no_c
+		  from org_department d,
+		       (select * from org_deprelation where relation_type = '0') r
+		 where d.recid = r.org_child
+		 start with d.dept_code = #{repBelDeptCode}
+		connect by prior r.org_child = r.org_parent),
+		sql1 as (
+		select  dm.tree_no_c,
+		         c.n_class_id,
+		         c.v_class_name,
+		         n.n_name_id,
+		         n.v_name,
+		         count(*) amount,
+		         ROUND(sum(d.n_price), 2) init_price,
+		         ROUND(sum(d.n_price -
+		     (decode(sign(months_between(sysdate, d.d_in_time) / 12 -d.n_depreciation),
+		       0,
+		       d.n_price * 0.05,
+		       1,
+		       d.n_price * 0.05,
+		       -1,
+		       d.n_price -
+		       d.n_price * 0.95 / d.n_depreciation *
+		       (months_between(sysdate, d.d_in_time) / 12)))),
+		       2) depreciation_val,
+		  ROUND(sum(decode(sign(months_between(sysdate, d.d_in_time) / 12 -d.n_depreciation),
+		      0,
+		      d.n_price * 0.05,
+		      1,
+		      d.n_price * 0.05,
+		      -1,
+		      d.n_price -
+		      d.n_price * 0.95 / d.n_depreciation *
+		      (months_between(sysdate, d.d_in_time) / 12))),
+		       2) real_price
+		     from TB_DEVICE_INFO      d,
+		           TB_REL_DEVICE_PLACE rp,
+		           TB_NAME_INFO        n,
+		           TB_CLASS_INFO       c,
+		           sql_org     dm   
+		     where d.n_device_info = rp.n_device_info
+		         and d.n_name_id = n.n_name_id
+		         and n.n_class_id = c.n_class_id
+		         and rp.v_dept_code = dm.dept_code
+		         
+		    <if test="repClassId !=null and repClassId != ''">
+		        AND c.n_class_id =#{repClassId} 
+		   </if>
+		             
+		   <if test="repNameId !=null and repNameId != ''">
+		        AND n.n_name_id =#{repNameId}
+		   </if>
+		   
+		    group by  dm.tree_no_c,
+		      c.n_class_id,
+		      c.v_class_name,
+		      n.n_name_id,
+		      n.v_name)    
+		        
+		      select org.dept_code blong_dept_code,
+		         org.dept_name blong_dept_name,
+		         s1.n_class_id,
+		         s1.v_class_name,
+		         s1.n_name_id,
+		         s1.v_name,
+		         s1.amount,
+		         s1.init_price,
+		         s1.depreciation_val,
+		         s1.real_price,
+		         decode(org.dept_code,#{repBelDeptCode}, 0, 1) rep_isdown_search  
+		      from sql1 s1,sql_org org
+		      where s1.tree_no_c = org.tree_no
+		            order by org.tree_no
+
+    </select> 
+    
+    <select id="getClassInfo" resultMap="ClassInfoMap">
+		select C.N_CLASS_ID, C.N_PARENT_ID,C.V_CLASS_NAME
+		  from TB_CLASS_INFO C
+		  order by C.N_CLASS_ID
+	</select>
+    
+    <select id="getNameInfo" resultMap="NameInfoMap">
+    	select N.N_NAME_ID, N.V_NAME
+		  from TB_NAME_INFO N
+		  order by N.N_NAME_ID
+    </select>
+    
+    <!-- 设备借用归还统计 -->
+    <select id="findListForBorrowRevertReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		 select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.v_model,
+		       d.v_bar_code,
+		       rp.v_receive_person borrow_opt_name,
+		       rp.d_receive_time,
+		       rp.d_return_date,
+		       rp.d_act_return_date,
+	     case
+         when rp.d_act_return_date is null then
+          	  decode(sign(TRUNC(sysdate)-rp.d_return_date),0,'0',1,'1',-1,'0')
+         else
+          	  decode(sign(TRUNC(rp.d_act_return_date) - rp.d_return_date),
+                 0,
+                 '2',
+                 1,
+                 '3',
+                 -1,
+                 '2')
+         end revert_status
+		 from TB_DEVICE_INFO      d,
+		       TB_REL_DEVICE_PLACE rp,
+		       TB_NAME_INFO        n,
+		       TB_CLASS_INFO       c,
+		       VORG_DEPARTMENT     dm
+		  where d.n_device_info = rp.n_device_info
+			   and d.n_name_id = n.n_name_id
+			   and n.n_class_id = c.n_class_id
+			   and rp.v_dept_code = dm.dept_code
+			   and rp.n_state = 2
+			
+		   <if test="repClassId !=null and repClassId != ''">
+                AND c.n_class_id =#{repClassId} 
+           </if>
+           
+           <if test="repNameId !=null and repNameId != ''">
+                AND n.n_name_id =#{repNameId}
+           </if>
+           
+           <if test="repBelTreeNo !=null and repBelTreeNo != ''">
+                AND dm.tree_no like CONCAT(#{repBelTreeNo},'%')
+           </if>
+           
+           <if test="repStartBorrowTime != null">
+                AND rp.d_receive_time &gt;= #{repStartBorrowTime,jdbcType=DATE}
+            </if>
+            
+            <if test="repEndBorrowTime != null">
+                AND rp.d_receive_time &lt;= #{repEndBorrowTime,jdbcType=DATE} + 1  
+            </if>
+            
+            <if test="repRevertStatus !=null and repRevertStatus != ''">
+                AND revert_status=#{repRevertStatus}
+           </if>
+           
+            order by dm.dept_code, revert_status
+    </select>
+    
+    <!-- 维修统计 -->
+    <select id="findListForDeviceRepairReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		with sql_org as
+			 (select d.dept_code,
+			         d.dept_name as dept_name,
+			         r.tree_no,
+			         substr(r.tree_no,
+			                0,
+			                (select length(r.tree_no) + 3
+			                   from org_deprelation r, org_department d
+			                  where r.org_child = d.recid
+			                    and d.dept_code = #{repBelDeptCode} 
+			                    and r.relation_type = '0')) tree_no_c
+			    from org_department d,
+			         (select * from org_deprelation where relation_type = '0') r
+			   where d.recid = r.org_child
+			   start with d.dept_code = #{repBelDeptCode} 
+			  connect by prior r.org_child = r.org_parent),
+			
+			sql1 as
+			 (select dm.tree_no_c,
+			           c.n_class_id,
+			           c.v_class_name,
+			           n.n_name_id,
+			           n.v_name,
+			           count(*) repair_counts,
+			           ROUND(sum(rg.v_repair_cost),2) repair_cost
+			      from TB_DEVICE_INFO      d,
+			           TB_REL_DEVICE_PLACE rp,
+			           TB_REPAIR_REG       rg,
+			           TB_NAME_INFO        n,
+			           TB_CLASS_INFO       c,
+			           sql_org     dm
+			      where d.n_device_info = rp.n_device_info
+			         and d.n_device_info = rg.n_device_info
+			         and d.n_name_id = n.n_name_id
+			         and n.n_class_id = c.n_class_id
+			         and rp.v_dept_code = dm.dept_code
+			
+			        <if test="repClassId !=null and repClassId != ''">
+						AND c.n_class_id =#{repClassId}
+					</if>
+					
+					<if test="repNameId !=null and repNameId != ''">
+						AND n.n_name_id =#{repNameId}
+					</if>
+				
+					<if test="repStartRepairTime != null">
+						AND rg.d_reg_time &gt;= #{repStartRepairTime,jdbcType=DATE}
+					</if>
+				
+					<if test="repEndRepairTime != null">
+						AND rg.d_reg_time &lt;= #{repEndRepairTime,jdbcType=DATE} + 1
+					</if>
+			           
+			      group by  dm.tree_no_c,
+			      c.n_class_id,
+			      c.v_class_name,
+			      n.n_name_id,
+			      n.v_name)
+			      
+			  select org.dept_code   blong_dept_code,
+			       org.dept_name   blong_dept_name,
+			       s1.n_class_id,
+			       s1.v_class_name,
+			       s1.n_name_id,
+			       s1.v_name,
+			       s1.repair_counts,
+			       s1.repair_cost,
+			       decode(org.dept_code,#{repBelDeptCode}, 0, 1) rep_isdown_search      
+			  from sql1 s1, sql_org org
+			 where s1.tree_no_c = org.tree_no
+			 order by org.tree_no
+    </select>
+    
+    <!-- 设备使用情况统计 -->
+    <select id="findListForDeviceUseReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		   with sql_org as
+			 (select d.dept_code,
+			         d.dept_name as dept_name,
+			         r.tree_no,
+			         substr(r.tree_no,
+			                0,
+			                (select length(r.tree_no) + 3
+			                   from org_deprelation r, org_department d
+			                  where r.org_child = d.recid
+			                    and d.dept_code = #{repBelDeptCode} 
+			                    and r.relation_type = '0')) tree_no_c
+			    from org_department d,
+			         (select * from org_deprelation where relation_type = '0') r
+			   where d.recid = r.org_child
+			   start with d.dept_code = #{repBelDeptCode} 
+			  connect by prior r.org_child = r.org_parent),
+			
+			sql1 as
+			 (select dm.tree_no_c, 
+			         c.n_class_id,
+			         c.v_class_name,
+			         n.n_name_id,
+			         n.v_name,
+			         count(*) amount,
+			         sum(case
+			               when d.n_state = 2 then
+			                1
+			               else
+			                0
+			             end) fault_amount,   
+			         sum(case
+			               when d.n_state = 3 then
+			                1
+			               else
+			                0
+			             end) scrap_amount,  
+			         sum(case
+			               when d.n_use_state = 1 and d.n_state <![CDATA[ <> ]]> 3 then
+			                1
+			               else
+			                0
+			             end) use_amount,   
+			         sum(case
+			               when d.n_use_state = 0 and d.n_state <![CDATA[ <> ]]> 3 then
+			                1
+			               else
+			                0
+			             end) ldle_amount    
+			    from TB_DEVICE_INFO      d,
+			         TB_REL_DEVICE_PLACE rp,
+			         TB_NAME_INFO        n,
+			         TB_CLASS_INFO       c,
+			         sql_org             dm 
+			   where d.n_device_info = rp.n_device_info
+			     and d.n_name_id = n.n_name_id
+			     and n.n_class_id = c.n_class_id
+			     and rp.v_dept_code = dm.dept_code
+			     
+			   <if test="repClassId !=null and repClassId != ''">
+			      AND c.n_class_id =#{repClassId} 
+			   </if>
+			             
+			   <if test="repNameId !=null and repNameId != ''">
+			       AND n.n_name_id =#{repNameId}
+			   </if>
+			             
+			   <if test="repStartStockTime != null">
+			       AND d.d_create_time &gt;= #{repStartStockTime,jdbcType=DATE}
+			   </if>
+			              
+			   <if test="repEndStockTime != null">
+			       AND d.d_create_time &lt;= #{repEndStockTime,jdbcType=DATE} + 1  
+			   </if>
+			  
+			   group by dm.tree_no_c,
+			            c.n_class_id,
+			            c.v_class_name,
+			            n.n_name_id,
+			            n.v_name)
+			  select org.dept_code   blong_dept_code,
+			       org.dept_name   blong_dept_name,
+			       s1.n_class_id,
+			       s1.v_class_name,
+			       s1.n_name_id,
+			       s1.v_name,
+			       s1.amount,
+			       s1.fault_amount,
+			       s1.scrap_amount,
+			       s1.use_amount,
+			       s1.ldle_amount,
+			       decode(org.dept_code,#{repBelDeptCode}, 0, 1) rep_isdown_search
+			  from sql1 s1, sql_org org
+			 where s1.tree_no_c = org.tree_no
+			 order by org.tree_no
+
+    </select>
+    
+    <!-- 设备使用情况明细 -->
+    <select id="findListForDeviceDetailReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,1,'甲种低值易耗品',2,'乙种低值易耗品',3,'丙种低值易耗品',4,'固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       decode(d.n_state,1,'正常',2,'故障',3,'报废') dev_state_words,
+		       decode(d.n_use_state,0,'闲置',1,'使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       decode(rp.n_state,0,'闲置',1,'使用',2,'借用') use_state_words,
+		       vp.person_name d_in_opt_name,
+		       p.v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_SOURCE,
+		       d.v_pname,
+		       d.v_pf_no
+		  from TB_DEVICE_INFO d
+		       inner join TB_REL_DEVICE_PLACE rp on d.n_device_info = rp.n_device_info
+		       inner join TB_NAME_INFO        n  on d.n_name_id = n.n_name_id
+		       inner join TB_CLASS_INFO       c  on n.n_class_id = c.n_class_id
+		       inner join VORG_DEPARTMENT     dm on rp.v_dept_code = dm.dept_code
+		       left join ORG_PERSON         vp on rp.d_in_opt=vp.person_code
+		       left join TB_PLACE_INFO       p  on rp.n_place_id=p.n_place_id
+		       left join  TB_SUPPLIER_INFO    sr on d.n_supplier_info=sr.n_supplier_info
+		  where c.n_class_id =#{repClassId} and n.n_name_id =#{repNameId}
+		  
+		   <if test="repNeedDownSerach !=null and repNeedDownSerach != ''">
+                <choose>
+                <when test='repNeedDownSerach=="0"'>
+                    and rp.v_dept_code=#{repBelDeptCode}
+                </when>
+                <when test='repNeedDownSerach=="1"'>
+                    and dm.tree_no like CONCAT(#{repBelTreeNo},'%')
+                </when>
+                <otherwise></otherwise>
+	            </choose>
+           </if>
+           
+		   <if test="repDevState !=null and repDevState != '' and repStateVal !=null and repStateVal != ''">
+                AND d.n_state =#{repStateVal} 
+           </if>
+           
+           <if test="repDevUseState !=null and repDevUseState != '' and repStateVal !=null and repStateVal != ''">
+                AND d.n_use_state =#{repStateVal}
+           </if>
+           
+		   ORDER BY d.n_device_info
+    </select>
+    
+    <!-- 设备详情报表(包含调拨中途) -->
+    <select id="findListForDeviceSituationReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		select * from 
+		(select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,1,'甲种低值易耗品',2,'乙种低值易耗品',3,'丙种低值易耗品',4,'固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state,1,'正常',2,'故障',3,'报废') dev_state_words,
+		       decode(d.n_use_state,0,'闲置',1,'使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       decode(rp.n_state,0,'闲置',1,'使用',2,'借用') use_state_words,
+		       '否' rep_is_transfering,
+		       vp.person_name d_in_opt_name,
+		       p.n_place_id,
+		       p.v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       p.v_under_dept,
+		       op.person_name v_create_opt_name,
+		       od.dept_name v_under_dept_name
+		      from TB_DEVICE_INFO d
+		           inner join TB_REL_DEVICE_PLACE rp on d.n_device_info = rp.n_device_info
+		           inner join TB_PLACE_INFO       p  on rp.n_place_id=p.n_place_id
+		           inner join TB_NAME_INFO        n  on d.n_name_id = n.n_name_id
+		           inner join TB_CLASS_INFO       c  on n.n_class_id = c.n_class_id
+		           inner join VORG_DEPARTMENT     dm on rp.v_dept_code = dm.dept_code
+		           left join ORG_PERSON         vp on rp.d_in_opt=vp.person_code
+		           left join  TB_SUPPLIER_INFO    sr on d.n_supplier_info=sr.n_supplier_info
+		           left join ORG_PERSON         op on d.v_create_opt=op.person_code
+		           left join ORG_DEPARTMENT     od on p.v_under_dept=od.dept_code
+		     <!-- 关联查询上级机构代管设备 -->     
+		     <if test='repSupEscrow !=null and repSupEscrow != "" and repSupEscrow =="1"'>
+		            union
+					select dm.dept_code blong_dept_code,
+					       dm.dept_name blong_dept_name,
+					       dm.tree_no blong_tree_no,
+					       c.n_class_id,
+					       c.v_class_name,
+					       n.n_name_id,
+					       n.v_name,
+					       d.n_device_info,
+					       <!-- decode(d.n_device_type,
+					              1,
+					              '甲种低值易耗品',
+					              2,
+					              '乙种低值易耗品',
+					              3,
+					              '丙种低值易耗品',
+					              4,
+					              '固定资产') device_type_words, -->
+					       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+					       d.v_card_num,
+					       d.v_decice_code,
+					       d.v_bar_code,
+					       d.v_model,
+					       d.n_price,
+					       d.d_buy_date,
+					       d.d_in_time,
+					       d.n_depreciation,
+					       d.v_specifications,
+					       d.v_brand,
+					       d.d_guarantee,
+					       d.n_state,
+					       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+					       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+					       d.d_create_time d_instock_time,
+					       decode(rp.n_state, 0, '闲置', 1, '使用', 2, '借用') use_state_words,
+					       '否' rep_is_transfering,
+					       vp.person_name d_in_opt_name,
+					       p.n_place_id,
+					       p.v_place_name,
+					       sr.v_supplier_name,
+					       d.N_LEDGER_ACCOUNT,
+					       d.V_ADDR_MEMO,
+					       d.V_SOURCE,
+					       d.v_remarks,
+					       d.v_pname,
+		       			   d.v_pf_no,
+					       p.v_under_dept,
+					       op.person_name v_create_opt_name,
+					       od.dept_name v_under_dept_name
+					  from TB_DEVICE_INFO d
+					inner join TB_REL_DEVICE_PLACE rp on d.n_device_info=rp.n_device_info
+					inner join TB_PLACE_INFO p on rp.n_place_id=p.n_place_id
+					inner join TB_NAME_INFO n on d.n_name_id=n.n_name_id
+					inner join TB_CLASS_INFO c on n.n_class_id=c.n_class_id
+					left join ORG_PERSON         vp on rp.d_in_opt=vp.person_code
+					inner join VORG_DEPARTMENT     dm on rp.v_dept_code = dm.dept_code
+					left join  TB_SUPPLIER_INFO    sr on d.n_supplier_info=sr.n_supplier_info
+					left join ORG_PERSON         op on d.v_create_opt=op.person_code
+					left join ORG_DEPARTMENT     od on p.v_under_dept=od.dept_code
+           	 </if>
+		           
+		  <!-- 关联原调拨单信息,后改为关联设备调拨信息
+		  union all
+		  
+		  select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       decode(d.n_device_type,1,'甲种低值易耗品',2,'乙种低值易耗品',3,'丙种低值易耗品',4,'固定资产') device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state,1,'正常',2,'故障',3,'报废') dev_state_words,
+		       decode(d.n_use_state,0,'闲置',1,'使用') is_use_words,
+		       null d_instock_time,
+		       '' use_state_words,
+		       '是' rep_is_transfering,
+		       '' d_in_opt_name,
+		       null n_place_id,
+		       '' v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       '' v_under_dept
+		     from TB_TRANSFER_ORDER tr
+		         inner join TB_TRANSFER_DETAIL ta on tr.n_transfer_order = ta.n_transfer_order
+		         inner join TB_TRANSFER_DEVICE td on ta.n_transfer_detail = td.n_transfer_detail
+		         inner join TB_DEVICE_INFO d on td.n_device = d.n_device_info
+		         inner join TB_NAME_INFO n on d.n_name_id = n.n_name_id
+		         inner join TB_CLASS_INFO c on n.n_class_id = c.n_class_id
+		         inner join VORG_DEPARTMENT dm on tr.v_create_dept = dm.dept_code
+		         left join TB_SUPPLIER_INFO sr on d.n_supplier_info = sr.n_supplier_info
+		         where tr.n_state in (1,3) -->
+		        
+		 union all
+		         
+         select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,
+		              1,
+		              '甲种低值易耗品',
+		              2,
+		              '乙种低值易耗品',
+		              3,
+		              '丙种低值易耗品',
+		              4,
+		              '固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+		       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       '' use_state_words,
+		       '是' rep_is_transfering,
+		       '' d_in_opt_name,
+		       null n_place_id,
+		       '' v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       '' v_under_dept,
+		       op.person_name v_create_opt_name,
+		       '' v_under_dept_name
+		  from TB_DEVICE_TRANSFER dt
+		 inner join TB_DEVICE_INFO d
+		    on dt.n_device_info = d.n_device_info
+		 inner join TB_NAME_INFO n
+		    on d.n_name_id = n.n_name_id
+		 inner join TB_CLASS_INFO c
+		    on n.n_class_id = c.n_class_id
+		 inner join VORG_DEPARTMENT dm
+		    on dt.v_transfer_oper_dept = dm.dept_code
+		  left join TB_SUPPLIER_INFO sr
+		    on d.n_supplier_info = sr.n_supplier_info
+		 left join ORG_PERSON op on d.v_create_opt=op.person_code
+		 where dt.n_transfer_state in (1, 3)
+		 
+		     ) r  where 1=1
+		  
+		   <if test="repClassId !=null and repClassId != ''">
+                AND r.n_class_id =#{repClassId} 
+           </if>
+           
+           <!-- <if test="repNameId !=null and repNameId != ''">
+                AND r.n_name_id =#{repNameId}
+           </if> -->
+           <if test="repNameName !=null and repNameName != ''">
+                AND r.v_name like CONCAT(CONCAT('%',#{repNameName}),'%')
+           </if>
+           
+           <if test="repIsDownOrg !=null and repIsDownOrg != '' and repSupEscrow !=null and repSupEscrow != ''">
+                and (
+                <choose>
+                <when test='repIsDownOrg=="0"'>
+                    r.blong_dept_code=#{repBelDeptCode}
+                </when>
+                <when test='repIsDownOrg=="1"'>
+                    r.blong_tree_no like CONCAT(#{repBelTreeNo},'%')
+                </when>
+                <otherwise></otherwise>
+	            </choose>
+	            <if test='repSupEscrow =="1"'>
+	                or r.v_under_dept=#{repBelDeptCode}
+	            </if>
+	            )
+           </if>
+           
+           <if test="repStartStockTime != null">
+                AND r.d_instock_time &gt;= #{repStartStockTime,jdbcType=DATE}
+            </if>
+            
+            <if test="repEndStockTime != null">
+                AND r.d_instock_time &lt;= #{repEndStockTime,jdbcType=DATE} + 1  
+            </if>
+            
+            <if test="repBarCode !=null and repBarCode != ''">
+                and r.v_bar_code in
+                <foreach collection="repBarCode.split(',')" item="item" index="index" open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if> 
+           
+           <if test="repBeginBarCodeSeq !=null and repBeginBarCodeSeq != ''">
+                and r.v_bar_code &gt;= #{repBeginBarCodeSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="repEndBarCodeSeq !=null and repEndBarCodeSeq != ''">
+                and r.v_bar_code &lt;= #{repEndBarCodeSeq,jdbcType=VARCHAR}
+           </if>
+            
+            <if test="repDeviceState !=null and repDeviceState != ''">
+                AND r.n_state =#{repDeviceState}
+           	</if>
+           	
+           	<if test="repBelPlaceId !=null and repBelPlaceId != ''">
+                AND r.n_place_id =#{repBelPlaceId}
+           	</if>
+           	
+           <if test="repCardNo !=null and repCardNo != ''">
+                and r.v_card_num in
+                <foreach collection="repCardNo.split(',')" item="item" index="index" open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if> 
+           
+           <if test="repBeginCardNoSeq !=null and repBeginCardNoSeq != ''">
+                and r.v_card_num &gt;= #{repBeginCardNoSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="repEndCardNoSeq !=null and repEndCardNoSeq != ''">
+                and r.v_card_num &lt;= #{repEndCardNoSeq,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="repDeciceCode !=null and repDeciceCode != ''">
+                and r.v_decice_code = #{repDeciceCode,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="repAddrMemo !=null and repAddrMemo != ''">
+                and r.v_addr_memo like CONCAT(CONCAT('%',#{repAddrMemo,jdbcType=VARCHAR}),'%')
+           </if>
+           
+           <if test="repRemarks !=null and repRemarks != ''">
+                and r.v_remarks like CONCAT(CONCAT('%',#{repRemarks,jdbcType=VARCHAR}),'%')
+           </if>
+           
+           <if test="repLedgerAccount !=null and repLedgerAccount != ''">
+                and r.N_LEDGER_ACCOUNT =#{repLedgerAccount,jdbcType=VARCHAR} 
+           </if>
+           
+           <if test="repPname !=null and repPname != ''">
+                and r.v_pname =#{repPname,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="repPfno !=null and repPfno != ''">
+                and r.v_pf_no =#{repPfno,jdbcType=VARCHAR}
+           </if>
+           
+		   ORDER BY r.blong_dept_code,r.d_instock_time
+    </select>
+    
+    <!-- 设备成本明细 -->
+    <select id="findListForDeviceCostDetailReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+	   select dm.dept_code blong_dept_code,
+	       dm.dept_name blong_dept_name,
+	       c.n_class_id,
+	       c.v_class_name,
+	       n.n_name_id,
+	       n.v_name,
+	       d.n_device_info,
+	       <!-- decode(d.n_device_type,
+	              1,
+	              '甲种低值易耗品',
+	              2,
+	              '乙种低值易耗品',
+	              3,
+	              '丙种低值易耗品',
+	              4,
+	              '固定资产') device_type_words, -->
+	       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+	       d.v_card_num,
+	       d.v_decice_code,
+	       d.v_bar_code,
+	       d.v_model,
+	       d.n_price,
+	       d.d_buy_date,
+	       d.d_in_time,
+	       d.n_depreciation,
+	       d.v_specifications,
+	       d.v_brand,
+	       d.d_guarantee,
+	       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+	       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+	       d.d_create_time d_instock_time,
+	       decode(rp.n_state, 0, '闲置', 1, '使用', 2, '借用') use_state_words,
+	       vp.person_name d_in_opt_name,
+	       p.v_place_name,
+	       sr.v_supplier_name,
+	       d.N_LEDGER_ACCOUNT,
+	       d.V_SOURCE,
+	       d.v_pname,
+		   d.v_pf_no,
+	       ROUND(d.n_price, 2) init_price,
+	       ROUND(d.n_price -
+	                 (decode(sign(months_between(sysdate, d.d_in_time) / 12 -d.n_depreciation),
+	                         0,
+	                         d.n_price * 0.05,
+	                         1,
+	                         d.n_price * 0.05,
+	                         -1,
+	                         d.n_price -
+	                         d.n_price * 0.95 / d.n_depreciation *
+	                         (months_between(sysdate, d.d_in_time) / 12))),
+	             2) depreciation_val,
+	       ROUND(decode(sign(months_between(sysdate, d.d_in_time) / 12 -d.n_depreciation),
+	                        0,
+	                        d.n_price * 0.05,
+	                        1,
+	                        d.n_price * 0.05,
+	                        -1,
+	                        d.n_price -
+	                        d.n_price * 0.95 / d.n_depreciation *
+	                        (months_between(sysdate, d.d_in_time) / 12)),
+	             2) real_price
+		  from TB_DEVICE_INFO      d
+			  inner join TB_REL_DEVICE_PLACE rp
+			      on d.n_device_info = rp.n_device_info
+			   inner join TB_PLACE_INFO p
+			      on rp.n_place_id = p.n_place_id
+			   inner join TB_NAME_INFO n
+			      on d.n_name_id = n.n_name_id
+			   inner join TB_CLASS_INFO c
+			      on n.n_class_id = c.n_class_id
+			   inner join VORG_DEPARTMENT dm
+			      on rp.v_dept_code = dm.dept_code
+			   left join ORG_PERSON vp
+			      on rp.d_in_opt = vp.person_code
+			    left join TB_SUPPLIER_INFO sr
+			      on d.n_supplier_info = sr.n_supplier_info
+		  where c.n_class_id =#{repClassId} and n.n_name_id =#{repNameId}
+		  
+		   <if test="repNeedDownSerach !=null and repNeedDownSerach != ''">
+                <choose>
+                <when test='repNeedDownSerach=="0"'>
+                    and rp.v_dept_code=#{repBelDeptCode}
+                </when>
+                <when test='repNeedDownSerach=="1"'>
+                    and dm.tree_no like CONCAT(#{repBelTreeNo},'%')
+                </when>
+                <otherwise></otherwise>
+	            </choose>
+           </if>
+		  ORDER BY d.n_device_info
+	</select>
+	
+	<!-- 设备维修明细 -->
+	<select id="findListForDeviceRepairDetailReport" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+	   select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,
+		              1,
+		              '甲种低值易耗品',
+		              2,
+		              '乙种低值易耗品',
+		              3,
+		              '丙种低值易耗品',
+		              4,
+		              '固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+		       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       decode(rp.n_state, 0, '闲置', 1, '使用', 2, '借用') use_state_words,
+		       vp.person_name d_in_opt_name,
+		       p.v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_SOURCE,
+		       d.v_pname,
+		       d.v_pf_no,
+		       rg.n_repair_reg rep_repair_reg,
+		       rg.d_reg_time rep_reg_time,
+		       rg.d_repair_time rep_repair_time,
+		       vp2.person_name rep_reg_opt_name,
+		       rg.v_repair_name rep_repair_name,
+		       ROUND(rg.v_repair_cost,2) repair_cost,
+		       rg.v_remarks rep_reg_remarks
+		 from TB_DEVICE_INFO      d
+			  inner join TB_REL_DEVICE_PLACE rp
+			      on d.n_device_info = rp.n_device_info
+			   inner join TB_PLACE_INFO p
+			      on rp.n_place_id = p.n_place_id
+			   inner join TB_REPAIR_REG       rg
+			      on d.n_device_info = rg.n_device_info
+			   inner join TB_NAME_INFO n
+			      on d.n_name_id = n.n_name_id
+			   inner join TB_CLASS_INFO c
+			      on n.n_class_id = c.n_class_id
+			   inner join VORG_DEPARTMENT dm
+			      on rp.v_dept_code = dm.dept_code
+			   left join ORG_PERSON vp
+			      on rp.d_in_opt = vp.person_code
+			   left join ORG_PERSON vp2
+			      on rg.v_reg_opt = vp2.person_code
+			    left join TB_SUPPLIER_INFO sr
+			      on d.n_supplier_info = sr.n_supplier_info
+		 where c.n_class_id =#{repClassId} and n.n_name_id =#{repNameId}
+		  
+		   <if test="repNeedDownSerach !=null and repNeedDownSerach != ''">
+                <choose>
+                <when test='repNeedDownSerach=="0"'>
+                    and rp.v_dept_code=#{repBelDeptCode}
+                </when>
+                <when test='repNeedDownSerach=="1"'>
+                    and dm.tree_no like CONCAT(#{repBelTreeNo},'%')
+                </when>
+                <otherwise></otherwise>
+	            </choose>
+           </if>
+		 order by d.n_device_info
+	</select>
+	
+	<select id="getOrgTree" resultMap="orgTreeMap">
+		select d.dept_id,
+        d.parent_id,
+        d.dept_name,
+        d.dept_code,
+        d2.dept_code parent_dept_code,
+        d.tree_no
+	   from vorg_department d
+	   left join vorg_department d2
+	     on d.parent_id = d2.DEPT_ID
+	  where d.status = 0
+	   and d.tree_no like CONCAT(#{treeNo},'%')
+	  order by d.dept_layer asc, d.sort_num asc
+	</select>
+	
+	<!-- 设备流转信息 -->
+	<select id="findListForDeviceFlow" parameterType="com.routdata.consumemanage.api.stock.dto.DeviceFlowQuery" 
+	   resultMap="DeviceFlowMap">
+				select dw.n_device_flow,
+				       dw.d_flow_time,
+				       decode(dw.v_flow_type,
+				              1,
+				              '初次入库',
+				              2,
+				              '调拨出库',
+				              3,
+				              '使用',
+				              4,
+				              '归还',
+				              5,
+				              '故障',
+				              6,
+				              '维修',
+				              7,
+				              '报废',
+				              8,
+				              '故障修复',
+				              9,
+				              '设备信息修改',
+				              10,
+				              '调拨入库',
+				              11,
+				              '调拨退回入库',
+				              12,
+				              '设备内部变动',
+				              13,
+				              '设备外部变动',
+				              14,
+				              '设备接收',
+				              15,
+				              '设备变动退回入库',
+				              16,
+				              '调拨撤回') flow_type_name,
+				       dm1.dept_name flow_source_dept_name,
+				       p.v_place_name flow_place_name,
+				       dm2.dept_name flow_dest_dept_name,
+				       p1.v_place_name flow_dest_place_name,
+				       dw.v_receive_person,
+				       dw.n_device_info,
+				       dm3.dept_name flow_receive_dept_name,
+				       vp.person_name flow_opt_name,
+				       dm.dept_name flow_opt_dept_name
+				  from TB_DEVICE_FLOW dw
+				 left join ORG_DEPARTMENT dm
+				    on dw.v_opt_dept = dm.dept_code
+				 left join ORG_PERSON vp
+				    on dw.d_create_opt = vp.person_code
+				  left join TB_PLACE_INFO p
+				    on dw.n_place_id = p.n_place_id
+				  left join TB_PLACE_INFO p1
+				    on dw.n_dest_place_id = p1.n_place_id
+				  left join ORG_DEPARTMENT dm1
+				    on dw.v_source_dept = dm1.dept_code
+				  left join ORG_DEPARTMENT dm2
+				    on dw.v_dest_dept = dm2.dept_code
+				  left join ORG_DEPARTMENT dm3
+				    on dw.v_receive_dept = dm3.dept_code
+				 where dw.n_device_info = #{dwDeviceInfo}
+				 order by dw.n_device_flow desc
+	</select>
+	
+	<!-- 条码在全表中查询,不限机构(限为当前地市局)-->
+    <select id="findAllForDeviceBarCode" parameterType="com.routdata.consumemanage.api.report.dto.ReportQuery" 
+	   resultMap="BaseResultMap">
+		select * from 
+		(select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,1,'甲种低值易耗品',2,'乙种低值易耗品',3,'丙种低值易耗品',4,'固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state,1,'正常',2,'故障',3,'报废') dev_state_words,
+		       decode(d.n_use_state,0,'闲置',1,'使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       decode(rp.n_state,0,'闲置',1,'使用',2,'借用') use_state_words,
+		       '否' rep_is_transfering,
+		       vp.person_name d_in_opt_name,
+		       p.n_place_id,
+		       p.v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       p.v_under_dept,
+		       op.person_name v_create_opt_name,
+		       od.dept_name v_under_dept_name
+		      from TB_DEVICE_INFO d
+		           inner join TB_REL_DEVICE_PLACE rp on d.n_device_info = rp.n_device_info
+		           inner join TB_PLACE_INFO       p  on rp.n_place_id=p.n_place_id
+		           inner join TB_NAME_INFO        n  on d.n_name_id = n.n_name_id
+		           inner join TB_CLASS_INFO       c  on n.n_class_id = c.n_class_id
+		           inner join VORG_DEPARTMENT     dm on rp.v_dept_code = dm.dept_code
+		           left join ORG_PERSON         vp on rp.d_in_opt=vp.person_code
+		           left join  TB_SUPPLIER_INFO    sr on d.n_supplier_info=sr.n_supplier_info
+		           left join ORG_PERSON op on d.v_create_opt=op.person_code
+		           left join ORG_DEPARTMENT     od on p.v_under_dept=od.dept_code
+		 union all
+		         
+         select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,
+		              1,
+		              '甲种低值易耗品',
+		              2,
+		              '乙种低值易耗品',
+		              3,
+		              '丙种低值易耗品',
+		              4,
+		              '固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+		       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       '' use_state_words,
+		       '是' rep_is_transfering,
+		       '' d_in_opt_name,
+		       null n_place_id,
+		       '' v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       '' v_under_dept,
+		       op.person_name v_create_opt_name,
+		       '' v_under_dept_name
+		  from TB_DEVICE_TRANSFER dt
+		 inner join TB_DEVICE_INFO d
+		    on dt.n_device_info = d.n_device_info
+		 inner join TB_NAME_INFO n
+		    on d.n_name_id = n.n_name_id
+		 inner join TB_CLASS_INFO c
+		    on n.n_class_id = c.n_class_id
+		 inner join VORG_DEPARTMENT dm
+		    on dt.v_transfer_oper_dept = dm.dept_code
+		  left join TB_SUPPLIER_INFO sr
+		    on d.n_supplier_info = sr.n_supplier_info
+		 left join ORG_PERSON op on d.v_create_opt=op.person_code
+		 where dt.n_transfer_state in (1, 3)
+		 
+		     ) r  where r.blong_tree_no like CONCAT(#{repDsjTreeNo},'%')
+            
+            <if test="repBarCode !=null and repBarCode != ''">
+                and r.v_bar_code in
+                <foreach collection="repBarCode.split(',')" item="item" index="index" open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if> 
+           
+           <if test="repBeginBarCodeSeq !=null and repBeginBarCodeSeq != ''">
+                and r.v_bar_code &gt;= #{repBeginBarCodeSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="repEndBarCodeSeq !=null and repEndBarCodeSeq != ''">
+                and r.v_bar_code &lt;= #{repEndBarCodeSeq,jdbcType=VARCHAR}
+           </if>
+           
+		   ORDER BY r.blong_dept_code,r.d_instock_time
+    </select>
+    
+    <select id="ckDeviceExist" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.N_DEVICE_INFO=#{ndeviceInfo,jdbcType=NUMERIC}
+	</select>
+    
+    <select id="ckDeciceCodeExist" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_DECICE_CODE=#{vDeciceCode}
+	</select>
+	
+	<update id="updateDeciceCode" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set           
+			V_DECICE_CODE=#{vDeciceCode,jdbcType=VARCHAR},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<insert id="saveDeviceFlowInfo" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceFlow">
+	    insert into TB_DEVICE_FLOW (
+			N_DEVICE_FLOW,
+	        D_FLOW_TIME,
+	        V_FLOW_TYPE,
+	        D_CREATE_OPT,
+	        V_OPT_DEPT,
+	        N_DEVICE_INFO
+	    )values (
+			SEQ_DEVICE_FLOW.NEXTVAL,
+			sysdate,
+			#{vFlowType,jdbcType=NUMERIC},
+			#{dCreateOpt,jdbcType=VARCHAR},
+			#{vOptDept,jdbcType=VARCHAR},
+			#{nDeviceInfo,jdbcType=NUMERIC}
+	     )
+	</insert>
+	
+	<!-- 设备信息申请下载列表 -->
+    <select id="findListForReportApply" parameterType="com.routdata.consumemanage.api.report.dto.DeviceReportApplyQuery" 
+	   resultMap="DeviceReportApplyMap">
+	     select ra.n_report_apply,
+	       ra.v_create_opt,
+	       ra.v_create_dept,
+	       ra.d_create_time,
+	       ra.v_dsj_code,
+	       ra.v_dsj_tree_no,
+	       ra.n_state,
+	       ra.v_exc_name,
+	       p.person_name v_create_opt_name,
+	       dm.dept_name v_create_dept_name,
+	       decode(ra.n_state,
+	              0,
+	              '已申请',
+	              1,
+	              '生成文件成功',
+	              2,
+	              '生成文件失败',
+	              3,
+	              '文件已删除') n_state_words
+		  from TB_DEVICE_REPORT_APPLY ra
+		 inner join org_department dm
+		    on ra.v_create_dept = dm.dept_code
+		  left join org_person p
+		    on ra.v_create_opt = p.person_code
+		 where ra.v_create_opt= #{vCreateOpt}
+		 
+		 <if test="beginApplyTime != null">
+             and ra.d_create_time &gt;= #{beginApplyTime,jdbcType=DATE}
+         </if>
+         
+         <if test="endApplyTime != null">
+             and ra.d_create_time &lt;= #{endApplyTime,jdbcType=DATE} + 1  
+         </if>
+		 order by ra.n_report_apply desc
+    </select>
+    
+    <!-- 新增设备信息申请下载 -->
+    <insert id="insertDeviceReportApply" parameterType="com.routdata.consumemanage.api.report.dto.TbDeviceReportApply">
+	    insert into TB_DEVICE_REPORT_APPLY (
+			N_REPORT_APPLY,
+			V_CREATE_OPT,
+			V_CREATE_DEPT,
+			D_CREATE_TIME,
+			V_DSJ_CODE,
+			V_DSJ_TREE_NO,
+			N_STATE,
+			V_EXC_NAME
+	    )values (
+			SEQ_DEVICE_REPORT_APPLY.NEXTVAL,
+			#{vCreateOpt,jdbcType=VARCHAR},
+			#{vCreateDept,jdbcType=VARCHAR},
+			sysdate,
+			#{vDsjCode,jdbcType=VARCHAR},
+			#{vDsjTreeNo,jdbcType=VARCHAR},
+			#{nState,jdbcType=NUMERIC},
+			#{vExcName,jdbcType=VARCHAR}
+	     )
+	</insert>
+	
+	<!-- 查询待生成文件的设备信息申请 -->
+    <select id="findWaiDeviceReportApply" resultMap="DeviceReportApplyMap">
+	     select ra.n_report_apply,
+	       ra.v_create_opt,
+	       ra.v_create_dept,
+	       ra.d_create_time,
+	       ra.v_dsj_code,
+	       ra.v_dsj_tree_no,
+	       ra.n_state
+		  from TB_DEVICE_REPORT_APPLY ra
+		  where ra.n_state=0
+		 order by ra.n_report_apply
+    </select>
+    
+    <!-- 查询全市设备信息详情-->
+    <select id="getListForDeviceReportApplyJob" resultMap="BaseResultMap">
+		select * from 
+		(select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,1,'甲种低值易耗品',2,'乙种低值易耗品',3,'丙种低值易耗品',4,'固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state,1,'正常',2,'故障',3,'报废') dev_state_words,
+		       decode(d.n_use_state,0,'闲置',1,'使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       decode(rp.n_state,0,'闲置',1,'使用',2,'借用') use_state_words,
+		       '否' rep_is_transfering,
+		       vp.person_name d_in_opt_name,
+		       p.n_place_id,
+		       p.v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       p.v_under_dept,
+		       op.person_name v_create_opt_name,
+		       od.dept_name v_under_dept_name
+		      from TB_DEVICE_INFO d
+		           inner join TB_REL_DEVICE_PLACE rp on d.n_device_info = rp.n_device_info
+		           inner join TB_PLACE_INFO       p  on rp.n_place_id=p.n_place_id
+		           inner join TB_NAME_INFO        n  on d.n_name_id = n.n_name_id
+		           inner join TB_CLASS_INFO       c  on n.n_class_id = c.n_class_id
+		           inner join VORG_DEPARTMENT     dm on rp.v_dept_code = dm.dept_code
+		           left join ORG_PERSON         vp on rp.d_in_opt=vp.person_code
+		           left join  TB_SUPPLIER_INFO    sr on d.n_supplier_info=sr.n_supplier_info
+		           left join ORG_PERSON op on d.v_create_opt=op.person_code
+		           left join ORG_DEPARTMENT     od on p.v_under_dept=od.dept_code
+		 union all
+		         
+         select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,
+		              1,
+		              '甲种低值易耗品',
+		              2,
+		              '乙种低值易耗品',
+		              3,
+		              '丙种低值易耗品',
+		              4,
+		              '固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+		       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       '' use_state_words,
+		       '是' rep_is_transfering,
+		       '' d_in_opt_name,
+		       null n_place_id,
+		       '' v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       '' v_under_dept,
+		       op.person_name v_create_opt_name,
+		       '' v_under_dept_name
+		  from TB_DEVICE_TRANSFER dt
+		 inner join TB_DEVICE_INFO d
+		    on dt.n_device_info = d.n_device_info
+		 inner join TB_NAME_INFO n
+		    on d.n_name_id = n.n_name_id
+		 inner join TB_CLASS_INFO c
+		    on n.n_class_id = c.n_class_id
+		 inner join VORG_DEPARTMENT dm
+		    on dt.v_transfer_oper_dept = dm.dept_code
+		  left join TB_SUPPLIER_INFO sr
+		    on d.n_supplier_info = sr.n_supplier_info
+		 left join ORG_PERSON op on d.v_create_opt=op.person_code
+		 where dt.n_transfer_state in (1, 3)
+		 
+		     ) r  where r.blong_tree_no like CONCAT(#{dsjTreeNo},'%')
+           
+		   ORDER BY r.blong_dept_code,r.d_instock_time
+    </select>
+    
+    <update id="updateDeviceReportApply" parameterType="com.routdata.consumemanage.api.report.dto.TbDeviceReportApply">
+        update  TB_DEVICE_REPORT_APPLY
+          <set>
+        	 <if test="nState != null">N_STATE=#{nState,jdbcType=NUMERIC},</if>
+        	 <if test="vExcName != null and vExcName != ''">V_EXC_NAME=#{vExcName,jdbcType=VARCHAR}</if>
+          </set>
+        where N_REPORT_APPLY=#{nReportApply,jdbcType=NUMERIC} 
+    </update>
+    
+    <select id="getDeviceReportApply" resultMap="DeviceReportApplyMap">
+    	select ra.n_report_apply,
+	       ra.v_create_opt,
+	       ra.v_create_dept,
+	       ra.d_create_time,
+	       ra.v_dsj_code,
+	       ra.v_dsj_tree_no,
+	       ra.n_state,
+	       ra.v_exc_name
+		  from TB_DEVICE_REPORT_APPLY ra
+		  where ra.n_report_apply=#{nReportApply,jdbcType=NUMERIC}
+    </select>
+    
+    <!-- 查询全市设备信息数量-->
+    <select id="getCountForDeviceReportApplyJob" resultType="java.lang.Integer">
+		select count(1) from 
+		(select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,1,'甲种低值易耗品',2,'乙种低值易耗品',3,'丙种低值易耗品',4,'固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state,1,'正常',2,'故障',3,'报废') dev_state_words,
+		       decode(d.n_use_state,0,'闲置',1,'使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       decode(rp.n_state,0,'闲置',1,'使用',2,'借用') use_state_words,
+		       '否' rep_is_transfering,
+		       vp.person_name d_in_opt_name,
+		       p.n_place_id,
+		       p.v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       p.v_under_dept,
+		       op.person_name v_create_opt_name,
+		       od.dept_name v_under_dept_name
+		      from TB_DEVICE_INFO d
+		           inner join TB_REL_DEVICE_PLACE rp on d.n_device_info = rp.n_device_info
+		           inner join TB_PLACE_INFO       p  on rp.n_place_id=p.n_place_id
+		           inner join TB_NAME_INFO        n  on d.n_name_id = n.n_name_id
+		           inner join TB_CLASS_INFO       c  on n.n_class_id = c.n_class_id
+		           inner join VORG_DEPARTMENT     dm on rp.v_dept_code = dm.dept_code
+		           left join ORG_PERSON         vp on rp.d_in_opt=vp.person_code
+		           left join  TB_SUPPLIER_INFO    sr on d.n_supplier_info=sr.n_supplier_info
+		           left join ORG_PERSON op on d.v_create_opt=op.person_code
+		           left join ORG_DEPARTMENT     od on p.v_under_dept=od.dept_code
+		 union all
+		         
+         select dm.dept_code blong_dept_code,
+		       dm.dept_name blong_dept_name,
+		       dm.tree_no blong_tree_no,
+		       c.n_class_id,
+		       c.v_class_name,
+		       n.n_name_id,
+		       n.v_name,
+		       d.n_device_info,
+		       <!-- decode(d.n_device_type,
+		              1,
+		              '甲种低值易耗品',
+		              2,
+		              '乙种低值易耗品',
+		              3,
+		              '丙种低值易耗品',
+		              4,
+		              '固定资产') device_type_words, -->
+		       decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) device_type_words,
+		       d.v_card_num,
+		       d.v_decice_code,
+		       d.v_bar_code,
+		       d.v_model,
+		       d.n_price,
+		       d.d_buy_date,
+		       d.d_in_time,
+		       d.n_depreciation,
+		       d.v_specifications,
+		       d.v_brand,
+		       d.d_guarantee,
+		       d.n_state,
+		       decode(d.n_state, 1, '正常', 2, '故障', 3, '报废') dev_state_words,
+		       decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		       d.d_create_time d_instock_time,
+		       '' use_state_words,
+		       '是' rep_is_transfering,
+		       '' d_in_opt_name,
+		       null n_place_id,
+		       '' v_place_name,
+		       sr.v_supplier_name,
+		       d.N_LEDGER_ACCOUNT,
+		       d.V_ADDR_MEMO,
+		       d.V_SOURCE,
+		       d.v_remarks,
+		       d.v_pname,
+		       d.v_pf_no,
+		       '' v_under_dept,
+		       op.person_name v_create_opt_name,
+		       '' v_under_dept_name
+		  from TB_DEVICE_TRANSFER dt
+		 inner join TB_DEVICE_INFO d
+		    on dt.n_device_info = d.n_device_info
+		 inner join TB_NAME_INFO n
+		    on d.n_name_id = n.n_name_id
+		 inner join TB_CLASS_INFO c
+		    on n.n_class_id = c.n_class_id
+		 inner join VORG_DEPARTMENT dm
+		    on dt.v_transfer_oper_dept = dm.dept_code
+		  left join TB_SUPPLIER_INFO sr
+		    on d.n_supplier_info = sr.n_supplier_info
+		 left join ORG_PERSON op on d.v_create_opt=op.person_code
+		 where dt.n_transfer_state in (1, 3)
+		 
+		     ) r  where r.blong_tree_no like CONCAT(#{dsjTreeNo},'%')
+           
+		   ORDER BY r.blong_dept_code,r.d_instock_time
+    </select>
+    
+    <!-- 查询全市设备信息详情-->
+    <select id="getListForDeviceReportApplyJobByPage" resultMap="BaseResultMap">
+        SELECT *
+		  FROM (SELECT t.*, ROWNUM r
+		          FROM (select *
+		                  from (select dm.dept_code blong_dept_code,
+		                               dm.dept_name blong_dept_name,
+		                               dm.tree_no blong_tree_no,
+		                               c.n_class_id,
+		                               c.v_class_name,
+		                               n.n_name_id,
+		                               n.v_name,
+		                               d.n_device_info,
+		                               decode(NVL2(d.V_DECICE_CODE, 1, 0),
+		                                      1,
+		                                      '固定资产',
+		                                      0,
+		                                      '低值易耗品') device_type_words,
+		                               d.v_card_num,
+		                               d.v_decice_code,
+		                               d.v_bar_code,
+		                               d.v_model,
+		                               d.n_price,
+		                               d.d_buy_date,
+		                               d.d_in_time,
+		                               d.n_depreciation,
+		                               d.v_specifications,
+		                               d.v_brand,
+		                               d.d_guarantee,
+		                               d.n_state,
+		                               decode(d.n_state,
+		                                      1,
+		                                      '正常',
+		                                      2,
+		                                      '故障',
+		                                      3,
+		                                      '报废') dev_state_words,
+		                               decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		                               d.d_create_time d_instock_time,
+		                               decode(rp.n_state,
+		                                      0,
+		                                      '闲置',
+		                                      1,
+		                                      '使用',
+		                                      2,
+		                                      '借用') use_state_words,
+		                               '否' rep_is_transfering,
+		                               vp.person_name d_in_opt_name,
+		                               p.n_place_id,
+		                               p.v_place_name,
+		                               sr.v_supplier_name,
+		                               d.N_LEDGER_ACCOUNT,
+		                               d.V_ADDR_MEMO,
+		                               d.V_SOURCE,
+		                               d.v_remarks,
+		                               d.v_pname,
+		                               d.v_pf_no,
+		                               p.v_under_dept,
+		                               op.person_name v_create_opt_name,
+		                               od.dept_name v_under_dept_name
+		                          from TB_DEVICE_INFO d
+		                         inner join TB_REL_DEVICE_PLACE rp
+		                            on d.n_device_info = rp.n_device_info
+		                         inner join TB_PLACE_INFO p
+		                            on rp.n_place_id = p.n_place_id
+		                         inner join TB_NAME_INFO n
+		                            on d.n_name_id = n.n_name_id
+		                         inner join TB_CLASS_INFO c
+		                            on n.n_class_id = c.n_class_id
+		                         inner join VORG_DEPARTMENT dm
+		                            on rp.v_dept_code = dm.dept_code
+		                          left join ORG_PERSON vp
+		                            on rp.d_in_opt = vp.person_code
+		                          left join TB_SUPPLIER_INFO sr
+		                            on d.n_supplier_info = sr.n_supplier_info
+		                          left join ORG_PERSON op
+		                            on d.v_create_opt = op.person_code
+		                          left join ORG_DEPARTMENT od
+		                            on p.v_under_dept = od.dept_code
+		                        union all
+		                        
+		                        select dm.dept_code blong_dept_code,
+		                               dm.dept_name blong_dept_name,
+		                               dm.tree_no blong_tree_no,
+		                               c.n_class_id,
+		                               c.v_class_name,
+		                               n.n_name_id,
+		                               n.v_name,
+		                               d.n_device_info,
+		                               decode(NVL2(d.V_DECICE_CODE, 1, 0),
+		                                      1,
+		                                      '固定资产',
+		                                      0,
+		                                      '低值易耗品') device_type_words,
+		                               d.v_card_num,
+		                               d.v_decice_code,
+		                               d.v_bar_code,
+		                               d.v_model,
+		                               d.n_price,
+		                               d.d_buy_date,
+		                               d.d_in_time,
+		                               d.n_depreciation,
+		                               d.v_specifications,
+		                               d.v_brand,
+		                               d.d_guarantee,
+		                               d.n_state,
+		                               decode(d.n_state,
+		                                      1,
+		                                      '正常',
+		                                      2,
+		                                      '故障',
+		                                      3,
+		                                      '报废') dev_state_words,
+		                               decode(d.n_use_state, 0, '闲置', 1, '使用') is_use_words,
+		                               d.d_create_time d_instock_time,
+		                               '' use_state_words,
+		                               '是' rep_is_transfering,
+		                               '' d_in_opt_name,
+		                               null n_place_id,
+		                               '' v_place_name,
+		                               sr.v_supplier_name,
+		                               d.N_LEDGER_ACCOUNT,
+		                               d.V_ADDR_MEMO,
+		                               d.V_SOURCE,
+		                               d.v_remarks,
+		                               d.v_pname,
+		                               d.v_pf_no,
+		                               '' v_under_dept,
+		                               op.person_name v_create_opt_name,
+		                               '' v_under_dept_name
+		                          from TB_DEVICE_TRANSFER dt
+		                         inner join TB_DEVICE_INFO d
+		                            on dt.n_device_info = d.n_device_info
+		                         inner join TB_NAME_INFO n
+		                            on d.n_name_id = n.n_name_id
+		                         inner join TB_CLASS_INFO c
+		                            on n.n_class_id = c.n_class_id
+		                         inner join VORG_DEPARTMENT dm
+		                            on dt.v_transfer_oper_dept = dm.dept_code
+		                          left join TB_SUPPLIER_INFO sr
+		                            on d.n_supplier_info = sr.n_supplier_info
+		                          left join ORG_PERSON op
+		                            on d.v_create_opt = op.person_code
+		                         where dt.n_transfer_state in (1, 3)
+		                        
+		                        ) r
+		                 where r.blong_tree_no like CONCAT(#{dsjTreeNo},'%')
+		                
+		                 ORDER BY r.blong_dept_code, r.d_instock_time) t
+		         WHERE ROWNUM &lt;= #{pageNumber} * #{pageSize})
+		 WHERE r &gt;= ((#{pageNumber} - 1) * #{pageSize} + 1)
+
+    </select>
+    
+</mapper>

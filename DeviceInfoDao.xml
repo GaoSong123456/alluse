@@ -1,0 +1,1250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routdata.consumemanage.svc.stock.dao.DeviceInfoDao">
+	<resultMap id="BaseResultMap" type="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+		<result column="N_DEVICE_INFO" jdbcType="NUMERIC" property="nDeviceInfo" />
+		<result column="N_NAME_ID" jdbcType="NUMERIC" property="nNameId" />
+		<result column="N_CLASS_ID" jdbcType="NUMERIC" property="nDclassCode" />
+		<result column="V_CLASS_NAME" jdbcType="VARCHAR" property="nDclassName" />
+		<result column="V_NAME" jdbcType="VARCHAR" property="nDeviceName" />
+		<result column="V_DECICE_CODE" jdbcType="VARCHAR" property="vDeciceCode" />
+		<result column="N_DEVICE_TYPE" jdbcType="NUMERIC" property="nDeviceType" />
+		<result column="V_BAR_CODE" jdbcType="VARCHAR" property="vBarCode" />
+		<result column="V_MODEL" jdbcType="VARCHAR" property="vModel" />
+		<result column="N_PRICE" jdbcType="NUMERIC" property="nPrice" />
+		<result column="D_BUY_DATE" jdbcType="DATE" property="dBuyDate" />
+		<result column="D_IN_TIME" jdbcType="DATE" property="dInTime" />
+		<result column="N_DEPRECIATION" jdbcType="NUMERIC" property="nDepreciation" />
+		<result column="N_SUPPLIER_INFO" jdbcType="NUMERIC" property="nSupplierInfo" />
+		<result column="V_RFID_LABLE" jdbcType="VARCHAR" property="vRfidLable" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="nState" />
+		<result column="V_PURPOSE" jdbcType="VARCHAR" property="vPurpose" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="vCreateOpt" />
+		<result column="PERSON_NAME" jdbcType="VARCHAR" property="vDcreateOptName" />
+		<result column="V_CREATE_DEPT" jdbcType="VARCHAR" property="vCreateDept" />
+		
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="dCreateTime" />
+		<result column="D_MODIFY_OPT" jdbcType="VARCHAR" property="dModifyOpt" />
+		<result column="V_MODIFY_DEPT" jdbcType="VARCHAR" property="vModifyDept" />
+		<result column="D_MODIFY_TIME" jdbcType="DATE" property="dModifyTime" />
+		<result column="N_USE_STATE" jdbcType="NUMERIC" property="nUseState" />
+		<result column="V_SPECIFICATIONS" jdbcType="VARCHAR" property="vSpecifications" />
+		<result column="D_CREATE_DATE" jdbcType="DATE" property="dCreateDate" />
+		<result column="V_REMARKS" jdbcType="VARCHAR" property="vRemarks" />
+		
+		<result column="V_BRAND" jdbcType="VARCHAR" property="vBrand" />
+		<result column="D_GUARANTEE" jdbcType="DATE" property="dGuarantee" />
+		<result column="V_CARD_NUM" jdbcType="VARCHAR" property="vCardNum" />
+		
+		<result column="V_SUPPLIER_NAME" jdbcType="VARCHAR" property="nDsupplierName" />
+		<result column="N_PLACE_ID" jdbcType="NUMERIC" property="nDplaceId" />
+		<result column="V_PLACE_NAME" jdbcType="VARCHAR" property="nDplaceName" />
+		<result column="DEPT_NAME" jdbcType="VARCHAR" property="nDeviceDeptName" />
+		<result column="D_IN_OPT_NAME" jdbcType="VARCHAR" property="vDinStockOptName" />
+		<result column="D_INSTOCK_TIME" jdbcType="DATE" property="vDInStockTime" />
+		<result column="CLS_INDEX" jdbcType="DATE" property="clsIndex" />
+		<result column="NAME_INDEX" jdbcType="DATE" property="nameIndex" />
+		
+		<result column="N_DEV_TYPE_NAME" jdbcType="VARCHAR" property="nDeviceTypeName" />
+		<result column="N_USE_STATE_WORDS" jdbcType="VARCHAR" property="nUseStateWords" />
+		<result column="N_LEDGER_ACCOUNT" jdbcType="VARCHAR" property="nLedgerAccount" />
+		<result column="V_QR_CODE" jdbcType="VARCHAR" property="qrCode" />	
+		<result column="V_ADDR_MEMO" jdbcType="VARCHAR" property="vAddrMemo" />
+		<result column="V_SOURCE" jdbcType="VARCHAR" property="vSource" />
+		<result column="N_REP_STATE" jdbcType="NUMERIC" property="nRepState" />
+		<result column="V_PNAME" jdbcType="VARCHAR" property="vPname" />
+		<result column="V_PF_NO" jdbcType="VARCHAR" property="vPfno" />	
+	</resultMap>
+	
+	<resultMap id="RelDevicePlaceMap" type="com.routdata.consumemanage.api.stock.dto.TbRelDevicePlace">
+		<result column="N_REL_DEVICE_PLACE" jdbcType="NUMERIC" property="nRelDevicePlace" />
+		<result column="V_DEPT_CODE" jdbcType="VARCHAR" property="vDeptCode" />
+		<result column="N_PLACE_ID" jdbcType="NUMERIC" property="nPlaceId" />
+		<result column="D_IN_TIME" jdbcType="DATE" property="dInTime" />
+		<result column="D_IN_OPT" jdbcType="VARCHAR" property="dInOpt" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="nState" />
+		<result column="V_RECEIVE_PERSON" jdbcType="VARCHAR" property="vReceivePerson" />
+		<result column="D_RECEIVE_TIME" jdbcType="DATE" property="dReceiveTime" />
+		<result column="D_MODIFY_TIME" jdbcType="DATE" property="dModifyTime" />
+		<result column="V_MODIFY_OPT" jdbcType="VARCHAR" property="vModifyOpt" />
+		<result column="N_DEVICE_INFO" jdbcType="NUMERIC" property="nDeviceInfo" />
+	</resultMap>
+	
+	<resultMap id="PlaceInfoMap" type="com.routdata.consumemanage.api.baseinfo.dto.TbPlaceInfo">
+		<result column="N_PLACE_ID" jdbcType="NUMERIC" property="placeKey" />
+		<result column="V_PLACE_NAME" jdbcType="VARCHAR" property="placeName" />
+		<result column="V_BELONG_DEPT" jdbcType="VARCHAR" property="belongDept" />
+		<result column="V_CREATE_DEPT" jdbcType="VARCHAR" property="createDept" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="createOpt" />
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="createTime" />
+		<result column="D_MODIFY_TIME" jdbcType="DATE" property="modifyTime" />
+		<result column="V_MODIFY_OPT" jdbcType="VARCHAR" property="modifyOpt" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="status" />
+	</resultMap>
+	
+	<resultMap id="SupplierInfoMap" type="com.routdata.consumemanage.api.baseinfo.dto.TbSupplierInfo">
+		<result column="N_SUPPLIER_INFO" jdbcType="NUMERIC" property="supplierInfoKey" />
+		<result column="V_SUPPLIER_NAME" jdbcType="VARCHAR" property="supplierName" />
+		<result column="V_SHORT_NAME" jdbcType="VARCHAR" property="shortName" />
+		<result column="V_BUSINESS_LICENSE" jdbcType="VARCHAR" property="businessLicense" />
+		<result column="V_LEGAL_PERSON" jdbcType="VARCHAR" property="legalPerson" />
+		<result column="V_CONTACTS_PERSON" jdbcType="VARCHAR" property="contactPerson" />
+		<result column="V_MOBILE" jdbcType="VARCHAR" property="mobileTel" />
+		<result column="V_SERVICE_TEL" jdbcType="VARCHAR" property="serviceTel" />
+		<result column="V_SERVICE_PER" jdbcType="VARCHAR" property="servicePer" />
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="createTime" />
+		
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="createOpt" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="state" />
+		<result column="V_CREATE_DEPT" jdbcType="VARCHAR" property="createDept" />
+		<result column="V_FAX" jdbcType="VARCHAR" property="fax" />
+		<result column="V_EMAIL" jdbcType="VARCHAR" property="email" />
+		<result column="V_ADDR" jdbcType="VARCHAR" property="address" />
+		<result column="V_REMARKS" jdbcType="VARCHAR" property="remarks" />
+	</resultMap>
+	
+	<resultMap id="ClassInfoMap" type="com.routdata.consumemanage.api.baseinfo.dto.TbClassInfo">
+		<result column="N_CLASS_ID" jdbcType="NUMERIC" property="classKey" />
+		<result column="N_PARENT_ID" jdbcType="VARCHAR" property="parentKey" />
+		<result column="V_CLASS_NAME" jdbcType="VARCHAR" property="className" />
+		<result column="TB_CLASS_CODE" jdbcType="VARCHAR" property="classCode" />
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="createTime" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="createOpt" />
+	</resultMap>
+	
+	<resultMap id="NameInfoMap" type="com.routdata.consumemanage.api.baseinfo.dto.TbNameInfo">
+		<result column="N_NAME_ID" jdbcType="NUMERIC" property="nameKey" />
+		<result column="V_NAME" jdbcType="VARCHAR" property="deviceName" />
+		<result column="V_NAME_CODE" jdbcType="VARCHAR" property="deviceNameCode" />
+		<result column="D_CREATE_TIME" jdbcType="DATE" property="createTime" />
+		<result column="V_CREATE_OPT" jdbcType="VARCHAR" property="createOpt" />
+		<result column="N_STATE" jdbcType="NUMERIC" property="state" />
+		<result column="N_CLASS_ID" jdbcType="NUMERIC" property="classInfoKey" />
+		<result column="N_DEP_YEAR" jdbcType="NUMERIC" property="depYear" />
+	</resultMap>
+	
+	<resultMap id="BarcodeTypeMap" type="com.routdata.consumemanage.api.stock.dto.TbBarcodeType">
+		<result column="N_ID" jdbcType="NUMERIC" property="nId" />
+		<result column="V_DEPT_CODE" jdbcType="VARCHAR" property="vDeptCode" />
+		<result column="N_BARCODE_TYPE" jdbcType="NUMERIC" property="nBarcodeType" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		D.N_DEVICE_INFO,
+		D.N_NAME_ID,
+		N.V_NAME,
+		N.N_CLASS_ID,
+		D.V_DECICE_CODE,
+		D.N_DEVICE_TYPE,
+		D.V_BAR_CODE,
+		D.V_MODEL,
+		D.N_PRICE,
+		D.D_BUY_DATE,
+		D.D_IN_TIME,
+		D.N_DEPRECIATION,
+		D.N_SUPPLIER_INFO,
+		D.V_RFID_LABLE,
+		D.N_STATE,
+		D.V_PURPOSE,
+		D.V_CREATE_OPT,
+		D.V_CREATE_DEPT,
+		D.D_CREATE_TIME,
+		D.D_MODIFY_OPT,
+		D.V_MODIFY_DEPT,
+		D.D_MODIFY_TIME,
+		D.N_USE_STATE,
+		decode(D.N_USE_STATE,0,'闲置',1,'使用') n_use_state_words,
+		D.V_SPECIFICATIONS,
+		D.D_CREATE_DATE,
+		D.V_REMARKS,
+		D.V_BRAND,
+		D.D_GUARANTEE,
+		D.V_CARD_NUM,
+		S.V_SUPPLIER_NAME,
+		RP.N_PLACE_ID,
+		RP.N_STATE N_REP_STATE,
+		P.V_PLACE_NAME,
+		VP.PERSON_NAME D_IN_OPT_NAME,
+		D.D_CREATE_TIME D_INSTOCK_TIME,
+		D.N_LEDGER_ACCOUNT,
+		V_QR_CODE,
+		V_ADDR_MEMO,
+		V_SOURCE,
+		V_PNAME,
+		V_PF_NO
+	</sql>
+
+
+	<sql id="tbDeviceInfoColumn">
+        a.N_DEVICE_INFO,
+        a.N_NAME_ID,
+        a.V_DECICE_CODE,
+        a.N_DEVICE_TYPE,
+        a.V_BAR_CODE,
+        a.V_MODEL,
+        a.N_PRICE,
+        a.D_BUY_DATE,
+        a.D_IN_TIME,
+        a.N_DEPRECIATION,
+        a.N_SUPPLIER_INFO,
+        a.V_RFID_LABLE,
+        a.N_STATE,
+        a.V_PURPOSE,
+        a.V_CREATE_OPT,
+        a.V_CREATE_DEPT,
+        a.D_CREATE_TIME,
+        a.D_MODIFY_OPT,
+        a.V_MODIFY_DEPT,
+        a.D_MODIFY_TIME,
+        a.N_USE_STATE,
+        a.V_SPECIFICATIONS,
+        a.D_CREATE_DATE,
+        a.V_REMARKS,
+        a.V_BRAND,
+        a.D_GUARANTEE,
+        a.V_CARD_NUM,
+        a.V_QR_CODE
+	</sql>
+	
+	<sql id="tbDeviceInfoColumn2">
+        a.N_DEVICE_INFO,
+        a.N_NAME_ID,
+        a.V_DECICE_CODE,
+        a.N_DEVICE_TYPE,
+        a.V_BAR_CODE,
+        a.V_MODEL,
+        a.N_PRICE,
+        a.D_BUY_DATE,
+        a.D_IN_TIME,
+        a.N_DEPRECIATION,
+        a.N_SUPPLIER_INFO,
+        a.V_RFID_LABLE,
+        a.N_STATE,
+        a.V_PURPOSE,
+        a.V_CREATE_OPT,
+        a.V_CREATE_DEPT,
+        a.D_CREATE_TIME,
+        a.D_MODIFY_OPT,
+        a.V_MODIFY_DEPT,
+        a.D_MODIFY_TIME,
+        a.N_USE_STATE,
+        a.V_SPECIFICATIONS,
+        a.D_CREATE_DATE,
+        a.V_REMARKS,
+        a.V_BRAND,
+        a.D_GUARANTEE,
+        a.V_CARD_NUM,
+        a.V_QR_CODE,
+        d.N_PLACE_ID N_PLACE_ID,
+        d.V_PLACE_NAME V_PLACE_NAME
+	</sql>
+	
+	<select id="findListForDeviceInfo" parameterType="com.routdata.consumemanage.api.stock.dto.DeviceInfoQuery" resultMap="BaseResultMap">
+		    SELECT
+		    d.N_DEVICE_INFO,
+		    c.V_CLASS_NAME,
+			n.V_NAME,
+			n.N_CLASS_ID,
+			d.V_CARD_NUM,
+			d.V_BAR_CODE,
+			d.V_DECICE_CODE,
+			d.V_BRAND,
+			d.V_MODEL,
+			decode(NVL2(d.V_DECICE_CODE, 1, 0), 1, '固定资产', 0, '低值易耗品' ) n_dev_type_name,
+		    d.n_price,
+			d.D_CREATE_TIME D_INSTOCK_TIME,
+			d.V_CREATE_DEPT,
+			d.V_REMARKS,
+			s.V_SUPPLIER_NAME,
+			p.V_PLACE_NAME,
+			d.N_LEDGER_ACCOUNT,
+			d.V_ADDR_MEMO,
+			d.V_SOURCE,
+			d.V_PNAME,
+			d.V_PF_NO 
+			FROM TB_DEVICE_INFO d
+	      inner join TB_REL_DEVICE_PLACE rp
+	         on d.N_DEVICE_INFO = rp.N_DEVICE_INFO
+	      inner join TB_PLACE_INFO p
+	         on rp.N_PLACE_ID = p.N_PLACE_ID
+	      inner join TB_NAME_INFO n
+	         on d.N_NAME_ID = n.N_NAME_ID
+	      inner join TB_CLASS_INFO c
+             on n.N_CLASS_ID=c.N_CLASS_ID
+	       left join TB_SUPPLIER_INFO s
+	         on d.N_SUPPLIER_INFO = s.N_SUPPLIER_INFO
+	      WHERE rp.V_DEPT_CODE = #{deptCode}
+			 and d.N_STATE <![CDATA[ <> ]]> 3
+		   <if test="nDclassId !=null and nDclassId != ''">
+                and n.N_CLASS_ID in
+                <foreach collection="nDclassId.split(',')" item="item" index="index"  open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if>
+			
+	       <if test="nDeviceName !=null and nDeviceName != ''">
+                and n.V_NAME =#{nDeviceName,jdbcType=VARCHAR}
+                 <!-- LIKE CONCAT(CONCAT('%',#{applyName}),'%') -->
+           </if> 
+         
+            <if test="beginInTime != null">
+                AND d.D_CREATE_TIME &gt;= #{beginInTime,jdbcType=DATE}
+            </if>
+            
+            <if test="endInTime != null">
+                AND d.D_CREATE_TIME &lt;= #{endInTime,jdbcType=DATE} + 1  
+            </if>
+            
+            <if test="vModel !=null and vModel != ''">
+                and d.V_MODEL = #{vModel,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="dCardNo !=null and dCardNo != ''">
+                and d.V_CARD_NUM in 
+                <foreach collection="dCardNo.split(',')" item="item" index="index" open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if> 
+           
+           <if test="beginDcardNoSeq !=null and beginDcardNoSeq != ''">
+                and d.V_CARD_NUM &gt;= #{beginDcardNoSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="endDcardNoSeq !=null and endDcardNoSeq != ''">
+                and d.V_CARD_NUM &lt;= #{endDcardNoSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="vBrand !=null and vBrand != ''">
+                and d.V_BRAND = #{vBrand,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="vBarCode !=null and vBarCode != ''">
+                and d.V_BAR_CODE in
+                <foreach collection="vBarCode.split(',')" item="item" index="index" open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if> 
+           
+           <if test="beginVbarCodeSeq !=null and beginVbarCodeSeq != ''">
+                and d.V_BAR_CODE &gt;= #{beginVbarCodeSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="endVbarCodeSeq !=null and endVbarCodeSeq != ''">
+                and d.V_BAR_CODE &lt;= #{endVbarCodeSeq,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="nDplaceId !=null and nDplaceId != ''">
+                and p.N_PLACE_ID = #{nDplaceId,jdbcType=NUMERIC}
+           </if>
+           
+           <if test="vDeciceCodeState !=null and vDeciceCodeState != ''">
+              <choose>
+                <when test='vDeciceCodeState=="0"'>
+                    and d.V_DECICE_CODE is null
+                </when>
+                <when test='vDeciceCodeState=="1"'>
+                    and d.V_DECICE_CODE is not null
+                </when>
+                <otherwise></otherwise>
+	          </choose>
+           </if>
+           
+           <if test="vDeciceCode !=null and vDeciceCode != ''">
+                and d.V_DECICE_CODE = #{vDeciceCode,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="vPname !=null and vPname != ''">
+                and d.V_PNAME = #{vPname,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="vPfno !=null and vPfno != ''">
+                and d.V_PF_NO = #{vPfno,jdbcType=VARCHAR}
+           </if>     
+         
+	       ORDER BY rp.D_IN_TIME DESC,rp.N_REL_DEVICE_PLACE DESC
+    </select>
+	
+	<insert id="insert" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+		<selectKey keyProperty="nDeviceInfo" order="BEFORE" resultType="java.lang.Long">
+          select SEQ_DEVICE_INFO.NEXTVAL from dual
+        </selectKey>
+        insert into TB_DEVICE_INFO (
+            N_DEVICE_INFO,
+			N_NAME_ID,
+			V_DECICE_CODE,
+			N_DEVICE_TYPE,
+			V_BAR_CODE,
+			V_MODEL,
+			N_PRICE,
+			D_BUY_DATE,
+			D_IN_TIME,
+			N_DEPRECIATION,
+			N_SUPPLIER_INFO,
+			N_STATE,
+			V_CREATE_OPT,
+			V_CREATE_DEPT,
+			D_CREATE_TIME,
+			N_USE_STATE,
+			V_SPECIFICATIONS,
+			D_CREATE_DATE,
+			V_REMARKS,
+			V_BRAND,
+			D_GUARANTEE,
+			V_CARD_NUM,
+			N_LEDGER_ACCOUNT,
+			V_ADDR_MEMO,
+			V_SOURCE,
+			V_PNAME,
+			V_PF_NO
+        )values (
+            #{nDeviceInfo,jdbcType=NUMERIC},
+            #{nNameId,jdbcType=NUMERIC},
+            #{vDeciceCode,jdbcType=VARCHAR},
+            #{nDeviceType,jdbcType=NUMERIC},
+            #{vBarCode,jdbcType=VARCHAR},
+            #{vModel,jdbcType=VARCHAR},
+            #{nPrice,jdbcType=NUMERIC},
+            #{dBuyDate,jdbcType=DATE},
+            #{dInTime,jdbcType=DATE},
+            #{nDepreciation,jdbcType=NUMERIC},
+            #{nSupplierInfo,jdbcType=NUMERIC},
+            
+            #{nState,jdbcType=NUMERIC},
+            #{vCreateOpt,jdbcType=VARCHAR},
+            #{vCreateDept,jdbcType=VARCHAR},
+            sysdate,
+            #{nUseState,jdbcType=NUMERIC},
+            #{vSpecifications,jdbcType=VARCHAR},
+            #{dCreateDate,jdbcType=DATE},
+            #{vRemarks,jdbcType=VARCHAR},
+            #{vBrand,jdbcType=VARCHAR},
+            #{dGuarantee,jdbcType=DATE},
+            #{vCardNum,jdbcType=VARCHAR},
+            #{nLedgerAccount,jdbcType=VARCHAR},
+            #{vAddrMemo,jdbcType=VARCHAR},
+            #{vSource,jdbcType=VARCHAR},
+            #{vPname,jdbcType=VARCHAR},
+            #{vPfno,jdbcType=VARCHAR}
+         )
+    </insert>
+	
+	<insert id="saveRelDevicePlace" parameterType="com.routdata.consumemanage.api.stock.dto.TbRelDevicePlace">
+	    insert into TB_REL_DEVICE_PLACE (
+			N_REL_DEVICE_PLACE,
+	        V_DEPT_CODE,
+	        N_PLACE_ID,
+	        D_IN_TIME,
+	        D_IN_OPT,
+	        N_STATE,
+	        N_DEVICE_INFO
+	    )values (
+			SEQ_REL_DEVICE_PLACE.NEXTVAL,
+			#{vDeptCode,jdbcType=VARCHAR},
+			#{nPlaceId,jdbcType=NUMERIC},
+			sysdate,
+			#{dInOpt,jdbcType=VARCHAR},
+			#{nState,jdbcType=NUMERIC},
+			#{nDeviceInfo,jdbcType=NUMERIC}
+	     )
+	</insert>
+	
+	<insert id="saveDeviceFlowInfo" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceFlow">
+	    insert into TB_DEVICE_FLOW (
+			N_DEVICE_FLOW,
+	        D_FLOW_TIME,
+	        V_FLOW_TYPE,
+	        N_PLACE_ID,
+	        V_DEST_DEPT,
+	        N_DEST_PLACE_ID,
+	        D_CREATE_OPT,
+	        V_OPT_DEPT,
+	        N_DEVICE_INFO
+	    )values (
+			SEQ_DEVICE_FLOW.NEXTVAL,
+			sysdate,
+			#{vFlowType,jdbcType=NUMERIC},
+			#{nPlaceId,jdbcType=NUMERIC},
+			#{vDestDept,jdbcType=VARCHAR},
+			#{nDestPlaceId,jdbcType=NUMERIC},
+			#{dCreateOpt,jdbcType=VARCHAR},
+			#{vOptDept,jdbcType=VARCHAR},
+			#{nDeviceInfo,jdbcType=NUMERIC}
+	     )
+	</insert>
+	
+	<select id="getPapaValue" resultType="java.lang.String">
+		select t.v_para_value from TB_BASE_PARA t where t.v_para_type=#{vPapaType} and t.v_pary_key=#{dsjCode}
+	</select>
+	
+	<select id="getVbarCodeSeq" resultType="java.lang.String">
+		<!-- select SEQ_DEVICE_INFO_BAR_CODE.NEXTVAL from dual -->
+		select ${seqName} from dual
+	</select>
+	
+	<select id="getVcardCodeSeq" resultType="java.lang.String">
+		select ${seqName} from dual
+	</select>
+	
+	<select id="get" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+	    TB_DEVICE_INFO D 
+	    inner join TB_REL_DEVICE_PLACE RP on D.N_DEVICE_INFO = RP.N_DEVICE_INFO 
+	    inner join TB_PLACE_INFO P on RP.N_PLACE_ID = P.N_PLACE_ID 
+	    inner join TB_NAME_INFO N on D.N_NAME_ID = N.N_NAME_ID
+	    left join ORG_PERSON VP on RP.D_IN_OPT=VP.PERSON_CODE
+	    left join  TB_SUPPLIER_INFO S on D.N_SUPPLIER_INFO = S.N_SUPPLIER_INFO
+		where D.N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+		      and D.N_STATE <![CDATA[ <> ]]> 3
+	</select>
+	
+	<update id="update" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set 
+			N_NAME_ID=#{nNameId,jdbcType=NUMERIC},            
+			V_DECICE_CODE=#{vDeciceCode,jdbcType=VARCHAR},
+			N_DEVICE_TYPE=#{nDeviceType,jdbcType=NUMERIC},
+			V_MODEL=#{vModel,jdbcType=VARCHAR},
+			N_PRICE=#{nPrice,jdbcType=NUMERIC},
+			D_BUY_DATE=#{dBuyDate,jdbcType=DATE},
+			D_IN_TIME=#{dInTime,jdbcType=DATE},
+			N_DEPRECIATION=#{nDepreciation,jdbcType=NUMERIC},
+			N_SUPPLIER_INFO=#{nSupplierInfo,jdbcType=NUMERIC},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate,
+			V_SPECIFICATIONS=#{vSpecifications,jdbcType=VARCHAR},
+			V_REMARKS=#{vRemarks,jdbcType=VARCHAR},
+			V_BRAND=#{vBrand,jdbcType=VARCHAR},
+			D_GUARANTEE=#{dGuarantee,jdbcType=DATE},
+			N_USE_STATE=#{nUseState,jdbcType=NUMERIC},
+			N_LEDGER_ACCOUNT=#{nLedgerAccount,jdbcType=VARCHAR},
+			V_ADDR_MEMO=#{vAddrMemo,jdbcType=VARCHAR},
+			V_SOURCE=#{vSource,jdbcType=VARCHAR},
+			V_PNAME=#{vPname,jdbcType=VARCHAR},
+			V_PF_NO=#{vPfno,jdbcType=VARCHAR}
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<update id="updateRelDevicePlace" parameterType="com.routdata.consumemanage.api.stock.dto.TbRelDevicePlace">
+	    update TB_REL_DEVICE_PLACE
+	    set
+	        N_PLACE_ID=#{nPlaceId,jdbcType=NUMERIC},
+	        D_MODIFY_TIME=sysdate,
+	        V_MODIFY_OPT=#{vModifyOpt,jdbcType=VARCHAR}
+	    where N_DEVICE_INFO=#{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<select id="getRelDevicePlace" resultMap="RelDevicePlaceMap">
+		SELECT
+		N_REL_DEVICE_PLACE,
+		V_DEPT_CODE,
+		N_PLACE_ID,
+		D_IN_TIME,
+		D_IN_OPT,
+		N_STATE,
+		V_RECEIVE_PERSON,
+		D_RECEIVE_TIME,
+		D_MODIFY_TIME,
+		V_MODIFY_OPT,
+		N_DEVICE_INFO
+		FROM
+		TB_REL_DEVICE_PLACE
+		WHERE
+		N_DEVICE_INFO = #{nDeviceInfo}
+	</select>
+	
+	<select id="getPlaceInfoBySearch" resultMap="PlaceInfoMap">
+		select P.N_PLACE_ID, P.V_PLACE_NAME
+		  from TB_PLACE_INFO P
+		 where P.V_BELONG_DEPT = #{deptCode}
+		   order by P.N_PLACE_ID
+	</select>
+	
+	<select id="getPlaceInfo" resultMap="PlaceInfoMap">
+		select P.N_PLACE_ID, P.V_PLACE_NAME
+		  from TB_PLACE_INFO P
+		 where P.V_BELONG_DEPT = #{deptCode}
+		   and P.N_STATE = 1
+		   order by P.N_PLACE_ID
+	</select>
+	
+	<select id="getSelfAndUnderPlaceInfo" resultMap="PlaceInfoMap">
+        select P.N_PLACE_ID, P.V_PLACE_NAME
+          from TB_PLACE_INFO P
+         where (P.V_BELONG_DEPT = #{deptCode} or P.V_UNDER_DEPT = #{deptCode})
+           and P.N_STATE = 1
+           order by P.N_PLACE_ID
+    </select>
+	
+	<select id="getSupplierInfo" resultMap="SupplierInfoMap">
+	    select s.N_SUPPLIER_INFO, s.V_SUPPLIER_NAME
+		  from TB_SUPPLIER_INFO s,
+		       (select d.dept_code, d.dept_name
+		          from org_department d,
+		               (select * from org_deprelation where relation_type = '0') r
+		         where d.recid = r.org_child
+		         start with d.dept_code = #{deptCode}
+		        connect by prior r.org_parent = r.org_child) org
+		 where s.v_create_dept = org.dept_code
+		   and ((s.v_create_dept <![CDATA[ <> ]]> #{deptCode} and s.N_IS_OPEN = 1) or
+		       s.v_create_dept = #{deptCode})
+		   and s.n_state = 1
+		 order by s.n_supplier_info
+	</select>
+	
+	<select id="getClassInfo" resultMap="ClassInfoMap">
+		select C.N_CLASS_ID, C.N_PARENT_ID,C.V_CLASS_NAME
+		  from TB_CLASS_INFO C
+		  where C.N_STATE = 1
+		  order by C.N_CLASS_ID
+	</select>
+	
+	<select id="getClassInfoBySearch" resultMap="ClassInfoMap">
+		select C.N_CLASS_ID, C.N_PARENT_ID,C.V_CLASS_NAME
+		  from TB_CLASS_INFO C
+		  order by C.N_CLASS_ID
+	</select>
+	
+	<select id="getClassInfoByClassId" resultType="java.lang.String">
+		select C.V_CLASS_NAME
+		  from TB_CLASS_INFO C where C.N_CLASS_ID=#{nDclassCode}
+	</select>
+	
+	<select id="getNameInfoByClassKey" resultMap="NameInfoMap">
+		select N.N_NAME_ID, N.V_NAME
+		  from TB_NAME_INFO N
+		  where N.N_STATE=1 and N_CLASS_ID=#{classKey}
+		  order by N.N_NAME_ID
+	</select>
+	
+	<select id="getDepYearByKey" resultMap="NameInfoMap">
+		select N.N_DEP_YEAR
+		  from TB_NAME_INFO N
+		  where N.N_NAME_ID=#{nameKey}
+	</select>
+	
+	<select id="getDeviceNameByQuery" resultMap="NameInfoMap">
+		select N.N_NAME_ID,N.V_NAME from TB_NAME_INFO N where N.V_NAME LIKE CONCAT(CONCAT('%',#{query}),'%')
+	</select>
+	
+	<select id="getvBrandByQuery" resultMap="BaseResultMap">
+		select distinct(d.v_brand) from TB_DEVICE_INFO d where d.v_brand LIKE CONCAT(CONCAT('%',#{query}),'%') and d.v_brand is not null
+	</select>
+	
+	<select id="getvSpecificationsByQuery" resultMap="BaseResultMap">
+		select distinct(d.v_specifications) from TB_DEVICE_INFO d where d.v_specifications LIKE CONCAT(CONCAT('%',#{query}),'%') and d.v_specifications is not null
+	</select>
+    
+    <select id="findListForDeviceRfidLable" parameterType="com.routdata.consumemanage.api.stock.dto.DeviceInfoQuery" resultMap="BaseResultMap">
+		      SELECT
+		        d.N_DEVICE_INFO,
+		        d.V_RFID_LABLE,
+		        d.V_BAR_CODE,
+		        d.V_DECICE_CODE,
+		        n.V_NAME,
+		        dm.DEPT_NAME,
+		        N.V_INDEX NAME_INDEX,
+                C.V_INDEX CLS_INDEX,
+                tp.V_PLACE_NAME,
+                NVL2(d.V_DECICE_CODE, 1, 0) N_DEVICE_TYPE,
+                d.V_QR_CODE,
+                d.V_ADDR_MEMO
+		      FROM TB_DEVICE_INFO      d,
+			       TB_REL_DEVICE_PLACE rp,
+			       TB_NAME_INFO        n,
+			       VORG_DEPARTMENT     dm,
+			       TB_CLASS_INFO       C,
+			       TB_PLACE_INFO       tp
+		      WHERE d.N_DEVICE_INFO = rp.N_DEVICE_INFO
+			      AND d.N_NAME_ID = n.N_NAME_ID
+			      AND rp.V_DEPT_CODE = dm.DEPT_CODE 
+			      AND N.N_CLASS_ID = C.N_CLASS_ID
+			      AND rp.n_place_id = tp.n_place_id
+			      AND rp.V_DEPT_CODE =#{deptCode}
+				  AND d.N_STATE <![CDATA[ <> ]]> 3
+		   <if test="nDplaceId !=null and nDplaceId != ''">
+                and rp.n_place_id = to_number(#{nDplaceId,jdbcType=VARCHAR})
+           </if>		  
+				  
+	       <if test="nDeviceName !=null and nDeviceName != ''">
+                and n.V_NAME =#{nDeviceName,jdbcType=VARCHAR}
+                 <!-- LIKE CONCAT(CONCAT('%',#{nDeviceName}),'%') -->
+           </if> 
+         
+            <if test="beginInTime != null">
+                AND d.D_CREATE_TIME &gt;= #{beginInTime,jdbcType=DATE}
+            </if>
+            
+            <if test="endInTime != null">
+                AND d.D_CREATE_TIME &lt;= #{endInTime,jdbcType=DATE} + 1  
+            </if>
+            
+            <if test="vBarCode !=null and vBarCode != ''">
+                and d.V_BAR_CODE in
+                <foreach collection="vBarCode.split(',')" item="item" index="index" open="(" separator="," close=")">
+		             #{item}
+		        </foreach>
+           </if>
+           
+           <if test="beginVbarCodeSeq !=null and beginVbarCodeSeq != ''">
+                and d.V_BAR_CODE &gt;= #{beginVbarCodeSeq,jdbcType=VARCHAR}
+           </if> 
+           
+           <if test="endVbarCodeSeq !=null and endVbarCodeSeq != ''">
+                and d.V_BAR_CODE &lt;= #{endVbarCodeSeq,jdbcType=VARCHAR}
+           </if>
+           
+           <if test="vRfidLableState !=null and vRfidLableState != ''">
+              <choose>
+                <when test='vRfidLableState=="0"'>
+                    and d.V_RFID_LABLE is null
+                </when>
+                <when test='vRfidLableState=="1"'>
+                    and d.V_RFID_LABLE is not null
+                </when>
+                <otherwise></otherwise>
+	          </choose>
+           </if>
+           
+           <if test="nDeviceType !=null and nDeviceType != ''">
+                and d.N_DEVICE_TYPE = to_number(#{nDeviceType,jdbcType=VARCHAR})
+           </if>
+           
+           <if test="qrCodeState !=null and qrCodeState != ''">
+              <choose>
+                <when test='qrCodeState=="0"'>
+                    and d.V_QR_CODE is null
+                </when>
+                <when test='qrCodeState=="1"'>
+                    and d.V_QR_CODE is not null
+                </when>
+                <otherwise></otherwise>
+	          </choose>
+           </if>  
+         
+	       ORDER BY rp.D_IN_TIME DESC,rp.N_REL_DEVICE_PLACE DESC
+    </select>
+    
+    <select id="getDeviceInfoForLable" resultMap="BaseResultMap">
+        SELECT d.V_RFID_LABLE,
+             d.V_BAR_CODE,
+             d.V_DECICE_CODE,
+             n.V_NAME,
+             dm.DEPT_NAME
+        FROM TB_DEVICE_INFO      d,
+             TB_REL_DEVICE_PLACE rp,
+             TB_NAME_INFO        n,
+             VORG_DEPARTMENT     dm
+        WHERE d.N_DEVICE_INFO = rp.N_DEVICE_INFO
+         AND d.N_NAME_ID = n.N_NAME_ID
+         AND rp.V_DEPT_CODE = dm.DEPT_CODE
+		 AND d.N_DEVICE_INFO =#{deviceInfoId}
+    </select>
+
+	<!--根据条形码编号查询设备信息-->
+	<select id="findDeviceInfoByBarCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="tbDeviceInfoColumn"/>
+		from TB_DEVICE_INFO a
+		inner join tb_rel_device_place b
+		on b.n_device_info = a.n_device_info
+		inner join org_department c
+		on c.dept_code = b.v_dept_code
+		inner join tb_place_info d
+		on  d.n_place_id = b.n_place_id
+		where a.V_BAR_CODE = #{barCodeValue,jdbcType = VARCHAR} and d.v_belong_dept = #{deptCode,jdbcType = VARCHAR}
+	</select>
+
+	<!--根据主键查询此设备信息-->
+    <select id="getTbDeviceInfoByDeviceInfoKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="tbDeviceInfoColumn"/>
+		from  TB_DEVICE_INFO a
+		where a.N_DEVICE_INFO = #{deviceInfoKey,jdbcType = DECIMAL}
+	</select>
+
+	<!--根据条码编号查询当前机构下设备信息-->
+	<select id="getDeviceInfoToBarCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="tbDeviceInfoColumn2"/>
+		from TB_DEVICE_INFO a
+		inner join tb_rel_device_place b
+		on b.n_device_info = a.n_device_info
+		inner join org_department c
+		on b.v_dept_code = c.dept_code
+		inner join tb_place_info d
+		on  d.n_place_id = b.n_place_id
+		where a.V_BAR_CODE = #{barCode,jdbcType = VARCHAR} and d.v_belong_dept = #{deptCode,jdbcType = VARCHAR}
+	</select>
+
+	<!--根据设备id查询设备信息-->
+	<select id="findDeviceInfoByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="tbDeviceInfoColumn"/>
+		from TB_DEVICE_INFO a
+		where a.N_DEVICE_INFO = #{deviceInfoKey,jdbcType = DECIMAL}
+	</select>
+
+    <update id="saveDeviceRfid" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+        update tb_device_info t 
+          set t.v_rfid_lable = #{vRfidLable,jdbcType=VARCHAR},
+              t.v_bar_code = #{vBarCode,jdbcType=VARCHAR} 
+        WHERE t.n_device_info = #{nDeviceInfo,jdbcType=NUMERIC}    
+    </update>
+    
+    <update id="updateDevicePlace" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set 
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<update id="saveBatchDeviceInfo" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set           
+			V_DECICE_CODE=#{vDeciceCode,jdbcType=VARCHAR},
+			V_BRAND=#{vBrand,jdbcType=VARCHAR},
+			V_MODEL=#{vModel,jdbcType=VARCHAR},
+			D_BUY_DATE=#{dBuyDate,jdbcType=DATE},
+			D_IN_TIME=#{dInTime,jdbcType=DATE},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate,
+			V_REMARKS=#{vRemarks,jdbcType=VARCHAR}
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<select id="findDeviceTransfer" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+		  FROM TB_TRANSFER_DEVICE T1
+		  FULL JOIN TB_DEVICE_TRANSFER T2
+		    ON T1.N_DEVICE = T2.N_DEVICE_INFO
+		 WHERE T1.N_DEVICE = #{deviceId,jdbcType=NUMERIC}
+		    OR T2.N_DEVICE_INFO = #{deviceId,jdbcType=NUMERIC}
+    </select>
+
+    <insert id="saveDevicePlaceBackup" parameterType="java.lang.Long">
+        INSERT INTO TB_REL_DEVICE_PLACE_BACKUP
+            SELECT * FROM TB_REL_DEVICE_PLACE t WHERE t.N_DEVICE_INFO = #{deviceId,jdbcType=NUMERIC}
+    </insert>
+    
+    <insert id="saveDeviceBackup" parameterType="java.lang.Long">
+        INSERT INTO TB_DEVICE_INFO_BACKUP
+            SELECT * FROM TB_DEVICE_INFO t WHERE t.N_DEVICE_INFO = #{deviceId,jdbcType=NUMERIC}
+    </insert>
+
+    <delete id="deleteDeviceFlow" parameterType="java.lang.Long">
+       DELETE FROM TB_DEVICE_FLOW t WHERE t.N_DEVICE_INFO = #{deviceId,jdbcType=NUMERIC}
+    </delete>
+
+    <delete id="deleteDevicePlaceRef" parameterType="java.lang.Long">
+       DELETE FROM TB_REL_DEVICE_PLACE t WHERE t.N_DEVICE_INFO = #{deviceId,jdbcType=NUMERIC}
+    </delete>
+    
+    <delete id="deleteDeviceInfo" parameterType="java.lang.Long">
+       DELETE FROM TB_DEVICE_INFO t WHERE t.N_DEVICE_INFO = #{deviceId,jdbcType=NUMERIC}
+    </delete>
+    
+    <select id="getBarcodeType" resultMap="BarcodeTypeMap">
+        select N_ID,V_DEPT_CODE,N_BARCODE_TYPE from TB_BARCODE_TYPE where V_DEPT_CODE=#{deptCode}
+    </select>
+    
+    <select id="getBarcodeTypeCount" resultType="java.lang.Long">
+		select count(1) from TB_BARCODE_TYPE t where t.V_DEPT_CODE=#{deptCode}
+	</select>
+	
+	<select id="ckHandBarListExist" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_BAR_CODE in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+             #{item}
+        </foreach>
+	</select>
+	
+	<select id="ckHandBarCodeExist" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_BAR_CODE=#{handBarCode}
+	</select>
+	
+	<insert id="insertTbBarcodeType" parameterType="com.routdata.consumemanage.api.stock.dto.TbBarcodeType">
+	    insert into TB_BARCODE_TYPE (
+			N_ID,
+	        V_DEPT_CODE,
+	        N_BARCODE_TYPE
+	    )values (
+			SEQ_BARCODE_TYPE.NEXTVAL,
+			#{vDeptCode,jdbcType=VARCHAR},
+			#{nBarcodeType,jdbcType=NUMERIC}
+	     )
+	</insert>
+	
+	<update id="updateTbBarcodeType" parameterType="com.routdata.consumemanage.api.stock.dto.TbBarcodeType">
+	    update TB_BARCODE_TYPE
+	    set           
+			N_BARCODE_TYPE=#{nBarcodeType,jdbcType=NUMERIC}
+	    where V_DEPT_CODE = #{vDeptCode,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="ckHandBarCodeList" resultMap="BaseResultMap">
+		select t.N_DEVICE_INFO,t.V_BAR_CODE from TB_DEVICE_INFO t where t.V_BAR_CODE=#{handBarCode}
+	</select>
+	
+	<update id="updateDevInfoConBarCode" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set 
+			N_NAME_ID=#{nNameId,jdbcType=NUMERIC},            
+			V_DECICE_CODE=#{vDeciceCode,jdbcType=VARCHAR},
+			N_DEVICE_TYPE=#{nDeviceType,jdbcType=NUMERIC},
+			V_MODEL=#{vModel,jdbcType=VARCHAR},
+			N_PRICE=#{nPrice,jdbcType=NUMERIC},
+			D_BUY_DATE=#{dBuyDate,jdbcType=DATE},
+			D_IN_TIME=#{dInTime,jdbcType=DATE},
+			N_DEPRECIATION=#{nDepreciation,jdbcType=NUMERIC},
+			N_SUPPLIER_INFO=#{nSupplierInfo,jdbcType=NUMERIC},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate,
+			V_SPECIFICATIONS=#{vSpecifications,jdbcType=VARCHAR},
+			V_REMARKS=#{vRemarks,jdbcType=VARCHAR},
+			V_BRAND=#{vBrand,jdbcType=VARCHAR},
+			D_GUARANTEE=#{dGuarantee,jdbcType=DATE},
+			N_USE_STATE=#{nUseState,jdbcType=NUMERIC},
+			N_LEDGER_ACCOUNT=#{nLedgerAccount,jdbcType=VARCHAR},
+			V_ADDR_MEMO=#{vAddrMemo,jdbcType=VARCHAR},
+			V_SOURCE=#{vSource,jdbcType=VARCHAR},
+			V_PNAME=#{vPname,jdbcType=VARCHAR},
+			V_PF_NO=#{vPfno,jdbcType=VARCHAR},
+			V_BAR_CODE=#{handBarCode,jdbcType=VARCHAR}
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<update id="saveBatchDevConBarCode" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set           
+			V_DECICE_CODE=#{vDeciceCode,jdbcType=VARCHAR},
+			V_BRAND=#{vBrand,jdbcType=VARCHAR},
+			V_MODEL=#{vModel,jdbcType=VARCHAR},
+			D_BUY_DATE=#{dBuyDate,jdbcType=DATE},
+			D_IN_TIME=#{dInTime,jdbcType=DATE},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate,
+			V_REMARKS=#{vRemarks,jdbcType=VARCHAR},
+			V_BAR_CODE=#{handBarCode,jdbcType=VARCHAR}
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<select id="ckDeciceCodeExist" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_DECICE_CODE=#{vDeciceCode}
+	</select>
+	
+	<select id="ckDeciceCodeList" resultMap="BaseResultMap">
+		select t.N_DEVICE_INFO,t.V_DECICE_CODE from TB_DEVICE_INFO t where t.V_DECICE_CODE=#{vDeciceCode}
+	</select>
+	
+	<select id="getBarCodeSeqName" resultType="java.lang.String">
+		select t.v_para_value from TB_BASE_PARA t where t.v_para_type='CITY_BAR_CODE_SEQ' and t.v_pary_key=#{dsjCode}
+	</select>
+	
+	<select id="getCardNoSeqName" resultType="java.lang.String">
+		select t.v_para_value from TB_BASE_PARA t where t.v_para_type='CITY_CARD_NO_SEQ' and t.v_pary_key=#{dsjCode}
+	</select>
+	
+	<select id="getNameInfo" resultMap="NameInfoMap">
+		select N.N_NAME_ID, N.V_NAME
+		  from TB_NAME_INFO N
+		  where N.N_STATE=1
+		  order by N.N_NAME_ID
+	</select>
+	
+	<select id="getClassInfoByNameKey" resultMap="ClassInfoMap">
+		select c.n_class_id, c.v_class_name
+		  from TB_CLASS_INFO c
+		 where c.n_class_id =
+		       (select n.n_class_id from TB_NAME_INFO n where n.n_name_id = #{nameKey})
+	</select>
+	
+	<select id="findDeviceInfoForPrintCard" resultType="org.apache.commons.collections.map.ListOrderedMap">
+        SELECT T.V_CARD_NUM,
+               D.DEPT_NAME,
+               TN.V_NAME,
+               T.V_BAR_CODE,
+               T.V_PURPOSE,
+               T.D_IN_TIME,
+               TP.V_PLACE_NAME,
+               T.V_ADDR_MEMO,
+               DECODE(T.N_USE_STATE, 0, '闲置', 1, '使用', '') USE_STATE,
+               T.V_MODEL,
+               T.V_BRAND,
+               T.N_DEPRECIATION,
+               T.D_GUARANTEE,
+               T.N_PRICE,
+               T.D_BUY_DATE,
+               T.V_DECICE_CODE,
+               T.V_SOURCE,
+               T.V_SPECIFICATIONS,
+               T.D_CREATE_DATE,
+               D2.DEPT_NAME CREAT_DEPT,
+               T.V_REMARKS,
+               T.D_CREATE_TIME,
+               T.D_MODIFY_OPT,
+               T.D_MODIFY_TIME,
+               T.V_ADDR_MEMO
+          FROM TB_DEVICE_INFO T
+          JOIN TB_NAME_INFO TN
+            ON T.N_NAME_ID = TN.N_NAME_ID
+          JOIN TB_REL_DEVICE_PLACE TR
+            ON T.N_DEVICE_INFO = TR.N_DEVICE_INFO
+          JOIN TB_PLACE_INFO TP
+            ON TR.N_PLACE_ID = TP.N_PLACE_ID
+          JOIN ORG_DEPARTMENT D
+            ON TR.V_DEPT_CODE = D.DEPT_CODE
+          JOIN ORG_DEPARTMENT D2
+            ON T.V_CREATE_DEPT = D2.DEPT_CODE
+         WHERE T.N_DEVICE_INFO = #{deviceInfoId}   
+    </select>
+    
+    <select id="findDeviceInfoForTrans" resultType="org.apache.commons.collections.map.ListOrderedMap">
+        SELECT T.V_CARD_NUM,
+		       D.DEPT_NAME,
+		       TN.V_NAME,
+		       T.V_BAR_CODE,
+		       T.V_PURPOSE,
+		       T.D_IN_TIME,
+		       TP.V_PLACE_NAME,
+		       T.V_ADDR_MEMO,
+		       DECODE(T.N_USE_STATE, 0, '闲置', 1, '使用', '') USE_STATE,
+		       T.V_MODEL,
+		       T.V_BRAND,
+		       T.N_DEPRECIATION,
+		       T.D_GUARANTEE,
+		       T.N_PRICE,
+		       T.D_BUY_DATE,
+		       T.V_DECICE_CODE,
+		       T.V_SOURCE,
+		       T.V_SPECIFICATIONS,
+		       T.D_CREATE_DATE,
+		       D2.DEPT_NAME CREAT_DEPT,
+		       T.V_REMARKS,
+		       T.D_CREATE_TIME,
+		       T.D_MODIFY_OPT,
+		       T.D_MODIFY_TIME
+		  FROM TB_DEVICE_INFO T
+		  JOIN TB_NAME_INFO TN
+		    ON T.N_NAME_ID = TN.N_NAME_ID
+		  LEFT JOIN TB_DEVICE_TRANSFER DT
+		    ON T.N_DEVICE_INFO = DT.N_DEVICE_INFO
+		  LEFT JOIN TB_PLACE_INFO TP
+		    ON DT.N_NEW_PLACE_ID = TP.N_PLACE_ID
+		  LEFT JOIN ORG_DEPARTMENT D
+		    ON TP.V_BELONG_DEPT = D.DEPT_CODE
+		  LEFT JOIN ORG_DEPARTMENT D2
+		    ON T.V_CREATE_DEPT = D2.DEPT_CODE
+		 WHERE T.N_DEVICE_INFO = #{deviceInfoId} 
+    </select>
+    
+    <select id="getPlaceInfoLimitUnderDept" resultMap="PlaceInfoMap">
+		select P.N_PLACE_ID, P.V_PLACE_NAME
+		  from TB_PLACE_INFO P
+		 where P.V_BELONG_DEPT = #{deptCode}
+		   and P.N_STATE = 1 and P.V_UNDER_DEPT is not null
+		   order by P.N_PLACE_ID
+	</select>
+	
+	<!-- 校验卡片编号是否存在 -->
+	<select id="ckCarNumExist" resultType="java.lang.Long">
+		  select count(1)
+		  from (SELECT dm.dept_code    blong_dept_code,
+		               dm.dept_name    blong_dept_name,
+		               d.n_device_info,
+		               d.n_state,
+		               d.v_card_num
+		          FROM TB_DEVICE_INFO d
+		         inner join TB_REL_DEVICE_PLACE rp
+		            on d.N_DEVICE_INFO = rp.N_DEVICE_INFO
+		         inner join TB_PLACE_INFO p
+		            on rp.N_PLACE_ID = p.N_PLACE_ID
+		         inner join vorg_department dm
+		            on rp.v_dept_code = dm.dept_code
+		        
+		        union all
+		        
+		        select dm.dept_code    blong_dept_code,
+		               dm.dept_name    blong_dept_name,
+		               d.n_device_info,
+		               d.n_state,
+		               d.v_card_num
+		          from TB_DEVICE_INFO d
+		         inner join TB_DEVICE_TRANSFER dt
+		            on d.n_device_info = dt.n_device_info
+		         inner join vorg_department dm
+		            on dt.v_transfer_oper_dept = dm.dept_code
+		         where dt.n_transfer_type = 1
+		           and dt.n_transfer_state in (1, 3)) r
+		
+			 WHERE r.blong_dept_code = #{deptCode}
+			   and r.N_STATE <![CDATA[ <> ]]> 3
+			   and r.V_CARD_NUM = #{vCardNum}
+	</select>
+	
+	<!-- 校验卡片编号是否存在限地市 -->
+	<select id="ckCarNumExistUnLimitDept" resultType="java.lang.Long">
+		  select count(1) from
+	       (select dm.dept_code    blong_dept_code,
+	               dm.dept_name    blong_dept_name,
+	               dm.tree_no      blong_tree_no,
+	               d.n_device_info,
+	               d.n_state,
+	               d.v_card_num
+	          from TB_DEVICE_INFO d
+	         inner join TB_REL_DEVICE_PLACE rp
+	            on d.n_device_info = rp.n_device_info
+	         inner join TB_PLACE_INFO p
+	            on rp.n_place_id = p.n_place_id
+	         inner join VORG_DEPARTMENT dm
+	            on rp.v_dept_code = dm.dept_code
+	            
+	        union all
+	        
+	        select dm.dept_code    blong_dept_code,
+	               dm.dept_name    blong_dept_name,
+	               dm.tree_no      blong_tree_no,
+	               d.n_device_info,
+	               d.n_state,
+	               d.v_card_num
+	          from TB_DEVICE_INFO d
+	         inner join TB_DEVICE_TRANSFER dt
+	            on d.n_device_info = dt.n_device_info
+	         inner join vorg_department dm
+	            on dt.v_transfer_oper_dept = dm.dept_code
+	         where dt.n_transfer_type = 1
+	           and dt.n_transfer_state in (1, 3)
+	        
+	        ) r
+			where r.blong_tree_no like CONCAT(#{dsjTreeNo},'%')
+			   and r.n_state <![CDATA[ <> ]]> 3
+			   and r.v_card_num = #{vCardNum}
+	</select>
+	
+	<!-- 根据卡片编号校验固定资产编号是否存在(不包含本身) -->
+	<select id="ckDecCodeExistByCarNum" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_DECICE_CODE=#{vDeciceCode} and t.V_CARD_NUM <![CDATA[ <> ]]> #{vCardNum}
+	</select>
+	
+	<!-- 根据卡片编号校验是否已有条码编号(is not null) -->
+	<select id="ckBarCodeByCarNum" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_CARD_NUM=#{vCardNum} and t.V_BAR_CODE is not null
+	</select>
+	
+	<!-- 根据卡片编号校验条码编号是否存在(不包含本身) -->
+	<select id="ckBarCodeExistByCarNum" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO t where t.V_BAR_CODE=#{vBarCode} and t.V_CARD_NUM <![CDATA[ <> ]]> #{vCardNum}
+	</select>
+	
+	<!-- 根据卡片编号获取设备信息对象 -->
+	<select id="getDeviceInfoByCarNum" resultMap="BaseResultMap">
+		  select r.n_device_info,r.v_card_num
+		  from (SELECT dm.dept_code    blong_dept_code,
+		               dm.dept_name    blong_dept_name,
+		               d.n_device_info,
+		               d.n_state,
+		               d.v_card_num
+		          FROM TB_DEVICE_INFO d
+		         inner join TB_REL_DEVICE_PLACE rp
+		            on d.N_DEVICE_INFO = rp.N_DEVICE_INFO
+		         inner join TB_PLACE_INFO p
+		            on rp.N_PLACE_ID = p.N_PLACE_ID
+		         inner join vorg_department dm
+		            on rp.v_dept_code = dm.dept_code
+		        
+		        union all
+		        
+		        select dm.dept_code    blong_dept_code,
+		               dm.dept_name    blong_dept_name,
+		               d.n_device_info,
+		               d.n_state,
+		               d.v_card_num
+		          from TB_DEVICE_INFO d
+		         inner join TB_DEVICE_TRANSFER dt
+		            on d.n_device_info = dt.n_device_info
+		         inner join vorg_department dm
+		            on dt.v_transfer_oper_dept = dm.dept_code
+		         where dt.n_transfer_type = 1
+		           and dt.n_transfer_state in (1, 3)) r
+		
+			 WHERE r.blong_dept_code = #{deptCode}
+			   and r.N_STATE <![CDATA[ <> ]]> 3
+			   and r.V_CARD_NUM = #{vCardNum}
+	</select>
+	
+	<!-- 根据卡片编号获取设备信息对象限地市 -->
+	<select id="getDeviceInfoByCarNumUnLimitDept" resultMap="BaseResultMap">
+		 select r.n_device_info,r.v_card_num from
+	       (select dm.dept_code    blong_dept_code,
+	               dm.dept_name    blong_dept_name,
+	               dm.tree_no      blong_tree_no,
+	               d.n_device_info,
+	               d.n_state,
+	               d.v_card_num
+	          from TB_DEVICE_INFO d
+	         inner join TB_REL_DEVICE_PLACE rp
+	            on d.n_device_info = rp.n_device_info
+	         inner join TB_PLACE_INFO p
+	            on rp.n_place_id = p.n_place_id
+	         inner join VORG_DEPARTMENT dm
+	            on rp.v_dept_code = dm.dept_code
+	            
+	        union all
+	        
+	        select dm.dept_code    blong_dept_code,
+	               dm.dept_name    blong_dept_name,
+	               dm.tree_no      blong_tree_no,
+	               d.n_device_info,
+	               d.n_state,
+	               d.v_card_num
+	          from TB_DEVICE_INFO d
+	         inner join TB_DEVICE_TRANSFER dt
+	            on d.n_device_info = dt.n_device_info
+	         inner join vorg_department dm
+	            on dt.v_transfer_oper_dept = dm.dept_code
+	         where dt.n_transfer_type = 1
+	           and dt.n_transfer_state in (1, 3)
+	        
+	        ) r
+			where r.blong_tree_no like CONCAT(#{dsjTreeNo},'%')
+			   and r.n_state <![CDATA[ <> ]]> 3
+			   and r.v_card_num = #{vCardNum}
+	</select>
+	
+	<!-- excel导入方式修改固定资产编号 -->
+	<update id="updateDecCodeByCarNumExcel" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set            
+			V_DECICE_CODE=#{vDeciceCode,jdbcType=VARCHAR},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+	
+	<!-- 根据卡片编号校验条码编号是否已有值 -->
+	<select id="ckHasBarCodeByCarNum" resultType="java.lang.Long">
+		select count(1) from TB_DEVICE_INFO d where d.V_CARD_NUM=#{vCardNum} and d.V_BAR_CODE is null
+	</select>
+	
+	<!-- excel导入方式修改条码编号 -->
+	<update id="updateBarCodeByCarNumExcel" parameterType="com.routdata.consumemanage.api.stock.dto.TbDeviceInfo">
+	    update TB_DEVICE_INFO
+	    set            
+			V_BAR_CODE=#{vBarCode,jdbcType=VARCHAR},
+			D_MODIFY_OPT=#{dModifyOpt,jdbcType=VARCHAR},
+			V_MODIFY_DEPT=#{vModifyDept,jdbcType=VARCHAR},
+			D_MODIFY_TIME=sysdate
+	    where N_DEVICE_INFO = #{nDeviceInfo,jdbcType=NUMERIC}
+	</update>
+
+</mapper>
+
+
