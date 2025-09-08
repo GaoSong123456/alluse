@@ -1,0 +1,135 @@
+select 'private ' || DECODE(T.DATA_TYPE,
+                            'VARCHAR2',
+                            'String ',
+                            'CHAR ',
+                            'String ',
+                            'DATE',
+                            'Date ',
+                            'NUMBER',
+                            'Long ',
+                            'LONG',
+                            'Long ',
+                            'TIMESTAMP',
+                            'Date ') ||
+       substr(lower(t.COLUMN_NAME),
+              0,
+              case
+                when instr(lower(t.COLUMN_NAME), '_') > 0 then
+                 instr(lower(t.COLUMN_NAME), '_') - 1
+                else
+                 length(lower(t.COLUMN_NAME))
+              end) || REGEXP_REPLACE(INITCAP(substr(lower(t.COLUMN_NAME),
+                                                    case
+                                                      when instr(lower(t.COLUMN_NAME), '_') > 0 then
+                                                       instr(lower(t.COLUMN_NAME), '_') + 1
+                                                      else
+                                                       length(lower(t.COLUMN_NAME)) + 1
+                                                    end,
+                                                    length(lower(t.COLUMN_NAME)))),
+                                     '(\w)[_]',
+                                     '\1') || ';  '||'//'||c.comments
+  from user_tab_cols t, user_col_comments c
+ where t.TABLE_NAME = 'TB_DEVICE_INFO_APPROVAL'
+   and c.table_name = t.TABLE_NAME
+   and c.column_name = t.COLUMN_NAME
+ ORDER BY T.COLUMN_ID;
+
+
+
+ select UPPER(COLUMN_NAME) from user_tab_columns where Table_Name='TB_CUST_FXQ_MONITOR_IMP' 
+ ORDER BY COLUMN_ID;
+
+
+
+--PostgreSQL
+
+CREATE OR REPLACE FUNCTION transform_underline(name text)
+  RETURNS text 
+AS $$
+DECLARE
+  ret text := '';
+  i int := 0;
+BEGIN
+  LOOP
+    i := POSITION('_' IN name);
+    IF i = 0 THEN
+      EXIT;
+    END IF;
+    ret := ret || INITCAP(SUBSTRING(name FROM 1 FOR i - 1));
+    name := SUBSTRING(name FROM i + 1);
+  END LOOP;
+  ret := ret || INITCAP(name);
+  RETURN LOWER(SUBSTRING(ret FROM 1 FOR 1)) || SUBSTRING(ret FROM 2);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION datatypemapping(type text)
+  RETURNS text 
+AS $$
+DECLARE
+    ret TEXT := type;
+BEGIN
+    CASE UPPER(type)
+        WHEN 'BIGINT' THEN ret := 'Long';
+	WHEN 'INT8' THEN ret := 'Long';
+        WHEN 'INTEGER' THEN ret := 'Integer';
+        WHEN 'CHARACTER VARYING' THEN ret := 'String';
+	WHEN 'VARCHAR' THEN ret := 'String';
+	WHEN 'CHAR' THEN ret := 'String';
+        WHEN 'NUMERIC' THEN ret := 'Long';
+	WHEN 'DATE' THEN ret := 'Date';
+        WHEN 'TIMESTAMP WITHOUT TIME ZONE' THEN ret := 'Date';
+	WHEN 'TIMESTAMP' THEN ret := 'Date';
+        WHEN 'SMALLINT' THEN ret := 'Integer';
+        ELSE ret := type;
+        END CASE;
+    RETURN ret;
+END;
+$$ LANGUAGE plpgsql;
+
+ select 
+CONCAT(
+-- 修饰符
+		'private ',
+-- 数据类型
+		dataTypeMapping(b.DATA_TYPE),
+		' ',
+-- 属性
+		transform_underline(b.COLUMN_NAME),
+		';',
+-- 注释部分
+		'//',
+		a.comment
+	)
+from
+(select COLUMN_NAME,DATA_TYPE from
+	information_schema.COLUMNS
+WHERE
+	TABLE_SCHEMA = 'jyzs' -- SCHEMA名
+AND TABLE_NAME = 'org_menu' -- 表名
+order by ordinal_position) b,
+
+( SELECT A.attname AS COLUMN_NAME,
+	col_description ( A.attrelid, A.attnum ) AS COMMENT 
+	FROM
+		pg_class AS C,
+		pg_attribute AS A,
+		pg_namespace AS N 
+	WHERE
+		C.relname = 'org_menu'
+		AND A.attrelid = C.oid 
+		AND A.attnum > 0 
+		AND C.RELNAMESPACE=N.OID
+		AND N.NSPNAME='public'  --SCHEMA
+	) A
+
+where b.COLUMN_NAME=a.COLUMN_NAME
+
+
+
+select COLUMN_NAME from
+	information_schema.COLUMNS
+WHERE
+	TABLE_SCHEMA = 'jyzs' --SCHEMA名
+AND TABLE_NAME = 'org_menu' -- 表名
+order by ordinal_position
