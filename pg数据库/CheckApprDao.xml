@@ -1,0 +1,1333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routdata.financialdata.svc.cstmappr.dao.CheckApprDao">
+	<resultMap id="BaseResultMap" type="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		<result column="n_id" property="nAppMain" />
+		<result column="v_theme_name" property="vThemeName" />
+		<result column="n_app_id" property="nAppId" />
+		<result column="v_app_org_code" property="vAppOrgCode" />
+		<result column="d_insert_date" property="dAppDate" />
+		<result column="v_deal_falg" property="vDealFalg" />
+		<result column="n_appr_stat" property="nApprStat" />
+		<result column="v_appr_desc" property="vApprDesc" />
+		<result column="n_appr_opr" property="nApprOpr" />
+		<result column="v_appr_dept" property="vApprDept" />
+
+		<result column="v_app_type" property="vAppType" />
+		<result column="v_app_type_name" property="vAppTypeName" />
+		<result column="v_sales_date" property="vSalesDate" />
+		<result column="d_appr_date" property="dApprDate" />
+		<result column="v_app_user_name" property="vAppUserName" />
+		<result column="v_app_org_name" property="vAppOrgName" />
+		<result column="v_deal_falg_name" property="vDealFalgName" />
+		<result column="v_appr_stat_name" property="vApprStatName" />
+		<result column="v_appr_opr_name" property="vApprOprName" />
+		<result column="v_appr_dept_name" property="vApprDeptName" />
+	</resultMap>
+
+	<resultMap id="CustSalesAccdtlMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCustSalesAccdtl">
+		<result property="nDetail" column="n_id"/>
+		<result property="nAppMain" column="n_rec_id"/>
+		<result property="vOrgCode" column="v_org_code"/>
+		<result property="nManagerId" column="n_manager_id"/>
+		<result property="vAcc" column="v_acc"/>
+		<result property="vSubacc" column="v_subacc"/>
+		<result property="vCustName" column="v_cust_name"/>
+		<result property="dOpenDate" column="d_open_date"/>
+		<result property="nAmt" column="n_amt"/>
+		<result property="nTerm" column="n_term"/>
+		<result property="vCheckAcc" column="v_check_acc"/>
+		<result property="nCheckAmt" column="n_check_amt"/>
+		<result property="nDiffAmt" column="n_diff_amt"/>
+		<result property="nCheckTerm" column="n_check_term"/>
+		<result property="nCustbal" column="n_custbal"/>
+		<result property="nLastCustbal" column="n_last_custbal"/>
+		<result property="vSubaccCls" column="v_subacc_cls"/>
+		<result property="dClsDate" column="d_cls_date"/>
+		<result property="vCustFlag" column="v_cust_flag"/>
+		<result property="dInsertDate" column="d_insert_date"/>
+		<result property="dUpdateDate" column="d_update_date"/>
+		<result property="vSalesman" column="v_salesman"/>
+		<result property="vReferrer" column="v_referrer"/>
+		<result property="nFinBal" column="n_fin_bal"/>
+		<result property="vCheckDesc" column="v_check_desc"/>
+		<result property="dCheckDate" column="d_check_date"/>
+		<result property="nCardbal" column="n_cardbal"/>
+		<result property="nLastCardbal" column="n_last_cardbal"/>
+		<result property="nDiffBalDay" column="n_diff_bal_day"/>
+		<result property="vCurrentToRegular" column="v_current_to_regular"/>
+		<result property="vCheckOrg" column="v_check_org"/>
+		<result property="vCheckDate" column="v_check_date"/>
+		<result property="nCustbalAvg" column="n_custbal_avg"/>
+		<result property="nLastCustbalAvg" column="n_last_custbal_avg"/>
+		<result property="nCardbalAvg" column="n_cardbal_avg"/>
+		<result property="nLastCardbalAvg" column="n_last_cardbal_avg"/>
+		<result property="vHdCust13179" column="v_hd_cust_13179"/>
+		<result property="nLastYearAvg" column="n_last_year_avg"/>
+		<result property="vHdCust15182" column="v_hd_cust_15182"/>
+		<result property="vHdCust15180" column="v_hd_cust_15180"/>
+		<result property="vHdCust15181" column="v_hd_cust_15181"/>
+		<result property="vHdCust15179" column="v_hd_cust_15179"/>
+		<result property="vOrgCustbalInc" column="v_org_custbal_inc"/>
+		<result property="nIsDqOut" column="n_is_dq_out"/>
+		<result property="nIsFundTf" column="n_is_fund_tf"/>
+		<result property="nMonthInc" column="n_month_inc"/>
+		<result property="nYearInc" column="n_year_inc"/>
+		<result property="nMonthIncDisc" column="n_month_inc_disc"/>
+		<result property="nYearIncDisc" column="n_year_inc_disc"/>
+		<result property="nFinalPerfor" column="n_final_perfor"/>
+		<result property="nCustWdFix1Inc" column="n_cust_wd_fix1_inc"/>
+		<result property="nCustFjFix1Inc" column="n_cust_fj_fix1_inc"/>
+		<result property="nCustWdFix2Dec" column="n_cust_wd_fix2_dec"/>
+		<result property="nCustFjFix2Dec" column="n_cust_fj_fix2_dec"/>
+		<result property="vOrgName" column="v_org_name"/>
+		<result property="nCardBalAvgAdd" column="n_cardbal_avg_add"/>
+		<result property="checkBal" column="check_bal"/>
+		<result property="checkFinBal" column="check_fin_bal"/>
+		<result property="diffAmtRag" column="diff_amt_rag"/>
+	</resultMap>
+
+	<resultMap id="CustCurrSalesAccdtlMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCustCurrSalesAccdtl">
+		<result property="nDetail" column="n_id"/>
+		<result property="nAppMain" column="n_rec_id"/>
+		<result property="vOrgCode" column="v_org_code"/>
+		<result property="nManagerId" column="n_manager_id"/>
+		<result property="vAcc" column="v_acc"/>
+		<result property="vCustName" column="v_cust_name"/>
+		<result property="dStoreDate" column="d_store_date"/>
+		<result property="nAmt" column="n_amt"/>
+		<result property="vSalesman" column="v_salesman"/>
+		<result property="vReferrer" column="v_referrer"/>
+		<result property="vCheckStat" column="v_check_stat"/>
+		<result property="vCheckOrg" column="v_check_org"/>
+		<result property="vCheckDate" column="v_check_date"/>
+		<result property="nCheckAmt" column="n_check_amt"/>
+		<result property="nAccbal" column="n_accbal"/>
+		<result property="nLastAccbal" column="n_last_accbal"/>
+		<result property="nLastquaAccbal" column="n_lastqua_accbal"/>
+		<result property="nAccbalAvg" column="n_accbal_avg"/>
+		<result property="nLastAccbalAvg" column="n_last_accbal_avg"/>
+		<result property="nLastquaAccbalAvg" column="n_lastqua_accbal_avg"/>
+		<result property="nCustbal" column="n_custbal"/>
+		<result property="nLastCustbal" column="n_last_custbal"/>
+		<result property="nCustbalAvg" column="n_custbal_avg"/>
+		<result property="nLastCustbalAvg" column="n_last_custbal_avg"/>
+		<result property="vCheckDesc" column="v_check_desc"/>
+		<result property="dInsertDate" column="d_insert_date"/>
+		<result property="dUpdateDate" column="d_update_date"/>
+		<result property="vCustFlag" column="v_cust_flag"/>
+		<result property="vHdCust11999" column="v_hd_cust_11999"/>
+		<result property="nCustbalHqAvg" column="n_custbal_hq_avg"/>
+		<result property="nLastCustbalHqAvg" column="n_last_custbal_hq_avg"/>
+		<result property="nCustbalHq" column="n_custbal_hq"/>
+		<result property="nLastCustbalHq" column="n_last_custbal_hq"/>
+		<result property="nYxlTradeK" column="n_yxl_trade_k"/>
+		<result property="nFinalPerfor" column="n_final_perfor"/>
+		<result property="vOrgName" column="v_org_name"/>
+		<result property="amtAccbal" column="amt_accbal"/>
+		<result property="amtAvgAccbal" column="amt_avg_accbal"/>
+		<result property="accbalLastquaAdd" column="accbal_lastqua_add"/>
+		<result property="accbalLastAdd" column="accbal_last_add"/>
+	</resultMap>
+
+	<resultMap id="FundTimeDtlMap" type="com.routdata.financialdata.api.cstmappr.dto.TbFundTimeDtl">
+		<result property="nDetail" column="n_id"/>
+		<result property="nAppMain" column="n_rec_id"/>
+		<result property="vDeptCode" column="v_dept_code"/>
+		<result property="vAcctno" column="v_acctno"/>
+		<result property="vCustName" column="v_cust_name"/>
+		<result property="vAddDate" column="v_add_date"/>
+		<result property="vFdId" column="v_fd_id"/>
+		<result property="nTranAmt" column="n_tran_amt"/>
+		<result property="vManager" column="v_manager"/>
+		<result property="vFirstDate" column="v_first_date"/>
+		<result property="nEverHandle" column="n_ever_handle"/>
+		<result property="nSuccessCnt" column="n_success_cnt"/>
+		<result property="nCheckStat" column="n_check_stat"/>
+		<result property="vCheckDesc" column="v_check_desc"/>
+		<result property="nCtnCharge" column="n_ctn_charge"/>
+		<result property="nCheckStat2" column="n_check_stat2"/>
+		<result property="vCheckDesc2" column="v_check_desc2"/>
+		<result property="vAutoCycle" column="v_auto_cycle"/>
+		<result property="vDeptName" column="v_dept_name"/>
+		<result property="everHandleWords" column="ever_handle_words"/>
+		<result property="ctnChargeWords" column="ctn_charge_words"/>
+		<result property="checkStatWords" column="check_stat_words"/>
+		<result property="checkStat2Words" column="check_stat2_words"/>
+	</resultMap>
+
+	<resultMap id="FundDeduStatDtlMap" type="com.routdata.financialdata.api.cstmappr.dto.TbFundDeduStatDtl">
+		<result property="nAppMain" column="n_recid"/>
+		<result property="vDeptCode" column="v_dept_code"/>
+		<result property="vAccount" column="v_account"/>
+		<result property="vName" column="v_name"/>
+		<result property="vProductNum" column="v_product_num"/>
+		<result property="nDeduNum" column="n_dedu_num"/>
+		<result property="nTxAmt" column="n_tx_amt"/>
+		<result property="vSaler" column="v_saler"/>
+		<result property="dInsertDate" column="d_insert_date" jdbcType="DATE"/>
+		<result property="dUpdateDate" column="d_update_date" jdbcType="DATE"/>
+		<result property="nDetail" column="n_id"/>
+		<result property="vDeptName" column="v_dept_name"/>
+	</resultMap>
+
+	<resultMap id="FinVerifiDtlMap" type="com.routdata.financialdata.api.cstmappr.dto.TbFinVerifiDtl">
+		<result property="vDeptCode" column="v_dept_code"/>
+		<result property="vAccount" column="v_account"/>
+		<result property="vName" column="v_name"/>
+		<result property="dTxDate" column="d_tx_date" jdbcType="DATE"/>
+		<result property="nTxAmt" column="n_tx_amt"/>
+		<result property="vSaler" column="v_saler"/>
+		<result property="nIsExist" column="n_is_exist"/>
+		<result property="nSrcAmt" column="n_src_amt"/>
+		<result property="nState" column="n_state"/>
+		<result property="vCheckDesc" column="v_check_desc"/>
+		<result property="dInsertDate" column="d_insert_date" jdbcType="DATE"/>
+		<result property="nAppMain" column="n_recid"/>
+		<result property="vProductNum" column="v_product_num"/>
+		<result property="nDetail" column="n_id"/>
+		<result property="vDeptName" column="v_dept_name"/>
+		<result property="isExistWords" column="is_exist_words"/>
+		<result property="stateWords" column="state_words"/>
+	</resultMap>
+
+	<resultMap id="CustAssetSalesAccdtlMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCustAssetSalesAccdtl">
+		<result property="nDetail" column="n_id"/>
+		<result property="nAppMain" column="n_rec_id"/>
+		<result property="vOrgCode" column="v_org_code"/>
+		<result property="vAcc" column="v_acc"/>
+		<result property="vCustName" column="v_cust_name"/>
+		<result property="vSalesman" column="v_salesman"/>
+		<result property="vReferrer" column="v_referrer"/>
+		<result property="vCheckStat" column="v_check_stat"/>
+		<result property="vCheckDesc" column="v_check_desc"/>
+		<result property="nAccbal" column="n_accbal"/>
+		<result property="nLastAccbal" column="n_last_accbal"/>
+		<result property="nLastquaAccbal" column="n_lastqua_accbal"/>
+		<result property="dInsertDate" column="d_insert_date"/>
+		<result property="dUpdateDate" column="d_update_date"/>
+		<result property="vOrgName" column="v_org_name"/>
+		<result property="checkStatWords" column="check_stat_words"/>
+	</resultMap>
+
+	<resultMap id="CstmIndClassMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCstmIndClass">
+		<result column="v_appr_type" jdbcType="VARCHAR" property="vApprType" />
+		<result column="v_assets_type" jdbcType="VARCHAR" property="vAssetsType" />
+		<result column="v_assets_type_name" jdbcType="VARCHAR" property="vAssetsTypeName" />
+		<result column="v_assets_sub" jdbcType="VARCHAR" property="vAssetsSub" />
+		<result column="v_assets_sub_name" jdbcType="VARCHAR" property="vAssetsSubName" />
+	</resultMap>
+
+	<resultMap id="ApplyApprvParaMap" type="com.routdata.financialdata.api.approvalparameter.dto.TbApplyApprvPara">
+		<result column="v_appr_class" jdbcType="BIGINT" property="vApprClass" />
+		<result column="v_appr_class_name" jdbcType="BIGINT" property="vApprClassName" />
+		<result column="v_appr_type" jdbcType="VARCHAR" property="vApprType" />
+		<result column="v_appr_type_name" jdbcType="VARCHAR" property="vApprTypeName" />
+		<result column="n_apprv_set" jdbcType="BIGINT" property="nApprvSet" />
+	</resultMap>
+	
+	<resultMap id="orgTreeMap" type="com.routdata.financialdata.api.cstmappr.dto.OrgTree">
+		<result column="dept_id" jdbcType="BIGINT" property="vDeptZid" />
+		<result column="parent_id" jdbcType="BIGINT" property="vDeptFid" />
+		<result column="tree_no" jdbcType="VARCHAR" property="vDeptTreeNo" />
+		<result column="dept_code" jdbcType="VARCHAR" property="vDeptZcode" />
+		<result column="parent_dept_code" jdbcType="VARCHAR" property="vDeptFcode" />
+		<result column="dept_name" jdbcType="VARCHAR" property="vDeptNodeName" />
+	</resultMap>
+
+	<sql id="diff_amt_rag_sql">
+		case
+			when coalesce(t.n_diff_amt, 0)&lt;10000 then '1万以下'
+			when coalesce(t.n_diff_amt, 0)&gt;=10000 and coalesce(t.n_diff_amt, 0)&lt;30000 then '1万-3万'
+			when coalesce(t.n_diff_amt, 0)&gt;=30000 and coalesce(t.n_diff_amt, 0)&lt;50000 then '3万-5万'
+			when coalesce(t.n_diff_amt, 0)&gt;=50000 and coalesce(t.n_diff_amt, 0)&lt;100000 then '5万-10万'
+			when coalesce(t.n_diff_amt, 0)&gt;=100000 and coalesce(t.n_diff_amt, 0)&lt;200000 then '10万-20万'
+			when coalesce(t.n_diff_amt, 0)&gt;=200000 and coalesce(t.n_diff_amt, 0)&lt;500000 then '20万-50万'
+			when coalesce(t.n_diff_amt, 0)&gt;=500000 and coalesce(t.n_diff_amt, 0)&lt;1000000 then '50万至100万'
+			when coalesce(t.n_diff_amt, 0)&gt;=1000000 and coalesce(t.n_diff_amt, 0)&lt;2000000 then '100万至200万'
+			when coalesce(t.n_diff_amt, 0)&gt;=2000000 and coalesce(t.n_diff_amt, 0)&lt;5000000 then '200万-500万'
+			when coalesce(t.n_diff_amt, 0)&gt;=5000000 then '500万以上'
+		end diff_amt_rag
+	</sql>
+
+	<sql id="text_mask_sql">
+		case
+			when t.v_cust_name is null then t.v_cust_name
+			when length(t.v_cust_name)&lt;2 then t.v_cust_name
+			else concat(substring(t.v_cust_name from 1 for length(t.v_cust_name)-2),concat('*', substring(t.v_cust_name from length(t.v_cust_name) - 1 + 1 for 1)))
+		end v_cust_name
+	</sql>
+
+	<sql id="text_mask_sql2">
+		case
+			when t.v_name is null then t.v_name
+			when length(t.v_name)&lt;2 then t.v_name
+			else concat(substring(t.v_name from 1 for length(t.v_name)-2),concat('*', substring(t.v_name from length(t.v_name) - 1 + 1 for 1)))
+		end v_name
+	</sql>
+
+	<sql id="mob_mask_sql">
+		concat(substring(t.v_cust_mob from 1 for 3),concat('****',substring(t.v_cust_mob, length(t.v_cust_mob)-4+1,4))) v_cust_mob
+	</sql>
+
+	<select id="getListForCheckApprData" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMainQuery" resultMap="BaseResultMap">
+		select
+			r.n_id,
+			r.v_theme_name,
+			r.n_app_id,
+			r.v_app_org_code,
+			r.d_insert_date,
+			r.v_deal_falg,
+			r.n_appr_stat,
+			r.v_appr_desc,
+			r.n_appr_opr,
+			r.v_appr_dept,
+			r.d_appr_date,
+			r.v_app_user_name,
+			r.v_app_org_name,
+			r.v_appr_opr_name,
+			r.v_appr_dept_name,
+			case r.v_deal_falg
+				when '-1' then '未申请'
+				when '0' then '未申请'
+				when '1' then '已申请'
+				when '2' then '待处理'
+				when '3' then '已处理'
+			else ''
+			end v_deal_falg_name,
+			case r.n_appr_stat
+				when '0' then '待审批'
+				when '1' then '审批通过'
+				when '2' then '审批不通过'
+			else ''
+			end v_appr_stat_name,
+			r.v_app_type,
+			r.v_app_type_name
+			from
+			(
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_falg,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'1' v_app_type,
+				'短定资金留存核查' v_app_type_name
+			from tb_cust_sales_accmn t
+			left join org_person p1 on t.n_app_id=p1.recid
+			left join org_person p2 on t.n_appr_opr=p2.recid
+			left join org_department d1 on t.v_app_org_code=d1.dept_code
+			left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_falg,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'2' v_app_type,
+				'活期资金核查' v_app_type_name
+			from tb_cust_curr_sales_accmn t
+			left join org_person p1 on t.n_app_id=p1.recid
+			left join org_person p2 on t.n_appr_opr=p2.recid
+			left join org_department d1 on t.v_app_org_code=d1.dept_code
+			left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_flag v_deal_falg,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'3' v_app_type,
+				'基金定投核查' v_app_type_name
+			from tb_fund_time_main t
+			left join org_person p1 on t.n_app_id=p1.recid
+			left join org_person p2 on t.n_appr_opr=p2.recid
+			left join org_department d1 on t.v_app_org_code=d1.dept_code
+			left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+			<!--
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_flag v_deal_falg,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'4' v_app_type,
+				'基金定投扣款统计核查' v_app_type_name
+			from tb_fund_dedu_stat_apply t
+			left join org_person p1 on t.n_app_id=p1.recid
+			left join org_person p2 on t.n_appr_opr=p2.recid
+			left join org_department d1 on t.v_app_org_code=d1.dept_code
+			left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+			-->
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_flag v_deal_falg,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'5' v_app_type,
+				'理财业务核查' v_app_type_name
+			from tb_fin_verifi_apply t
+			left join org_person p1 on t.n_app_id=p1.recid
+			left join org_person p2 on t.n_appr_opr=p2.recid
+			left join org_department d1 on t.v_app_org_code=d1.dept_code
+			left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_falg,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'6' v_app_type,
+				'总资产核查' v_app_type_name
+			from tb_cust_asset_sales_accmn t
+			left join org_person p1 on t.n_app_id=p1.recid
+			left join org_person p2 on t.n_appr_opr=p2.recid
+			left join org_department d1 on t.v_app_org_code=d1.dept_code
+			left join org_department d2 on t.v_appr_dept=d2.dept_code
+		) r
+		<where>
+		<if test="createUser !=null">
+			and r.n_app_id =#{createUser,jdbcType=BIGINT}
+		</if>
+
+		<if test="vThemeName !=null and vThemeName != ''">
+			and r.v_theme_name like concat(concat('%',#{vThemeName}),'%')
+		</if>
+
+		<if test="vAppType !=null and vAppType != ''">
+			and r.v_app_type = #{vAppType,jdbcType=VARCHAR}
+		</if>
+
+		<if test="nState !=null and nState != ''">
+			<choose>
+				<when test='nState=="-1"'>
+					and r.v_deal_falg in ('-1','0')
+				</when>
+				<otherwise>
+					and r.v_deal_falg = #{nState,jdbcType=VARCHAR}
+				</otherwise>
+			</choose>
+		</if>
+
+		<if test="dStartDate != null and dStartDate != ''">
+			AND r.d_insert_date &gt;= to_date(#{dStartDate},'yyyy-MM-dd')
+		</if>
+
+		<if test="dEndDate != null and dEndDate != ''">
+			AND r.d_insert_date &lt; to_date(#{dEndDate},'yyyy-MM-dd')+1
+		</if>
+
+		</where>
+		order by r.n_id desc
+		</select>
+
+	<insert id="saveCustSalesAccmnInfo" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		insert into tb_cust_sales_accmn (
+			n_id,
+			n_app_id,
+			v_app_org_code,
+			v_theme_name,
+			v_sales_date,
+			v_deal_falg,
+			d_insert_date
+		)values (
+			nextval('seq_appr_main'),
+			#{nAppId},
+			#{vAppOrgCode},
+			#{vThemeName},
+			#{vSalesDate},
+			#{vDealFalg},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveCustCurrSalesAccmnInfo" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		insert into tb_cust_curr_sales_accmn (
+			n_id,
+			n_app_id,
+			v_app_org_code,
+			v_theme_name,
+			v_sales_date,
+			v_deal_falg,
+			d_insert_date
+		)values (
+			nextval('seq_appr_main'),
+			#{nAppId},
+			#{vAppOrgCode},
+			#{vThemeName},
+			#{vSalesDate},
+			#{vDealFalg},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveFundTimeMainInfo" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		insert into tb_fund_time_main (
+			n_id,
+			n_app_id,
+			v_app_org_code,
+			v_theme_name,
+			v_sales_date,
+			v_deal_flag,
+			d_insert_date
+		)values (
+			nextval('seq_appr_main'),
+			#{nAppId},
+			#{vAppOrgCode},
+			#{vThemeName},
+			#{vSalesDate},
+			#{vDealFalg},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveFundDeduStatApplyInfo" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		insert into tb_fund_dedu_stat_apply (
+			n_id,
+			n_app_id,
+			v_app_org_code,
+			v_theme_name,
+			v_deal_flag,
+			d_insert_date
+		)values (
+			nextval('seq_appr_main'),
+			#{nAppId},
+			#{vAppOrgCode},
+			#{vThemeName},
+			#{vDealFalg},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveFinVerifiApplyInfo" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		insert into tb_fin_verifi_apply (
+			n_id,
+			n_app_id,
+			v_app_org_code,
+			v_theme_name,
+			v_deal_flag,
+			d_insert_date
+		)values (
+			nextval('seq_appr_main'),
+			#{nAppId},
+			#{vAppOrgCode},
+			#{vThemeName},
+			#{vDealFalg},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveCustAssetSalesAccmnInfo" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		insert into tb_cust_asset_sales_accmn (
+			n_id,
+			n_app_id,
+			v_app_org_code,
+			v_theme_name,
+			v_sales_date,
+			v_deal_falg,
+			d_insert_date
+		)values (
+			nextval('seq_appr_main'),
+			#{nAppId},
+			#{vAppOrgCode},
+			#{vThemeName},
+			#{vSalesDate},
+			#{vDealFalg},
+			now()
+		 )
+	</insert>
+
+	<select id="getCustSalesAccmnByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_theme_name,
+			v_sales_date,
+			v_deal_falg,
+			n_appr_stat,
+			'短定资金留存核查' v_app_type_name
+		from tb_cust_sales_accmn
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<select id="getCustCurrSalesAccmnByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_theme_name,
+			v_sales_date,
+			v_deal_falg,
+			n_appr_stat,
+			'活期资金核查' v_app_type_name
+		from tb_cust_curr_sales_accmn
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<select id="getFundTimeMainByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_theme_name,
+			v_sales_date,
+			v_deal_flag v_deal_falg,
+			n_appr_stat,
+			'基金定投核查' v_app_type_name
+		from tb_fund_time_main
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<select id="getFundDeduStatApplyByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_theme_name,
+			v_deal_flag v_deal_falg,
+			n_appr_stat,
+			'基金定投扣款统计核查' v_app_type_name
+		from tb_fund_dedu_stat_apply
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<select id="getFinVerifiApplyByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_theme_name,
+			v_deal_flag v_deal_falg,
+			n_appr_stat,
+			'理财业务核查' v_app_type_name
+		from tb_fin_verifi_apply
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<select id="getCustAssetSalesAccmnByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_theme_name,
+			v_sales_date,
+			v_deal_falg,
+			n_appr_stat,
+			'总资产核查' v_app_type_name
+		from tb_cust_asset_sales_accmn
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteCustSalesAccdtl">
+		delete from tb_cust_sales_accdtl t3 where exists(
+		select 1 from tb_cust_sales_accmn t2 where t2.n_id=t3.n_rec_id and t2.n_id=#{nAppMain,jdbcType=BIGINT})
+	</delete>
+
+	<delete id="deleteCustSalesAccmn">
+		delete from tb_cust_sales_accmn t where t.n_id=#{nAppMain,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteCustCurrSalesAccdtl">
+		delete from tb_cust_curr_sales_accdtl t3 where exists(
+		select 1 from tb_cust_curr_sales_accmn t2 where t2.n_id=t3.n_rec_id and t2.n_id=#{nAppMain,jdbcType=BIGINT})
+	</delete>
+
+	<delete id="deleteCustCurrSalesAccmn">
+		delete from tb_cust_curr_sales_accmn t where t.n_id=#{nAppMain,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteFundTimeMainAccdtl">
+		delete from tb_fund_time_dtl t3 where exists(
+		select 1 from tb_fund_time_main t2 where t2.n_id=t3.n_rec_id and t2.n_id=#{nAppMain,jdbcType=BIGINT})
+	</delete>
+
+	<delete id="deleteFundTimeMain">
+		delete from tb_fund_time_main t where t.n_id=#{nAppMain,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteFundDeduStatAccdtl">
+		delete from tb_fund_dedu_stat_dtl t3 where exists(
+		select 1 from tb_fund_dedu_stat_apply t2 where t2.n_id=t3.n_recid and t2.n_id=#{nAppMain,jdbcType=BIGINT})
+	</delete>
+
+	<delete id="deleteFundDeduStatApply">
+		delete from tb_fund_dedu_stat_apply t where t.n_id=#{nAppMain,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteFinVerifiAccdtl">
+		delete from tb_fin_verifi_dtl t3 where exists(
+		select 1 from tb_fin_verifi_apply t2 where t2.n_id=t3.n_recid and t2.n_id=#{nAppMain,jdbcType=BIGINT})
+	</delete>
+
+	<delete id="deleteFinVerifiApply">
+		delete from tb_fin_verifi_apply t where t.n_id=#{nAppMain,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteCustAssetSalesAccdtl">
+		delete from tb_cust_asset_sales_accdtl t3 where exists(
+		select 1 from tb_cust_asset_sales_accmn t2 where t2.n_id=t3.n_rec_id and t2.n_id=#{nAppMain,jdbcType=BIGINT})
+	</delete>
+
+	<delete id="deleteCustAssetSalesAccmn">
+		delete from tb_cust_asset_sales_accmn t where t.n_id=#{nAppMain,jdbcType=BIGINT}
+	</delete>
+
+	<update id="saveCustSalesAccmnSubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cust_sales_accmn
+		set
+			v_deal_falg=#{vDealFalg,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="saveCustCurrSalesAccmnSubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cust_curr_sales_accmn
+		set
+			v_deal_falg=#{vDealFalg,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="saveFundTimeMainSubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_fund_time_main
+		set
+			v_deal_flag=#{vDealFalg,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="saveFundDeduStatApplySubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_fund_dedu_stat_apply
+		set
+			v_deal_flag=#{vDealFalg,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="saveFinVerifiApplySubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_fin_verifi_apply
+		set
+			v_deal_flag=#{vDealFalg,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="saveCustAssetSalesAccmnSubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cust_asset_sales_accmn
+		set
+			v_deal_falg=#{vDealFalg,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<select id="getListForCustSalesAccdtl" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CustSalesAccdtlMap">
+		select
+			t.n_id,
+			t.n_rec_id,
+			t.v_org_code,
+			<include refid="text_mask_sql"></include>,
+			case 
+				when t.v_acc is null then t.v_acc
+				when length(t.v_acc)&lt;6 then t.v_acc
+				else rpad(substring(t.v_acc from 1 for length(t.v_acc)-6),length(t.v_acc),'*')
+			end v_acc,
+			case 
+				when t.v_subacc is null then t.v_subacc
+				when length(t.v_subacc)&lt;6 then t.v_subacc
+				else rpad(substring(t.v_subacc from 1 for length(t.v_subacc)-6),length(t.v_subacc),'*')
+			end v_subacc,
+			t.d_open_date,
+			t.n_amt,
+			t.n_term,
+			t.v_salesman,
+			t.v_referrer,
+			d.dept_name v_org_name
+		from tb_cust_sales_accdtl t
+		     left join org_department d on t.v_org_code=d.dept_code
+		where t.n_rec_id=cast(#{nAppMain} as bigint)
+		order by t.n_id asc
+	</select>
+
+	<select id="getListForCustCurrSalesAccdtl" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CustCurrSalesAccdtlMap">
+		select
+			t.n_id,
+			t.n_rec_id,
+			t.v_org_code,
+			<include refid="text_mask_sql"></include>,
+			case 
+				when t.v_acc is null then t.v_acc
+				when length(t.v_acc)&lt;6 then t.v_acc
+				else rpad(substring(t.v_acc from 1 for length(t.v_acc)-6),length(t.v_acc),'*')
+			end v_acc,
+			t.d_store_date,
+			t.n_amt,
+			t.v_salesman,
+			t.v_referrer,
+			d.dept_name v_org_name
+		from tb_cust_curr_sales_accdtl t
+			 left join org_department d on t.v_org_code=d.dept_code
+		where t.n_rec_id=cast(#{nAppMain} as bigint)
+		order by t.n_id asc
+	</select>
+
+	<select id="getListForFundTimeDtl" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="FundTimeDtlMap">
+		select
+		    t.n_id,
+			t.n_rec_id,
+			t.v_dept_code,
+			case 
+				when t.v_acctno is null then t.v_acctno
+				when length(t.v_acctno)&lt;6 then t.v_acctno
+				else rpad(substring(t.v_acctno from 1 for length(t.v_acctno)-6),length(t.v_acctno),'*')
+			end v_acctno,
+			<include refid="text_mask_sql"></include>,
+			t.v_add_date,
+			t.v_fd_id,
+			t.n_tran_amt,
+			t.v_manager,
+			t.v_first_date,
+			case t.v_auto_cycle
+				when '1' then '周定投'
+				when '2' then '月定投'
+			end as v_auto_cycle,
+			d.dept_name v_dept_name
+		from tb_fund_time_dtl t
+			 left join org_department d on t.v_dept_code=d.dept_code
+		where t.n_rec_id=cast(#{nAppMain} as bigint)
+		order by t.n_id asc
+	</select>
+
+	<select id="getListForFundDeduStatDtl" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="FundDeduStatDtlMap">
+
+	</select>
+
+	<select id="getListForFinVerifiDtl" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="FinVerifiDtlMap">
+		select
+			t.n_id,
+			t.n_recid,
+			t.v_dept_code,
+			case 
+				when t.v_account is null then t.v_account
+				when length(t.v_account)&lt;6 then t.v_account
+				else rpad(substring(t.v_account from 1 for length(t.v_account)-6),length(t.v_account),'*')
+			end v_account,
+			<include refid="text_mask_sql2"></include>,
+			t.d_tx_date,
+			t.v_product_num,
+			t.n_tx_amt,
+			t.v_saler,
+			d.dept_name v_dept_name
+		from tb_fin_verifi_dtl t
+			left join org_department d on t.v_dept_code=d.dept_code
+		where t.n_recid=cast(#{nAppMain} as bigint)
+		order by t.n_id asc
+	</select>
+
+	<select id="getListForCustAssetSalesAccdtl" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CustAssetSalesAccdtlMap">
+		select
+			t.n_id,
+			t.n_rec_id,
+			t.v_org_code,
+			<include refid="text_mask_sql"></include>,
+			case 
+				when t.v_acc is null then t.v_acc
+				when length(t.v_acc)&lt;6 then t.v_acc
+				else rpad(substring(t.v_acc from 1 for length(t.v_acc)-6),length(t.v_acc),'*')
+			end v_acc,
+			t.v_salesman,
+			t.v_referrer,
+			d.dept_name v_org_name
+		from tb_cust_asset_sales_accdtl t
+			left join org_department d on t.v_org_code=d.dept_code
+		where t.n_rec_id=cast(#{nAppMain} as bigint)
+		order by t.n_id asc
+	</select>
+
+	<select id="getImportOrg" resultType="java.util.HashMap">
+		select t.dept_name,t.dept_code from vorg_department_all t
+	</select>
+
+	<select id="getImportOrgTwo" resultType="java.util.HashMap">
+		select dept_name,dept_code
+			  from (select d1.wd_code dept_code, d1.wd_name dept_name
+					  from vorg_department_rel d1
+					union all
+					select d.dept_code, d.dept_name
+					  from vorg_department d,
+						   (select distinct d1.fj_code dept_code, d1.fj_name dept_name
+							  from vorg_department_rel d1) d2
+					 where d.dept_code = d2.dept_code
+					union all
+					select d.dept_code, d.dept_name
+					  from vorg_department d
+					 where d.dept_code = d.dsjbh) r
+	</select>
+
+	<insert id="saveCustSalesAccdtlExcelData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCustSalesAccdtl">
+		insert into tb_cust_sales_accdtl (
+			n_id,
+			n_rec_id,
+			v_org_code,
+			v_cust_name,
+			v_acc,
+			v_subacc,
+			d_open_date,
+			n_amt,
+			n_term,
+			v_salesman,
+			v_referrer,
+			d_insert_date
+		)values (
+			nextval('seq_cust_sales_detail'),
+			#{nAppMain},
+			#{vOrgCode},
+			#{vCustName},
+			#{vAcc},
+			#{vSubacc},
+			#{dOpenDate},
+			#{nAmt},
+			#{nTerm},
+			#{vSalesman},
+			#{vReferrer},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveCustCurrSalesAccdtlExcelData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCustCurrSalesAccdtl">
+		insert into tb_cust_curr_sales_accdtl (
+			n_id,
+			n_rec_id,
+			v_org_code,
+			v_cust_name,
+			v_acc,
+			d_store_date,
+			n_amt,
+			v_salesman,
+			v_referrer,
+			d_insert_date
+		)values (
+			nextval('seq_cust_curr_sales_accdtl'),
+			#{nAppMain},
+			#{vOrgCode},
+			#{vCustName},
+			#{vAcc},
+			#{dStoreDate},
+			#{nAmt},
+			#{vSalesman},
+			#{vReferrer},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveFundTimeDtlExcelData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbFundTimeDtl">
+		insert into tb_fund_time_dtl (
+			n_id,
+			n_rec_id,
+			v_dept_code,
+			v_acctno,
+			v_cust_name,
+			v_add_date,
+			v_fd_id,
+			n_tran_amt,
+			v_manager,
+			v_first_date,
+			v_auto_cycle
+		)values (
+			nextval('seq_tb_fund_time_dtl'),
+			#{nAppMain},
+			#{vDeptCode},
+			#{vAcctno},
+			#{vCustName},
+			#{vAddDate},
+			#{vFdId},
+			#{nTranAmt},
+			#{vManager},
+			#{vFirstDate},
+			#{vAutoCycle}
+		 )
+	</insert>
+
+	<insert id="saveFinVerifiDtlExcelData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbFinVerifiDtl">
+		insert into tb_fin_verifi_dtl (
+			n_id,
+			n_recid,
+			v_dept_code,
+			v_account,
+			v_name,
+			d_tx_date,
+			v_product_num,
+			n_tx_amt,
+			v_saler,
+			d_insert_date
+		)values (
+			nextval('seq_fin_verifi_dtl'),
+			#{nAppMain},
+			#{vDeptCode},
+			#{vAccount},
+			#{vName},
+			#{dTxDate},
+			#{vProductNum},
+			#{nTxAmt},
+			#{vSaler},
+			now()
+		 )
+	</insert>
+
+	<insert id="saveCustAssetSalesAccdtlExcelData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCustAssetSalesAccdtl">
+		insert into tb_cust_asset_sales_accdtl (
+			n_id,
+			n_rec_id,
+			v_org_code,
+			v_cust_name,
+			v_acc,
+			v_salesman,
+			v_referrer,
+			d_insert_date
+		)values (
+			nextval('seq_cust_asset_sales_detail'),
+			#{nAppMain},
+			#{vOrgCode},
+			#{vCustName},
+			#{vAcc},
+			#{vSalesman},
+			#{vReferrer},
+			now()
+		 )
+	</insert>
+
+	<update id="updateCustSalesState">
+		update tb_cust_sales_accmn
+		set
+			v_deal_falg=#{vState,jdbcType=VARCHAR}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateCustCurrSalesState">
+		update tb_cust_curr_sales_accmn
+		set
+			v_deal_falg=#{vState,jdbcType=VARCHAR}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateFundTimeState">
+		update tb_fund_time_main
+		set
+			v_deal_flag=#{vState,jdbcType=VARCHAR}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateFinVerifiState">
+		update tb_fin_verifi_apply
+		set
+			v_deal_flag=#{vState,jdbcType=VARCHAR}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateCustAssetSalesState">
+		update tb_cust_asset_sales_accmn
+		set
+			v_deal_falg=#{vState,jdbcType=VARCHAR}
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<select id="getListForCustSalesResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CustSalesAccdtlMap">
+		 select d.dept_name v_org_name,
+				<include refid="text_mask_sql"></include>,
+				case 
+					when t.v_acc is null then t.v_acc
+					when length(t.v_acc)&lt;6 then t.v_acc
+					else rpad(substring(t.v_acc from 1 for length(t.v_acc)-6),length(t.v_acc),'*')
+				end v_acc,
+				case 
+					when t.v_subacc is null then t.v_subacc
+					when length(t.v_subacc)&lt;6 then t.v_subacc
+					else rpad(substring(t.v_subacc from 1 for length(t.v_subacc)-6),length(t.v_subacc),'*')
+				end v_subacc,
+				t.d_open_date,
+				coalesce(t.n_amt, 0) n_amt,
+				t.n_term,
+				t.v_salesman,
+				t.v_referrer,
+				case t.v_check_acc
+					 when '0' then '未核验'
+					 when '1' then '有效'
+					 when '2' then '无效'
+			  	end v_check_acc,
+				t.v_check_desc,
+				d2.dept_name v_check_org,
+				<include refid="diff_amt_rag_sql"></include>,
+				t.n_check_term,
+				(coalesce(t.n_cardbal_avg, 0) - coalesce(t.n_last_cardbal_avg, 0)) n_cardbal_avg_add,
+				case
+				  when coalesce(t.n_cardbal, 0) >=(coalesce(t.n_last_cardbal, 0) + coalesce(t.n_amt, 0)) then '是'
+				  else '否'
+				end check_bal,
+				case
+				  when coalesce(t.n_fin_bal, 0) > 0 then '是'
+				  else '否'
+				end check_fin_bal,
+				case t.v_subacc_cls
+					when '1' then '已销户'
+					when '2' then '未销户'
+				end v_subacc_cls,
+				t.d_cls_date
+		   from tb_cust_sales_accdtl t
+				left join org_department d on t.v_org_code = d.dept_code
+				left join org_department d2 on t.v_check_org = d2.dept_code
+		  where t.n_rec_id = cast(#{nAppMain} as bigint)
+
+			<if test="vOrgName !=null and vOrgName != ''">
+				and d.dept_name like concat(concat('%',#{vOrgName}),'%')
+			</if>
+			<if test="vCustName !=null and vCustName != ''">
+				and t.v_cust_name like concat(concat('%',#{vCustName}),'%')
+			</if>
+			<if test="vSalesman !=null and vSalesman != ''">
+				and t.v_salesman like concat(concat('%',#{vSalesman}),'%')
+			</if>
+		  order by t.n_id asc
+	</select>
+
+	<select id="getListForCustCurrSalesResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CustCurrSalesAccdtlMap">
+			select
+				d.dept_name v_org_name,
+				<include refid="text_mask_sql"></include>,
+				case 
+					when t.v_acc is null then t.v_acc
+					when length(t.v_acc)&lt;6 then t.v_acc
+					else rpad(substring(t.v_acc from 1 for length(t.v_acc)-6),length(t.v_acc),'*')
+				end v_acc,
+				t.d_store_date,
+				coalesce(t.n_amt, 0) n_amt,
+				t.v_salesman,
+				t.v_referrer,
+				case
+					when coalesce(t.n_accbal, 0) >= coalesce(t.n_amt,0) then '是'
+					else '否'
+				end amt_accbal,
+				coalesce(t.n_accbal_avg, 0) - coalesce(t.n_last_accbal_avg, 0) amt_avg_accbal,
+				coalesce(t.n_final_perfor, 0)  n_final_perfor,
+				case
+					when coalesce(t.n_last_accbal, 0) >= coalesce(t.n_lastqua_accbal, 0)  then '是'
+					else '否'
+				end accbal_lastqua_add,
+		 		case
+					when coalesce(t.n_accbal, 0) >= coalesce(t.n_last_custbal, 0)  then '是'
+					else '否'
+			 	end accbal_last_add,
+			 	case t.v_check_stat
+				 	when '0' then '未核验'
+				 	when '1' then '有效'
+				 	when '2' then '无效'
+			 	end v_check_stat,
+		 		t.v_check_desc
+		 	from tb_cust_curr_sales_accdtl t
+		 		left join org_department d on t.v_org_code = d.dept_code
+		 	where t.n_rec_id= cast(#{nAppMain} as bigint)
+
+			<if test="vOrgName !=null and vOrgName != ''">
+				and d.dept_name like concat(concat('%',#{vOrgName}),'%')
+			</if>
+			<if test="vCustName !=null and vCustName != ''">
+				and t.v_cust_name like concat(concat('%',#{vCustName}),'%')
+			</if>
+			<if test="vSalesman !=null and vSalesman != ''">
+				and t.v_salesman like concat(concat('%',#{vSalesman}),'%')
+			</if>
+			order by t.n_id asc
+	</select>
+
+	<select id="getListForFundTimeResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="FundTimeDtlMap">
+		select
+			d.dept_name v_dept_name,
+			t.v_manager,
+			<include refid="text_mask_sql"></include>,
+			case 
+				when t.v_acctno is null then t.v_acctno
+				when length(t.v_acctno)&lt;6 then t.v_acctno
+				else rpad(substring(t.v_acctno from 1 for length(t.v_acctno)-6),length(t.v_acctno),'*')
+			end v_acctno,
+			t.v_add_date,
+			t.v_first_date,
+			case t.v_auto_cycle
+				when '1' then '周定投'
+				when '2' then '月定投'
+			end v_auto_cycle,
+			coalesce(t.n_tran_amt, 0) n_tran_amt,
+			t.v_fd_id,
+			case t.n_ever_handle
+				when 0 then '是'
+				when 1 then '否'
+			end ever_handle_words,
+			t.n_success_cnt,
+			case t.n_ctn_charge
+				when 0 then '是'
+				when 1 then '否'
+			end ctn_charge_words,
+			case t.n_check_stat
+				when 1 then '有效'
+				when 2 then '无效'
+				when 3 then '未核对'
+			end check_stat_words,
+			t.v_check_desc,
+			case t.n_check_stat2
+				when 1 then '有效'
+				when 2 then '无效'
+				when 3 then '未核对'
+			end check_stat2_words,
+			t.v_check_desc2
+			from tb_fund_time_dtl t
+				left join org_department d on t.v_dept_code = d.dept_code
+			where t.n_rec_id=cast(#{nAppMain} as bigint)
+
+			<if test="vOrgName !=null and vOrgName != ''">
+				and d.dept_name like concat(concat('%',#{vOrgName}),'%')
+			</if>
+			<if test="vCustName !=null and vCustName != ''">
+				and t.v_cust_name like concat(concat('%',#{vCustName}),'%')
+			</if>
+			<if test="vSalesman !=null and vSalesman != ''">
+				and t.v_manager like concat(concat('%',#{vSalesman}),'%')
+			</if>
+			order by t.n_id asc
+	</select>
+
+	<select id="getListForFinVerifiResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="FinVerifiDtlMap">
+		select
+		   d.dept_name v_dept_name,
+		   case 
+				when t.v_account is null then t.v_account
+				when length(t.v_account)&lt;6 then t.v_account
+				else rpad(substring(t.v_account from 1 for length(t.v_account)-6),length(t.v_account),'*')
+			end v_account,
+		   <include refid="text_mask_sql2"></include>,
+		   t.d_tx_date,
+		   t.v_product_num,
+		   coalesce(t.n_tx_amt, 0) n_tx_amt,
+		   t.v_saler,
+		   case t.n_is_exist
+			 	when 1 then '是'
+			 	when 0 then '否'
+		   end is_exist_words,
+		   coalesce(t.n_src_amt, 0) n_src_amt,
+		   case t.n_state
+				when 1 then '核查通过'
+				when 2 then '核查不通过'
+				when 3 then '待核查'
+			end state_words,
+		    t.v_check_desc
+		  from tb_fin_verifi_dtl t
+		  		left join org_department d on t.v_dept_code=d.dept_code
+		  where t.n_recid=cast(#{nAppMain} as bigint)
+
+		<if test="vOrgName !=null and vOrgName != ''">
+			and d.dept_name like concat(concat('%',#{vOrgName}),'%')
+		</if>
+		<if test="vCustName !=null and vCustName != ''">
+			and t.v_name like concat(concat('%',#{vCustName}),'%')
+		</if>
+		<if test="vSalesman !=null and vSalesman != ''">
+			and t.v_saler like concat(concat('%',#{vSalesman}),'%')
+		</if>
+		order by t.n_id asc
+	</select>
+
+	<select id="getListForCustAssetSalesResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CustAssetSalesAccdtlMap">
+		select
+			d.dept_name v_org_name,
+			<include refid="text_mask_sql"></include>,
+			case 
+				when t.v_acc is null then t.v_acc
+				when length(t.v_acc)&lt;6 then t.v_acc
+				else rpad(substring(t.v_acc from 1 for length(t.v_acc)-6),length(t.v_acc),'*')
+			end v_acc,
+			t.v_salesman,
+			t.v_referrer,
+			coalesce(t.n_accbal, 0) n_accbal,
+			coalesce(t.n_last_accbal, 0) n_last_accbal,
+			coalesce(t.n_lastqua_accbal, 0) n_lastqua_accbal,
+			case t.v_check_stat
+				when '1' then '成功'
+				when '2' then '失败'
+			end check_stat_words,
+			t.v_check_desc
+			from tb_cust_asset_sales_accdtl t
+				 left join org_department d on t.v_org_code=d.dept_code
+			where t.n_rec_id=cast(#{nAppMain} as bigint)
+			<if test="vOrgName !=null and vOrgName != ''">
+				and d.dept_name like concat(concat('%',#{vOrgName}),'%')
+			</if>
+			<if test="vCustName !=null and vCustName != ''">
+				and t.v_cust_name like concat(concat('%',#{vCustName}),'%')
+			</if>
+			<if test="vSalesman !=null and vSalesman != ''">
+				and t.v_salesman like concat(concat('%',#{vSalesman}),'%')
+			</if>
+			order by t.n_id asc
+	</select>
+</mapper>
+
+

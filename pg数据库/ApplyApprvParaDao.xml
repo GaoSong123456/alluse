@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routdata.financialdata.svc.approvalparameter.dao.ApplyApprvParaDao">
+	<resultMap id="BaseResultMap" type="com.routdata.financialdata.api.approvalparameter.dto.TbApplyApprvPara">
+		<result column="v_appr_class" jdbcType="BIGINT" property="vApprClass" />
+		<result column="v_appr_class_name" jdbcType="BIGINT" property="vApprClassName" />
+		<result column="v_appr_type" jdbcType="VARCHAR" property="vApprType" />
+		<result column="v_appr_type_name" jdbcType="VARCHAR" property="vApprTypeName" />
+		<result column="n_apprv_set" jdbcType="BIGINT" property="nApprvSet" />
+	</resultMap>
+
+	<select id="getListForApplyApprvPara" resultMap="BaseResultMap">
+		select
+			t.v_appr_class,
+			t.v_appr_class_name,
+			t.v_appr_type,
+			t.v_appr_type_name,
+			t.n_apprv_set
+		from
+			tb_apply_apprv_para t
+	</select>
+
+	<update id="updateApplyApprvPara" parameterType="com.routdata.financialdata.api.approvalparameter.dto.TbApplyApprvPara">
+	    update tb_apply_apprv_para
+	    set 
+			n_apprv_set=#{nApprvSet}
+	    where v_appr_class = #{vApprClass} and v_appr_type = #{vApprType}
+	</update>
+
+</mapper>
+
+

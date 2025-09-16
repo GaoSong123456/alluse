@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routdata.financialdata.svc.cstmapproval.dao.CstmApprovalDao">
+	<resultMap id="BaseResultMap" type="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		<result column="n_id" property="nAppMain" />
+		<result column="v_theme_name" property="vThemeName" />
+		<result column="n_app_id" property="nAppId" />
+		<result column="v_app_org_code" property="vAppOrgCode" />
+		<result column="d_insert_date" property="dAppDate" />
+		<result column="v_deal_falg" property="vDealFalg" />
+		<result column="n_appr_stat" property="nApprStat" />
+		<result column="v_appr_desc" property="vApprDesc" />
+		<result column="n_appr_opr" property="nApprOpr" />
+		<result column="v_appr_dept" property="vApprDept" />
+
+		<result column="v_app_type" property="vAppType" />
+		<result column="v_app_type_name" property="vAppTypeName" />
+		<result column="v_sales_date" property="vSalesDate" />
+		<result column="d_appr_date" property="dApprDate" />
+		<result column="v_app_user_name" property="vAppUserName" />
+		<result column="v_app_org_name" property="vAppOrgName" />
+		<result column="v_deal_falg_name" property="vDealFalgName" />
+		<result column="v_appr_stat_name" property="vApprStatName" />
+		<result column="v_appr_opr_name" property="vApprOprName" />
+		<result column="v_appr_dept_name" property="vApprDeptName" />
+	</resultMap>
+
+	<resultMap id="CstmTargetCustMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCstmTargetCust">
+		<result column="n_id" property="nCstmTargetCust" />
+		<result column="v_cust_no_src" property="vCustNoSrc" />
+		<result column="v_customer_no" property="vCustomerNo" />
+		<result column="v_cust_name" property="vCustName" />
+		<result column="v_cust_mob" property="vCustMob" />
+		<result column="v_org_code" property="vOrgCode" />
+		<result column="n_manager_id" property="nManagerId" />
+		<result column="v_cert_no" property="vCertNo" />
+		<result column="v_acc_no" property="vAccNo" />
+		<result column="v_data_from" property="vDataFrom" />
+
+		<result column="d_create_date" property="dCreateDate" />
+		<result column="n_create_user" property="nCreateUser" />
+		<result column="n_update_user" property="nUpdateUser" />
+		<result column="d_update_date" property="dUpdateDate" />
+		<result column="v_state" property="vState" />
+		<result column="n_appr_id" property="nApprId" />
+		<result column="n_org_id" property="nOrgId" />
+		<result column="v_tel" property="vTel" />
+		<result column="n_beg_val" property="nBegVal" />
+		<result column="n_end_val" property="nEndVal" />
+		<result column="v_org_code_name" property="vOrgCodeName" />
+		<result column="v_manager_name" property="vManagerName" />
+	</resultMap>
+
+	<select id="getListForCstmApprovalData" parameterType="com.routdata.financialdata.api.cstmapproval.dto.CstmApprvalQuery" resultMap="BaseResultMap">
+		select
+			r.n_id,
+			r.v_theme_name,
+			r.n_app_id,
+			r.v_app_org_code,
+			r.d_insert_date,
+			r.v_deal_falg,
+			r.n_appr_stat,
+			r.v_appr_desc,
+			r.n_appr_opr,
+			r.v_appr_dept,
+			r.d_appr_date,
+			r.v_app_user_name,
+			r.v_app_org_name,
+			r.v_appr_opr_name,
+			r.v_appr_dept_name,
+			r.v_deal_falg_name,
+			case r.n_appr_stat
+				when '0' then '待审批'
+				when '1' then '审批通过'
+				when '2' then '审批不通过'
+				else ''
+			end v_appr_stat_name,
+			r.v_app_type,
+			r.v_app_type_name
+			from
+			(
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_falg,
+				case t.v_deal_falg
+					when '-1' then '未申请'
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'1' v_app_type,
+				'短定资金留存核查' v_app_type_name
+				from tb_cust_sales_accmn t
+					left join org_person p1 on t.n_app_id=p1.recid
+					left join org_person p2 on t.n_appr_opr=p2.recid
+					left join org_department d1 on t.v_app_org_code=d1.dept_code
+					left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_falg,
+				case t.v_deal_falg
+					when '-1' then '未申请'
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'2' v_app_type,
+				'活期资金核查' v_app_type_name
+				from tb_cust_curr_sales_accmn t
+					left join org_person p1 on t.n_app_id=p1.recid
+					left join org_person p2 on t.n_appr_opr=p2.recid
+					left join org_department d1 on t.v_app_org_code=d1.dept_code
+					left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_flag v_deal_falg,
+				case t.v_deal_flag
+					when '-1' then '未申请'
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'3' v_app_type,
+				'基金定投核查' v_app_type_name
+				from tb_fund_time_main t
+					left join org_person p1 on t.n_app_id=p1.recid
+					left join org_person p2 on t.n_appr_opr=p2.recid
+					left join org_department d1 on t.v_app_org_code=d1.dept_code
+					left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_flag v_deal_falg,
+				case t.v_deal_flag
+					when '-1' then '未申请'
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'5' v_app_type,
+				'理财业务核查' v_app_type_name
+				from tb_fin_verifi_apply t
+					left join org_person p1 on t.n_app_id=p1.recid
+					left join org_person p2 on t.n_appr_opr=p2.recid
+					left join org_department d1 on t.v_app_org_code=d1.dept_code
+					left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_theme_name,
+				t.n_app_id,
+				t.v_app_org_code,
+				t.d_insert_date,
+				t.v_deal_falg,
+				case t.v_deal_falg
+					when '-1' then '未申请'
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'6' v_app_type,
+				'总资产核查' v_app_type_name
+				from tb_cust_asset_sales_accmn t
+					left join org_person p1 on t.n_app_id=p1.recid
+					left join org_person p2 on t.n_appr_opr=p2.recid
+					left join org_department d1 on t.v_app_org_code=d1.dept_code
+					left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_appr_name v_theme_name,
+				t.n_create_user n_app_id,
+				t.v_org_code v_app_org_code,
+				t.d_create_date d_insert_date,
+				t.v_state v_deal_falg,
+				case t.v_state
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'7' v_app_type,
+				'客户类数据申请查询' v_app_type_name
+				from tb_cstm_appr_data t
+					left join org_person p1 on t.n_create_user=p1.recid
+					left join org_person p2 on t.n_appr_opr=p2.recid
+					left join org_department d1 on t.v_org_code=d1.dept_code
+					left join org_department d2 on t.v_appr_dept=d2.dept_code
+
+			union all
+
+			select
+				t.n_id,
+				t.v_appr_name v_theme_name,
+				t.n_create_user n_app_id,
+				t.v_org_code v_app_org_code,
+				t.d_create_date d_insert_date,
+				t.v_state v_deal_falg,
+				case t.v_state
+					when '0' then '未申请'
+					when '1' then '已申请'
+					when '2' then '待处理'
+					when '3' then '已处理'
+					else ''
+				end v_deal_falg_name,
+				t.n_appr_stat,
+				t.v_appr_desc,
+				t.n_appr_opr,
+				t.v_appr_dept,
+				t.d_appr_date,
+				p1.person_name v_app_user_name,
+				d1.dept_name v_app_org_name,
+				p2.person_name v_appr_opr_name,
+				d2.dept_name v_appr_dept_name,
+				'8' v_app_type,
+				'机构类数据申请查询' v_app_type_name
+			from tb_cstm_org_appr_data t
+				left join org_person p1 on t.n_create_user=p1.recid
+				left join org_person p2 on t.n_appr_opr=p2.recid
+				left join org_department d1 on t.v_org_code=d1.dept_code
+				left join org_department d2 on t.v_appr_dept=d2.dept_code
+			) r
+		where r.v_app_org_code=#{vAppDeptCode,jdbcType=VARCHAR} and r.n_appr_stat is not null
+
+		<if test="vThemeName !=null and vThemeName != ''">
+			and r.v_theme_name like concat(concat('%',#{vThemeName}),'%')
+		</if>
+
+		<if test="vAppType !=null and vAppType != ''">
+			and r.v_app_type = #{vAppType,jdbcType=VARCHAR}
+		</if>
+
+		<if test="nState !=null and nState != ''">
+			<choose>
+				<when test='nState=="-1"'>
+					and r.v_deal_falg in ('-1','0')
+				</when>
+				<otherwise>
+					and r.v_deal_falg = #{nState,jdbcType=VARCHAR}
+				</otherwise>
+			</choose>
+		</if>
+
+		<if test="nApprState !=null and nApprState != ''">
+			and r.n_appr_stat = cast(#{nApprState} as bigint)
+		</if>
+
+		<if test="dStartDate != null and dStartDate != ''">
+			AND r.d_insert_date &gt;= to_date(#{dStartDate},'yyyy-MM-dd')
+		</if>
+
+		<if test="dEndDate != null and dEndDate != ''">
+			AND r.d_insert_date &lt; to_date(#{dEndDate},'yyyy-MM-dd')+1
+		</if>
+		order by r.d_insert_date desc
+	</select>
+
+	<select id="getCstmApprDataByKey" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_appr_name v_theme_name,
+			v_state v_deal_falg,
+			n_appr_stat,
+			'客户类数据申请查询' v_app_type_name
+		from tb_cstm_appr_data
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<select id="getCstmOrgApprDataByKey" resultMap="BaseResultMap">
+		select
+			n_id,
+			v_appr_name v_theme_name,
+			v_state v_deal_falg,
+			n_appr_stat,
+			'机构类数据申请查询' v_app_type_name
+		from tb_cstm_org_appr_data
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</select>
+
+	<update id="updateCustSalesApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cust_sales_accmn
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_deal_falg=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateCustCurrSalesApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cust_curr_sales_accmn
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_deal_falg=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateFundTimeMainApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_fund_time_main
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_deal_flag=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateFinVerifiApplyApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_fin_verifi_apply
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_deal_flag=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateCustAssetSalesApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cust_asset_sales_accmn
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_deal_falg=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateCstmApprDataApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cstm_appr_data
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_state=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateCstmOrgApprDataApproval" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprMain">
+		update tb_cstm_org_appr_data
+		<set>
+			<if test="nApprStat != null and nApprStat == 1L">
+				v_state=#{vDealFalg},
+			</if>
+			n_appr_stat=#{nApprStat},
+			v_appr_desc=#{vApprDesc},
+			n_appr_opr=#{nApprOpr},
+			v_appr_dept=#{vApprDept},
+			d_appr_date=now()
+		</set>
+		where n_id = #{nAppMain,jdbcType=BIGINT}
+	</update>
+
+	<select id="getListForCstmApprCust" parameterType="com.routdata.financialdata.api.cstmappr.dto.ApprDetailQuery" resultMap="CstmTargetCustMap">
+			select
+			t.n_id,
+			case
+				when t.v_cust_name is null then t.v_cust_name
+				when length(t.v_cust_name)&lt;2 then t.v_cust_name
+				else concat(substring(t.v_cust_name from 1 for length(t.v_cust_name)-2),concat('*', substring(t.v_cust_name from length(t.v_cust_name) - 1 + 1 for 1)))
+			end v_cust_name,
+			( select d.dept_name from org_department d where t.n_org_id = d.recid ) v_org_code_name,
+			case 
+				when t.v_cert_no is null then t.v_cert_no
+				when length(t.v_cert_no)&lt;6 then t.v_cert_no
+				else rpad(substring(t.v_cert_no from 1 for length(t.v_cert_no)-6),length(t.v_cert_no),'*')
+			end v_cert_no,
+			case 
+				when t.v_acc_no is null then t.v_acc_no
+				when length(t.v_acc_no)&lt;6 then t.v_acc_no
+				else rpad(substring(t.v_acc_no from 1 for length(t.v_acc_no)-6),length(t.v_acc_no),'*')
+			end v_acc_no
+			from
+			tb_cstm_target_cust t
+			where t.n_appr_id = cast(#{nAppMain} as bigint)
+
+			<if test="custName !=null and custName != ''">
+				and t.v_cust_name like concat(concat('%',#{custName}),'%')
+			</if>
+
+			<if test="certNo !=null and certNo != ''">
+				and t.v_cert_no = #{certNo,jdbcType=VARCHAR}
+			</if>
+
+			<if test="accNo !=null and accNo != ''">
+				and t.v_acc_no = #{accNo,jdbcType=VARCHAR}
+			</if>
+	</select>
+</mapper>
+
+

@@ -1,0 +1,1330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routdata.financialdata.svc.cstmappr.dao.CstmApprDao">
+	<resultMap id="BaseResultMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCstmApprData">
+		<result column="n_id" jdbcType="BIGINT" property="nCstmApprData" />
+		<result column="v_appr_name" jdbcType="VARCHAR" property="apprName" />
+		<result column="v_appr_type" jdbcType="VARCHAR" property="apprType" />
+		<result column="v_assets_type" jdbcType="VARCHAR" property="assetsType" />
+		<result column="v_assets_sub" jdbcType="VARCHAR" property="assetsSub" />
+		<result column="v_index_type" jdbcType="VARCHAR" property="indexType" />
+		<result column="v_state_type" jdbcType="VARCHAR" property="stateType" />
+		<result column="v_exp_pro_type" jdbcType="VARCHAR" property="expProType" />
+		<result column="v_add_busi_type" jdbcType="VARCHAR" property="addBusiType" />
+		<result column="v_pot_date" jdbcType="VARCHAR" property="potDate" />
+		<result column="v_pot_begin_date" jdbcType="VARCHAR" property="potBeginDate" />
+		<result column="v_pot_end_date" jdbcType="VARCHAR" property="potEndDate" />
+		<result column="v_avg_begin_date" jdbcType="VARCHAR" property="avgBeginDate" />
+		<result column="v_avg_end_date" jdbcType="VARCHAR" property="avgEndDate" />
+		<result column="v_state" jdbcType="VARCHAR" property="state" />
+		<result column="v_org_code" jdbcType="VARCHAR" property="orgCode" />
+		<result column="d_create_date" jdbcType="DATE" property="createDate" />
+		<result column="n_create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="n_update_user" jdbcType="BIGINT" property="updateUser" />
+		<result column="d_update_date" jdbcType="DATE" property="updateDate" />
+
+		<result column="person_name" jdbcType="VARCHAR" property="createUserName" />
+		<result column="dept_name" jdbcType="VARCHAR" property="orgName" />
+		<result column="n_appr_stat" jdbcType="BIGINT" property="nApprStat" />
+		<result column="v_appr_desc" jdbcType="VARCHAR" property="vApprDesc" />
+		<result column="n_appr_opr" jdbcType="BIGINT" property="nApprOpr" />
+		<result column="v_appr_dept" jdbcType="VARCHAR" property="vApprDept" />
+		<result column="d_appr_date" jdbcType="DATE" property="dApprDate" />
+		<result column="v_appr_stat_name" jdbcType="VARCHAR" property="vApprStatName" />
+		<result column="v_appr_opr_name" jdbcType="VARCHAR" property="vApprOprName" />
+		<result column="v_appr_dept_name" jdbcType="VARCHAR" property="vApprDeptName" />
+
+		<result column="v_appr_type_name" jdbcType="VARCHAR" property="vApprTypeName" />
+		<result column="v_assets_type_name" jdbcType="VARCHAR" property="vAssetsTypeName" />
+		<result column="v_assets_sub_name" jdbcType="VARCHAR" property="vAssetsSubName" />
+		<result column="v_index_type_name" jdbcType="VARCHAR" property="vIndexTypeSubName" />
+		<result column="v_state_type_name" jdbcType="VARCHAR" property="vStateTypeName" />
+		<result column="v_exp_pro_type_name" jdbcType="VARCHAR" property="vExpProTypeName" />
+		<result column="v_add_busi_type_name" jdbcType="VARCHAR" property="vAddBusiTypeName" />
+	</resultMap>
+	
+	<resultMap id="CstmIndClassMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCstmIndClass">
+		<result column="v_appr_type" jdbcType="VARCHAR" property="vApprType" />
+		<result column="v_assets_type" jdbcType="VARCHAR" property="vAssetsType" />
+		<result column="v_assets_type_name" jdbcType="VARCHAR" property="vAssetsTypeName" />
+		<result column="v_assets_sub" jdbcType="VARCHAR" property="vAssetsSub" />
+		<result column="v_assets_sub_name" jdbcType="VARCHAR" property="vAssetsSubName" />
+	</resultMap>
+	
+	<resultMap id="CstmTargetCustMap" type="com.routdata.financialdata.api.cstmappr.dto.TbCstmTargetCust">
+		<result column="n_id" jdbcType="BIGINT" property="nCstmTargetCust" />
+		<result column="v_cust_no_src" jdbcType="VARCHAR" property="vCustNoSrc" />
+		<result column="v_customer_no" jdbcType="VARCHAR" property="vCustomerNo" />
+		<result column="v_cust_name" jdbcType="VARCHAR" property="vCustName" />
+		<result column="v_cust_mob" jdbcType="VARCHAR" property="vCustMob" />
+		<result column="v_org_code" jdbcType="VARCHAR" property="vOrgCode" />
+		<result column="n_manager_id" jdbcType="VARCHAR" property="nManagerId" />
+		<result column="v_cert_no" jdbcType="VARCHAR" property="vCertNo" />
+		<result column="v_acc_no" jdbcType="VARCHAR" property="vAccNo" />
+		<result column="v_data_from" jdbcType="DATE" property="vDataFrom" />
+		
+		<result column="d_create_date" jdbcType="VARCHAR" property="dCreateDate" />
+		<result column="n_create_user" jdbcType="NUMERIC" property="nCreateUser" />
+		<result column="n_update_user" jdbcType="VARCHAR" property="nUpdateUser" />
+		<result column="d_update_date" jdbcType="VARCHAR" property="dUpdateDate" />
+		<result column="v_state" jdbcType="VARCHAR" property="vState" />
+		<result column="n_appr_id" jdbcType="VARCHAR" property="nApprId" />
+		<result column="n_org_id" jdbcType="VARCHAR" property="nOrgId" />
+		<result column="v_tel" jdbcType="VARCHAR" property="vTel" />
+		<result column="n_beg_val" jdbcType="VARCHAR" property="nBegVal" />
+		<result column="n_end_val" jdbcType="VARCHAR" property="nEndVal" />
+		<result column="v_org_code_name" jdbcType="VARCHAR" property="vOrgCodeName" />
+		<result column="v_manager_name" jdbcType="VARCHAR" property="vManagerName" />
+	</resultMap>
+
+	<resultMap id="ApplyApprvParaMap" type="com.routdata.financialdata.api.approvalparameter.dto.TbApplyApprvPara">
+		<result column="v_appr_class" jdbcType="BIGINT" property="vApprClass" />
+		<result column="v_appr_class_name" jdbcType="BIGINT" property="vApprClassName" />
+		<result column="v_appr_type" jdbcType="VARCHAR" property="vApprType" />
+		<result column="v_appr_type_name" jdbcType="VARCHAR" property="vApprTypeName" />
+		<result column="n_apprv_set" jdbcType="BIGINT" property="nApprvSet" />
+	</resultMap>
+	
+	<resultMap id="orgTreeMap" type="com.routdata.financialdata.api.cstmappr.dto.OrgTree">
+		<result column="dept_id" jdbcType="BIGINT" property="vDeptZid" />
+		<result column="parent_id" jdbcType="BIGINT" property="vDeptFid" />
+		<result column="tree_no" jdbcType="VARCHAR" property="vDeptTreeNo" />
+		<result column="dept_code" jdbcType="VARCHAR" property="vDeptZcode" />
+		<result column="parent_dept_code" jdbcType="VARCHAR" property="vDeptFcode" />
+		<result column="dept_name" jdbcType="VARCHAR" property="vDeptNodeName" />
+	</resultMap>
+
+	<resultMap id="CstmApprDataReportMap" type="com.routdata.financialdata.api.cstmappr.dto.CstmApprDataReport">
+		<result property="nId" column="n_id"/>
+		<result property="fjName" column="fj_name"/>
+		<result property="wdName" column="wd_name"/>
+		<result property="vCustName" column="v_cust_name"/>
+		<result property="vCustMob" column="v_cust_mob"/>
+		<result property="vPotBeginDate" column="v_pot_begin_date"/>
+		<result property="vPotEndDate" column="v_pot_end_date"/>
+		<result property="vAvgBeginDate" column="v_avg_begin_date"/>
+		<result property="vAvgEndDate" column="v_avg_end_date"/>
+		<result property="assetsSub" column="assets_sub"/>
+		<result property="vIndexType" column="v_index_type"/>
+		<result property="vStateType" column="v_state_type"/>
+		<result property="nBegVal" column="n_beg_val"/>
+		<result property="nEndVal" column="n_end_val"/>
+		<result property="indexVal" column="index_val"/>
+		<result property="indexRag" column="index_rag"/>
+		<result property="bdType" column="bd_type"/>
+		<result property="custNum" column="cust_num"/>
+		<result property="yxNum" column="yx_num"/>
+		<result property="indexTypeVal" column="index_type_val"/>
+		<result property="stateTypeVal" column="state_type_val"/>
+		<result property="vDueProd" column="v_due_prod"/>
+		<result property="dqNum" column="dq_num"/>
+		<result property="vDueDate" column="v_due_date"/>
+		<result property="dueAmt" column="due_amt"/>
+		<result property="nDueAmt" column="n_due_amt"/>
+		<result property="addBusiType" column="add_busi_type"/>
+
+		<result property="nIsBalInc" column="n_is_bal_inc"/>
+		<result property="nIsAlloInc" column="n_is_allo_inc"/>
+		<result property="isBalInc" column="is_bal_inc"/>
+		<result property="isAlloInc" column="is_allo_inc"/>
+		<result property="vIncProd" column="v_inc_prod"/>
+		<result property="nBegHq" column="n_beg_hq"/>
+		<result property="nBegDq" column="n_beg_dq"/>
+		<result property="nBegIns" column="n_beg_ins"/>
+		<result property="nBegFund" column="n_beg_fund"/>
+		<result property="nBegFin" column="n_beg_fin"/>
+		<result property="nBegFm" column="n_beg_fm"/>
+		<result property="nEndHq" column="n_end_hq"/>
+		<result property="nEndDq" column="n_end_dq"/>
+		<result property="nEndIns" column="n_end_ins"/>
+		<result property="nEndFund" column="n_end_fund"/>
+		<result property="nEndFin" column="n_end_fin"/>
+		<result property="nEndFm" column="n_end_fm"/>
+		<result property="addHq" column="add_hq"/>
+		<result property="addDq" column="add_dq"/>
+		<result property="addIns" column="add_ins"/>
+		<result property="addFund" column="add_fund"/>
+		<result property="addFin" column="add_fin"/>
+		<result property="addFm" column="add_fm"/>
+		<result property="hjAdd" column="hj_add"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		t.n_id,
+		t.v_appr_name,
+		t.v_appr_type,
+		t.v_assets_type,
+		t.v_assets_sub,
+		t.v_index_type,
+		t.v_state_type,
+		t.v_exp_pro_type,
+		t.v_add_busi_type,
+		t.v_pot_date,
+		t.v_pot_begin_date,
+		t.v_pot_end_date,
+		t.v_avg_begin_date,
+		t.v_avg_end_date,
+		t.v_state,
+		t.v_org_code,
+		t.d_create_date,
+		t.n_create_user,
+		t.n_update_user,
+		t.d_update_date,
+		t.n_appr_stat,
+		t.v_appr_desc,
+		t.n_appr_opr,
+		t.v_appr_dept,
+		t.d_appr_date,
+		case t.v_appr_type
+		when 'A' then '资产统计'
+		when 'B' then '产品到期'
+		when 'C' then '业务加办'
+		when 'D' then '资产配置增加'
+		else '' end v_appr_type_name,
+		case t.v_assets_type
+		when '0' then '总资产'
+		when '1' then '余额'
+		when '2' then '大理财'
+		when '3' then '保险'
+		else '' end  v_assets_type_name,
+		case t.v_index_type
+		when '01' then '时点'
+		when '02' then '日均'
+		else '' end  v_index_type_name,
+		case t.v_state_type
+		when '01' then '变动值'
+		when '02' then '时点值'
+		else '' end  v_state_type_name,
+		( select c.v_assets_sub_name from tb_cstm_ind_class c where c.v_assets_sub = t.v_assets_sub ) v_assets_sub_name,
+		( select c.v_assets_sub_name from tb_cstm_ind_class c where c.v_assets_sub = t.v_exp_pro_type ) v_exp_pro_type_name,
+		( select c.v_assets_sub_name from tb_cstm_ind_class c where c.v_assets_sub = t.v_add_busi_type ) v_add_busi_type_name
+	</sql>
+
+	<sql id="amount_sub_sql">
+		case
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &lt; 10000 then '1w以下'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 10000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 30000 then '1-3w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 30000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 50000 then '3-5w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 50000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 100000 then '5-10w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 100000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 200000 then '10-20w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 200000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 500000 then '20-50w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 500000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 1000000 then '50-100w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 1000000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 2000000 then '100-200w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 2000000 and coalesce ( abs((coalesce(t.n_end_val, 0) - coalesce(t.n_beg_val, 0))), 0 ) &lt; 6000000 then '200-600w'
+			when coalesce ( abs ( ( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) ), 0 ) &gt;= 6000000 then '600w以上'
+		end index_rag
+	</sql>
+
+	<sql id="amount_range_sql">
+		case
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 10000 then '1w以下'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 10000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 30000 then '1-3w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 30000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 50000 then '3-5w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 50000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 100000 then '5-10w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 100000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 200000 then '10-20w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 200000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 500000 then '20-50w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 500000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 1000000 then '50-100w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 1000000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 2000000 then '100-200w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 2000000 and coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &lt; 6000000 then '200-600w'
+			when coalesce(abs(coalesce(t.n_beg_val, 0)), 0) &gt;= 6000000 then '600w以上'
+		end index_rag
+	</sql>
+
+	<sql id="amount_due_sql">
+		case
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 10000 then '1w以下'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 10000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 30000 then '1-3w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 30000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 50000 then '3-5w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 50000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 100000 then '5-10w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 100000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 200000 then '10-20w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 200000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 500000 then '20-50w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 500000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 1000000 then '50-100w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 1000000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 2000000 then '100-200w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 2000000 and coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &lt; 6000000 then '200-600w'
+			when coalesce(abs(coalesce(cd.n_due_amt, 0)), 0) &gt;= 6000000 then '600w以上'
+		end due_amt
+	</sql>
+
+	<sql id="text_mask_sql">
+		case
+			when t.v_cust_name is null then t.v_cust_name
+			when length(t.v_cust_name)&lt;2 then t.v_cust_name
+			else concat(substring(t.v_cust_name from 1 for length(t.v_cust_name)-2),concat('*', substring(t.v_cust_name from length(t.v_cust_name) - 1 + 1 for 1)))
+		end v_cust_name
+	</sql>
+
+	<sql id="mob_mask_sql">
+		concat(substring(t.v_cust_mob from 1 for 3),concat('****',substring(t.v_cust_mob, length(t.v_cust_mob)-4+1,4))) v_cust_mob
+	</sql>
+
+	<select id="getListForCstmApprData" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprQuery" resultMap="BaseResultMap">
+		SELECT
+			T.n_id,
+			T.v_appr_name,
+			T.v_appr_type,
+			T.v_assets_type,
+			( SELECT A.v_assets_sub_name FROM tb_cstm_ind_class A WHERE A.v_assets_sub = T.v_assets_sub ) v_assets_sub,
+			T.v_index_type,
+			T.v_state_type,
+			( SELECT A.v_assets_sub_name FROM tb_cstm_ind_class A WHERE A.v_assets_sub = T.v_exp_pro_type ) v_exp_pro_type,
+			( SELECT A.v_assets_sub_name FROM tb_cstm_ind_class A WHERE A.v_assets_sub = T.v_add_busi_type ) v_add_busi_type,
+			T.n_create_user,
+			d.dept_name,
+			P.person_name,
+			T.d_create_date,
+			T.v_state,
+			T.n_appr_stat,
+			T.v_appr_desc,
+			T.n_appr_opr,
+			T.v_appr_dept,
+			T.d_appr_date,
+			CASE T.n_appr_stat
+			WHEN '0' THEN '未申请'
+			WHEN '1' THEN '已申请'
+			WHEN '2' THEN '待处理'
+			WHEN '3' THEN '已处理'
+			ELSE '' END v_appr_stat_name,
+			p2.person_name v_appr_opt_name,
+			d2.dept_name v_appr_dept_name
+			FROM
+			tb_cstm_appr_data T
+			left join org_department d on T.v_org_code = d.dept_code
+			left join org_person P on T.n_create_user = P.recid
+			left join org_department d2 on T.v_appr_dept=d2.dept_code
+		    left join org_person P2 on T.n_appr_opr=P2.recid
+
+			<where>
+			<if test="createUser !=null">
+				and T.n_create_user =#{createUser,jdbcType=BIGINT}
+			</if>
+
+			<if test="apprType !=null and apprType != ''">
+				and T.v_appr_type =#{apprType,jdbcType=VARCHAR}
+				<choose>
+					<when test='apprType=="A"'>
+						<if test="assetsType !=null and assetsType != ''">
+							and T.v_assets_type = #{assetsType,jdbcType=VARCHAR}
+						</if>
+					</when>
+					<otherwise></otherwise>
+				</choose>
+			</if>
+
+	       <!--<if test="apprType !=null and apprType != ''">
+			   and T.v_appr_type =#{apprType,jdbcType=VARCHAR}
+			   <choose>
+				   <when test='apprType=="A"'>
+					   <if test="assetsType !=null and assetsType != ''">
+						   and T.v_assets_type = #{assetsType,jdbcType=VARCHAR}
+						   <if test="assetsSub !=null and assetsSub != ''">
+							   and T.v_assets_sub = #{assetsSub,jdbcType=VARCHAR}
+						   </if>
+					   </if>
+					   <if test="indexType !=null and indexType != ''">
+						   and T.v_index_type = #{indexType,jdbcType=VARCHAR}
+					   </if>
+					   <if test="stateType !=null and stateType != ''">
+						   and T.v_state_type = #{stateType,jdbcType=VARCHAR}
+					   </if>
+				   </when>
+				   <when test='apprType=="B"'>
+					   <if test="expProType !=null and expProType != ''">
+						   and T.v_exp_pro_type = #{expProType,jdbcType=VARCHAR}
+					   </if>
+				   </when>
+				   <when test='apprType=="C"'>
+					   <if test="addBusiType !=null and addBusiType != ''">
+						   and T.v_add_busi_type = #{addBusiType,jdbcType=VARCHAR}
+					   </if>
+				   </when>
+				   <otherwise></otherwise>
+			   </choose>
+           </if>-->
+
+			<if test="apprName !=null and apprName != ''">
+				and T.v_appr_name like concat(concat('%',#{apprName}),'%')
+			</if>
+
+			<if test="startDate != null and startDate != ''">
+				AND T.d_create_date &gt;= to_date(#{startDate},'yyyy-MM-dd')
+			</if>
+
+			<if test="endDate != null and endDate != ''">
+				AND T.d_create_date &lt; to_date(#{endDate},'yyyy-MM-dd')+1
+			</if>
+           
+           <if test="state !=null and state != ''">
+                and T.v_state = #{state,jdbcType=VARCHAR}
+           </if>
+	       </where>
+		   order by T.n_id desc
+	</select>
+
+	<select id="getListForCstmIndClass" resultMap="CstmIndClassMap">
+		SELECT
+			T.v_appr_type,
+			T.v_assets_type,
+			T.v_assets_type_name,
+			T.v_assets_sub,
+			T.v_assets_sub_name
+		FROM
+			tb_cstm_ind_class T
+		<where>
+			<if test="vApprType !=null and vApprType != ''">
+				and T.v_appr_type =#{vApprType,jdbcType=VARCHAR}
+			</if>
+			<if test="vAssetsType !=null and vAssetsType != ''">
+				and T.v_assets_type =#{vAssetsType,jdbcType=VARCHAR}
+			</if>
+	    </where>
+	</select>
+	
+	<insert id="saveCstmData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCstmApprData">
+        insert into tb_cstm_appr_data (
+            n_id,
+			v_appr_name,
+			v_appr_type,
+			v_assets_type,
+			v_assets_sub,
+			v_index_type,
+			v_state_type,
+			v_exp_pro_type,
+			v_add_busi_type,
+			v_pot_date,
+			v_pot_begin_date,
+			v_pot_end_date,
+			v_avg_begin_date,
+			v_avg_end_date,
+			v_state,
+			v_org_code,
+			d_create_date,
+			n_create_user
+        )values (
+            nextval('seq_cstm_appr_data'),
+            #{apprName,jdbcType=VARCHAR},
+            #{apprType,jdbcType=VARCHAR},
+            #{assetsType,jdbcType=VARCHAR},
+            #{assetsSub,jdbcType=VARCHAR},
+            #{indexType,jdbcType=VARCHAR},
+            #{stateType,jdbcType=VARCHAR},
+            #{expProType,jdbcType=VARCHAR},
+            #{addBusiType,jdbcType=VARCHAR},
+            #{potDate,jdbcType=VARCHAR},
+            #{potBeginDate,jdbcType=VARCHAR},
+            #{potEndDate,jdbcType=VARCHAR},
+            #{avgBeginDate,jdbcType=VARCHAR},
+            #{avgEndDate,jdbcType=VARCHAR},
+            #{state,jdbcType=VARCHAR},
+            #{orgCode,jdbcType=VARCHAR},
+            now(),
+            #{createUser,jdbcType=BIGINT}
+         )
+    </insert>
+
+	<update id="updateCstmData" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCstmApprData">
+        update tb_cstm_appr_data
+        set
+			v_appr_name = #{apprName},
+			v_appr_type = #{apprType},
+			v_assets_type = #{assetsType},
+			v_assets_sub = #{assetsSub},
+			v_index_type = #{indexType},
+			v_state_type = #{stateType},
+			v_exp_pro_type = #{expProType},
+			v_add_busi_type = #{addBusiType},
+			v_pot_date = #{potDate},
+			v_pot_begin_date = #{potBeginDate},
+			v_pot_end_date = #{potEndDate},
+			v_avg_begin_date = #{avgBeginDate},
+			v_avg_end_date = #{avgEndDate},
+			d_update_date = now(),
+			n_update_user = #{updateUser}
+		where n_id=#{nCstmApprData,jdbcType=BIGINT}
+    </update>
+	
+	<select id="getCstmDataByKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tb_cstm_appr_data t
+		where t.n_id = #{nCstmApprData,jdbcType=BIGINT}
+	</select>
+
+	<select id="getListForCstmApprCust" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmTargetCustMap">
+		select
+			t.n_id,
+			<include refid="text_mask_sql"></include>,
+			( select d.dept_name from org_department d where t.n_org_id = d.recid ) v_org_code_name,
+			case 
+				when t.v_cert_no is null then t.v_cert_no
+				when length(t.v_cert_no)&lt;6 then t.v_cert_no
+				else rpad(substring(t.v_cert_no from 1 for length(t.v_cert_no)-6),length(t.v_cert_no),'*')
+			end v_cert_no,
+			case 
+				when t.v_acc_no is null then t.v_acc_no
+				when length(t.v_acc_no)&lt;6 then t.v_acc_no
+				else rpad(substring(t.v_acc_no from 1 for length(t.v_acc_no)-6),length(t.v_acc_no),'*')
+			end v_acc_no
+		from
+			tb_cstm_target_cust t
+			where t.n_appr_id = #{nApprId}
+
+		<if test="custName !=null and custName != ''">
+			and t.v_cust_name like concat(concat('%',#{custName}),'%')
+		</if>
+
+		<if test="telPhone !=null and telPhone != ''">
+			and t.v_cust_mob = #{telPhone,jdbcType=VARCHAR}
+		</if>
+
+		<if test="certNo !=null and certNo != ''">
+			and t.v_cert_no = #{certNo,jdbcType=VARCHAR}
+		</if>
+
+		<if test="accNo !=null and accNo != ''">
+			and t.v_acc_no = #{accNo,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="ckCstmApprCustCount" resultType="java.lang.Long">
+		select count(1) from tb_cstm_target_cust t where t.n_appr_id= #{nCstmApprData,jdbcType=BIGINT}
+	</select>
+
+	<select id="getApplyApprvPara" resultMap="ApplyApprvParaMap">
+		select
+			v_appr_class,
+			v_appr_class_name,
+			v_appr_type,
+			v_appr_type_name,
+			n_apprv_set
+		from
+			tb_apply_apprv_para
+		where
+			v_appr_class = #{apprClass,jdbcType=VARCHAR}
+			and v_appr_type = #{apprType,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="saveCstmSubmit" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCstmApprData">
+	    update tb_cstm_appr_data
+	    set 
+			v_state=#{state,jdbcType=VARCHAR},
+			n_appr_stat=#{nApprStat,jdbcType=BIGINT}
+	    where n_id = #{nCstmApprData,jdbcType=BIGINT}
+	</update>
+
+	<delete id="deleteCustInfo">
+		delete from tb_cstm_target_cust t where t.n_id = #{nCstmTargetCust,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteApply">
+		delete from tb_cstm_appr_data t where t.n_id = #{nCstmApprData,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insertCstmTargetCust" parameterType="com.routdata.financialdata.api.cstmappr.dto.TbCstmTargetCust">
+	    insert into tb_cstm_target_cust (
+			n_id,
+			n_appr_id,
+	        v_cust_name,
+	        v_cert_no,
+	        v_acc_no,
+	        v_data_from,
+	        v_org_code,
+	        n_org_id,
+	        n_create_user,
+	        d_create_date,
+	        v_state
+	    )values (
+			nextval('seq_cstm_target_cust'),
+			#{nApprId,jdbcType=BIGINT},
+			#{vCustName,jdbcType=VARCHAR},
+			#{vCertNo,jdbcType=VARCHAR},
+			#{vAccNo,jdbcType=VARCHAR},
+			#{vDataFrom,jdbcType=VARCHAR},
+			#{vOrgCode,jdbcType=VARCHAR},
+			#{nOrgId,jdbcType=BIGINT},
+			#{nCreateUser,jdbcType=BIGINT},
+			now(),
+			#{vState,jdbcType=VARCHAR}
+	     )
+	</insert>
+    
+    <select id="ckOrgExist" resultType="java.lang.Long">
+		select count(1) from org_department t where t.dept_code=#{orgCode}
+	</select>
+	
+	<select id="ckCertNoExistByAppId" resultType="java.lang.Long">
+		select count(1) from tb_cstm_target_cust t where t.v_cert_no=#{vCertNo,jdbcType=VARCHAR} and t.n_appr_id=#{nAppId,jdbcType=BIGINT}
+	</select>
+	
+	<select id="ckAccNoExistByAppId" resultType="java.lang.Long">
+		select count(1) from tb_cstm_target_cust t where t.v_acc_no=#{vAccNo,jdbcType=VARCHAR} and t.n_appr_id=#{nAppId,jdbcType=BIGINT}
+	</select>
+	
+	<select id="getOrgTree" resultMap="orgTreeMap">
+		select d.dept_id,
+        d.parent_id,
+        d.dept_name,
+        d.dept_code,
+        d2.dept_code parent_dept_code,
+        d.tree_no
+	   from vorg_department d
+	   left join vorg_department d2
+	     on d.parent_id = d2.DEPT_ID
+	  where d.status = 0
+	   and d.tree_no like CONCAT(#{treeNo},'%')
+	  order by d.dept_layer asc, d.sort_num asc
+	</select>
+
+	<select id="getListForCstmCustResultAvg" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+		select
+			n_id,
+			fj_name,
+			wd_name,
+			v_cust_name,
+			v_cust_mob,
+			v_pot_begin_date,
+			v_pot_end_date,
+			v_avg_begin_date,
+			v_avg_end_date,
+			assets_sub,
+			v_index_type,
+			case v_index_type
+				when '01' then '时点'
+				when '02' then '日均'
+			end as index_type_val,
+			v_state_type,
+			case v_state_type
+				when '01' then '变动值'
+				when '02' then '时点值'
+			end as state_type_val,
+			n_beg_val,
+			n_end_val,
+			index_val,
+			index_rag,
+			case
+				when index_val &gt; 0 then '上升'
+				when index_val &lt; 0 then '下降'
+				else'不变'
+			end bd_type
+			from
+			(
+				select
+				t.n_id,
+				d.fj_name,
+				d.wd_name,
+				<include refid="text_mask_sql" />,
+				<include refid="mob_mask_sql"/>,
+				c.v_pot_begin_date,
+				c.v_pot_end_date,
+				c.v_avg_begin_date,
+				c.v_avg_end_date,
+				( select a.v_assets_sub_name from tb_cstm_ind_class a where a.v_assets_sub = c.v_assets_sub ) assets_sub,
+				c.v_index_type,
+				c.v_state_type,
+				coalesce ( t.n_beg_val, 0 ) n_beg_val,
+				coalesce ( t.n_end_val, 0 ) n_end_val,
+				<include refid="amount_sub_sql" />,
+				( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) index_val
+			from
+				tb_cstm_target_cust t
+				inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+				left join vorg_department_rel d on t.n_org_id = d.wd_id
+				where t.n_appr_id = #{nApprId}
+				and d.tree_no like concat(#{treeNo},'%')
+    ) r
+    <where>
+    <if test="changeType !=null and changeType != ''">
+        <choose>
+            <when test='changeType=="1"'>
+                and index_val &gt; 0
+            </when>
+            <when test='changeType=="-1"'>
+                and index_val &lt; 0
+            </when>
+            <when test='changeType=="0"'>
+                and index_val = 0
+            </when>
+            <otherwise></otherwise>
+        </choose>
+    </if>
+    <if test="minAccount !=null and minAccount != ''">
+        and cast(index_val as decimal) &gt;= cast(#{minAccount} as decimal)
+    </if>
+    <if test="maxAccount !=null and maxAccount != ''">
+        and cast(index_val as decimal) &lt;= cast(#{maxAccount} as decimal)
+    </if>
+    </where>
+</select>
+
+<select id="getListForCstmCustResultAvgSummary" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+	select
+		<if test='statType !=null and statType == "1"'>
+			wd_name,
+		</if>
+		count ( 1 ) cust_num,
+		sum ( yx_num ) yx_num,
+		v_pot_begin_date,
+		v_pot_end_date,
+		v_avg_begin_date,
+		v_avg_end_date,
+		assets_sub,
+		v_index_type,
+		case v_index_type
+			when '01' then '时点'
+			when '02' then '日均'
+		end as index_type_val,
+		v_state_type,
+		case v_state_type
+			when '01' then '变动值'
+			when '02' then '时点值'
+		end as state_type_val,
+		sum ( n_beg_val ) n_beg_val,
+		sum ( n_end_val ) n_end_val,
+		bd_type,
+		sum ( index_val ) index_val
+		from
+		(
+			select
+			fj_name,
+			wd_name,
+			yx_num,
+			v_cust_name,
+			v_cust_mob,
+			v_pot_begin_date,
+			v_pot_end_date,
+			v_avg_begin_date,
+			v_avg_end_date,
+			assets_sub,
+			v_index_type,
+			v_state_type,
+			n_beg_val,
+			n_end_val,
+			index_val,
+			index_rag,
+			case
+				when index_val &gt; 0 then '上升'
+				when index_val &lt; 0 then '下降'
+				else'不变'
+			end bd_type
+			from (
+				select
+				d.fj_name,
+				d.wd_name,
+				case
+					when t.v_cust_no_src is not null then 1
+					else 0
+				end yx_num,
+				<include refid="text_mask_sql" />,
+				<include refid="mob_mask_sql"/>,
+				c.v_pot_begin_date,
+				c.v_pot_end_date,
+				c.v_avg_begin_date,
+				c.v_avg_end_date,
+				(select a.v_assets_sub_name from tb_cstm_ind_class a where a.v_assets_sub = c.v_assets_sub) assets_sub,
+				c.v_index_type,
+				c.v_state_type,
+				coalesce ( t.n_beg_val, 0 ) n_beg_val,
+				coalesce ( t.n_end_val, 0 ) n_end_val,
+				<include refid="amount_sub_sql" />,
+				( coalesce ( t.n_end_val, 0 ) - coalesce ( t.n_beg_val, 0 ) ) index_val
+				from tb_cstm_target_cust t
+				inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+				left join vorg_department_rel d on t.n_org_id = d.wd_id
+				where t.n_appr_id = #{nApprId}
+				and d.tree_no like concat(#{treeNo},'%')
+				) r1
+				<where>
+				<if test="changeType !=null and changeType != ''">
+					<choose>
+						<when test='changeType=="1"'>
+							and index_val &gt; 0
+						</when>
+						<when test='changeType=="-1"'>
+							and index_val &lt; 0
+						</when>
+						<when test='changeType=="0"'>
+							and index_val = 0
+						</when>
+						<otherwise></otherwise>
+					</choose>
+				</if>
+				<if test="minAccount !=null and minAccount != ''">
+					and cast(index_val as decimal) &gt;= cast(#{minAccount} as decimal)
+				</if>
+				<if test="maxAccount !=null and maxAccount != ''">
+					and cast(index_val as decimal) &lt;= cast(#{maxAccount} as decimal)
+				</if>
+				</where>
+		) r2
+		group by
+		<if test='statType !=null and statType == "1"'>
+			wd_name,
+		</if>
+		v_pot_begin_date, v_pot_end_date,v_avg_begin_date,v_avg_end_date,assets_sub,v_index_type,BD_TYPE,v_state_type
+</select>
+
+<select id="getListForCstmCustResultPoint" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+		select n_id,
+			   fj_name,
+		       wd_name,
+		       v_cust_name,
+		       v_cust_mob,
+		       v_pot_begin_date,
+		       v_pot_end_date,
+		       v_avg_begin_date,
+		       v_avg_end_date,
+		       assets_sub,
+		       v_index_type,
+			   case v_index_type
+				when '01' then '时点'
+				when '02' then '日均'
+			   end as index_type_val,
+		       v_state_type,
+			   case v_state_type
+				when '01' then '变动值'
+				when '02' then '时点值'
+			   end as state_type_val,
+		       index_val,
+		       index_rag
+		  from (select t.n_id,
+					   d.fj_name,
+		               d.wd_name,
+		               <include refid="text_mask_sql"></include>,
+					   <include refid="mob_mask_sql"/>,
+		               c.v_pot_begin_date,
+		               c.v_pot_end_date,
+		               c.v_avg_begin_date,
+		               c.v_avg_end_date,
+		               (select a.v_assets_sub_name from tb_cstm_ind_class a	where a.v_assets_sub = c.v_assets_sub) assets_sub,
+		               c.v_index_type,
+		               c.v_state_type,
+					   coalesce(t.n_beg_val, 0) n_beg_val,
+					   coalesce(t.n_end_val, 0) n_end_val,
+					   <include refid="amount_range_sql"></include>,
+		               coalesce(t.n_beg_val, 0) index_val
+		          from tb_cstm_target_cust t
+				inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+				left join vorg_department_rel d on t.n_org_id = d.wd_id
+				where t.n_appr_id = #{nApprId}
+				and d.tree_no like concat(#{treeNo},'%')
+		         ) r
+				<where>
+					<if test="minAccount !=null and minAccount != ''">
+						and cast(index_val as decimal) &gt;= cast(#{minAccount} as decimal)
+					</if>
+					<if test="maxAccount !=null and maxAccount != ''">
+						and cast(index_val as decimal) &lt;= cast(#{maxAccount} as decimal)
+					</if>
+				</where>
+</select>
+
+<select id="getListForCstmCustResultPointSummary" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+			select
+				<if test='statType !=null and statType == "1"'>
+					wd_name,
+				</if>
+				count(1) cust_num,
+				sum(yx_num) yx_num,
+				v_pot_begin_date,
+		        v_pot_end_date,
+		        assets_sub,
+		        v_index_type,
+		        case v_index_type
+				 when '01' then '时点'
+				 when '02' then '日均'
+				end as index_type_val,
+		        v_state_type,
+		        case v_state_type
+				 when '01' then '变动值'
+				 when '02' then '时点值'
+				end as state_type_val,
+		        sum(index_val) index_val
+		        from (
+					select fj_name,
+						   wd_name,
+						   yx_num,
+						   v_cust_name,
+						   v_cust_mob,
+						   v_pot_begin_date,
+						   v_pot_end_date,
+						   v_avg_begin_date,
+						   v_avg_end_date,
+						   assets_sub,
+						   v_index_type,
+						   v_state_type,
+						   index_val,
+						   index_rag
+						from (
+							select
+								d.fj_name,
+		               			d.wd_name,
+		               			case
+								 when t.v_cust_no_src is not null then 1
+								 else 0
+								end yx_num,
+								<include refid="text_mask_sql"></include>,
+								<include refid="mob_mask_sql"/>,
+		               			c.v_pot_begin_date,
+		               			c.v_pot_end_date,
+		               			c.v_avg_begin_date,
+		               			c.v_avg_end_date,
+		               			(select a.v_assets_sub_name	from tb_cstm_ind_class a where a.v_assets_sub = c.v_assets_sub) assets_sub,
+							    c.v_index_type,
+							    c.v_state_type,
+							    coalesce(t.n_beg_val, 0) n_beg_val,
+							    coalesce(t.n_end_val, 0) n_end_val,
+							    <include refid="amount_range_sql"></include>,
+		               			coalesce(t.n_beg_val, 0) index_val
+							from tb_cstm_target_cust t
+								inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+								left join vorg_department_rel d on t.n_org_id = d.wd_id
+								where t.n_appr_id = #{nApprId}
+								and d.tree_no like concat(#{treeNo},'%')
+		         				) r1
+		         				<where>
+									<if test="minAccount !=null and minAccount != ''">
+										and cast(index_val as decimal) &gt;= cast(#{minAccount} as decimal)
+									</if>
+									<if test="maxAccount !=null and maxAccount != ''">
+										and cast(index_val as decimal) &lt;= cast(#{maxAccount} as decimal)
+									</if>
+								</where>
+							) r2
+		 					group by
+							<if test='statType !=null and statType == "1"'>
+								wd_name,
+							</if>
+		 					v_pot_begin_date,v_pot_end_date,assets_sub,v_index_type,v_state_type
+</select>
+
+<select id="getListForCstmCustProResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+	select n_id,
+		   fj_name,
+		   wd_name,
+		   v_cust_name,
+		   v_cust_mob,
+		   v_due_prod,
+		   v_due_date,
+		   due_amt,
+		   n_due_amt
+		  from (
+		    select t.n_id,
+		           d.fj_name,
+				   d.wd_name,
+				   <include refid="text_mask_sql"></include>,
+				   <include refid="mob_mask_sql"/>,
+				   cd.v_due_prod,
+				   cd.v_due_date,
+				   <include refid="amount_due_sql"></include>,
+				   coalesce(cd.n_due_amt,0) n_due_amt
+		          from tb_cstm_target_cust t
+					   inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+	                   left join vorg_department_rel d on t.n_org_id = d.wd_id
+					   left join tb_cstm_target_cust_due cd on t.n_id =cd.n_id
+					   where t.n_appr_id = #{nApprId}
+						<if test="minAccount !=null and minAccount != ''">
+							and cd.n_due_amt &gt;= cast(#{minAccount} as decimal)
+						</if>
+						<if test="maxAccount !=null and maxAccount != ''">
+							and cd.n_due_amt &lt;= cast(#{maxAccount} as decimal)
+						</if>
+						<if test="beginDate !=null and beginDate != ''">
+							and cd.v_due_date &gt;= #{beginDate}
+						</if>
+						<if test="endDate !=null and endDate != ''">
+							and cd.v_due_date &lt;= #{endDate}
+						</if>
+	                   and d.tree_no like concat(#{treeNo},'%')
+				 )r
+</select>
+
+<select id="getListForCstmCustProResultSummary" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+	select
+		<if test='statType !=null and statType == "1"'>
+			wd_name,
+		</if>
+ 		count(1) cust_num,
+ 		sum(yx_num) yx_num,
+ 		v_pot_begin_date,
+	    v_pot_end_date,
+	    v_due_prod,
+	    sum(dq_num) dq_num,
+	    sum(n_due_amt) n_due_amt
+	    from (
+			select fj_name,
+				   wd_name,
+				   yx_num,
+				   v_cust_name,
+				   v_cust_mob,
+				   v_pot_begin_date,
+				   v_pot_end_date,
+				   dq_num,
+				   v_due_prod,
+				   v_due_date,
+				   n_due_amt
+		  		from (
+		  			 select d.fj_name,
+		               		d.wd_name,
+						    case
+							 when t.v_cust_no_src is not null then 1
+							 else 0
+						    end yx_num,
+						    <include refid="text_mask_sql"></include>,
+							<include refid="mob_mask_sql"/>,
+		               		c.v_pot_begin_date,
+		               		c.v_pot_end_date,
+						 	case
+							 when cd.n_id is not null then 1
+							 else 0
+						 	end dq_num,
+						    cd.v_due_prod,
+						    cd.v_due_date,
+						    coalesce ( cd.n_due_amt, 0 ) n_due_amt
+		          			from tb_cstm_target_cust t
+							     inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+		               			 left join vorg_department_rel d on t.n_org_id = d.wd_id
+								 left join tb_cstm_target_cust_due cd on t.n_id =cd.n_id
+								 where t.n_appr_id = #{nApprId}
+								<if test="minAccount !=null and minAccount != ''">
+									and cd.n_due_amt &gt;= cast(#{minAccount} as decimal)
+								</if>
+								<if test="maxAccount !=null and maxAccount != ''">
+									and cd.n_due_amt &lt;= cast(#{maxAccount} as decimal)
+								</if>
+								<if test="beginDate !=null and beginDate != ''">
+									and cd.v_due_date &gt;= #{beginDate}
+								</if>
+								<if test="endDate !=null and endDate != ''">
+									and cd.v_due_date &lt;= #{endDate}
+								</if>
+								 and d.tree_no like concat(#{treeNo},'%')
+						) r1
+					) r2
+					group by
+					<if test='statType !=null and statType == "1"'>
+						wd_name,
+					</if>
+					v_pot_begin_date,v_pot_end_date,v_due_prod
+</select>
+
+<select id="getListForCstmAddResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+		select n_id,fj_name,
+		       wd_name,
+		       v_cust_name,
+		       v_cust_mob,
+		       v_pot_begin_date,
+		       v_pot_end_date,
+		       v_avg_begin_date,
+		       v_avg_end_date,
+		       add_busi_type,
+		       v_index_type,
+			   case v_index_type
+				when '01' then '时点'
+				when '02' then '日均'
+			   end as index_type_val,
+		       v_state_type,
+			   case v_state_type
+				when '01' then '变动值'
+				when '02' then '时点值'
+			   end as state_type_val,
+		       index_val,
+		       index_rag
+		  	from (
+		  	 	select t.n_id,
+		  	 	       d.fj_name,
+		               d.wd_name,
+		               <include refid="text_mask_sql"></include>,
+					   <include refid="mob_mask_sql"/>,
+		               c.v_pot_begin_date,
+		               c.v_pot_end_date,
+		               c.v_avg_begin_date,
+		               c.v_avg_end_date,
+		               (select a.v_assets_sub_name from tb_cstm_ind_class a	where a.v_assets_sub = c.v_add_busi_type) add_busi_type,
+		               c.v_index_type,
+		               c.v_state_type,
+		               coalesce ( t.n_beg_val, 0 ) n_beg_val,
+		               coalesce ( t.n_end_val, 0 ) n_end_val,
+	                   <include refid="amount_range_sql"></include>,
+		               coalesce(t.n_beg_val, 0) index_val
+		          from tb_cstm_target_cust t
+					   inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+					   left join vorg_department_rel d on t.n_org_id = d.wd_id
+					   where t.n_appr_id = #{nApprId}
+	                   and d.tree_no like concat(#{treeNo},'%')
+		         ) r
+				<where>
+					<if test="minAccount !=null and minAccount != ''">
+						and cast(index_val as decimal) &gt;= cast(#{minAccount} as decimal)
+					</if>
+					<if test="maxAccount !=null and maxAccount != ''">
+						and cast(index_val as decimal) &lt;= cast(#{maxAccount} as decimal)
+					</if>
+				</where>
+</select>
+
+<select id="getListForCstmAddResultSummary" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+	select
+		<if test='statType !=null and statType == "1"'>
+			wd_name,
+		</if>
+		count(1) cust_num,
+		sum(yx_num) yx_num,
+		v_pot_begin_date,
+	    v_pot_end_date,
+	    add_busi_type,
+	    sum(index_val) index_val
+	    from (
+			select fj_name,
+				   wd_name,
+				   yx_num,
+				   v_cust_name,
+				   v_cust_mob,
+				   v_pot_begin_date,
+				   v_pot_end_date,
+				   v_avg_begin_date,
+				   v_avg_end_date,
+				   add_busi_type,
+				   v_index_type,
+				   v_state_type,
+				   index_val,
+				   index_rag
+				  from (select d.fj_name,
+							   d.wd_name,
+							   case
+								 when t.v_cust_no_src is not null then 1
+								 else 0
+							   end yx_num,
+							   <include refid="text_mask_sql"></include>,
+							   <include refid="mob_mask_sql"/>,
+							   c.v_pot_begin_date,
+							   c.v_pot_end_date,
+							   c.v_avg_begin_date,
+							   c.v_avg_end_date,
+							   (select a.v_assets_sub_name from tb_cstm_ind_class a	where a.v_assets_sub = c.v_add_busi_type) add_busi_type,
+							   c.v_index_type,
+							   c.v_state_type,
+							   coalesce ( t.n_beg_val, 0 ) n_beg_val,
+							   coalesce ( t.n_end_val, 0 ) n_end_val,
+							   <include refid="amount_range_sql"></include>,
+		               		   coalesce(t.n_beg_val, 0) index_val
+						  from tb_cstm_target_cust t
+						  inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+						  left join vorg_department_rel d on t.n_org_id = d.wd_id
+						  where t.n_appr_id = #{nApprId}
+	                      and d.tree_no like concat(#{treeNo},'%')
+		         		 ) r1
+						<where>
+							<if test="minAccount !=null and minAccount != ''">
+								and cast(index_val as decimal) &gt;= cast(#{minAccount} as decimal)
+							</if>
+							<if test="maxAccount !=null and maxAccount != ''">
+								and cast(index_val as decimal) &lt;= cast(#{maxAccount} as decimal)
+							</if>
+						</where>
+				     ) r2
+					 group by
+					<if test='statType !=null and statType == "1"'>
+						wd_name,
+					</if>
+					 v_pot_begin_date,v_pot_end_date,add_busi_type
+</select>
+
+<select id="getListForCstmAssetsAddResult" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+		 select n_id,
+				fj_name,
+				wd_name,
+				v_cust_name,
+				v_cust_mob,
+				v_pot_begin_date,
+				v_pot_end_date,
+				is_bal_inc,
+				is_allo_inc,
+				v_inc_prod,
+				n_beg_hq,
+				n_beg_dq,
+				n_beg_ins,
+				n_beg_fund,
+				n_beg_fin,
+				n_beg_fm,
+				n_end_hq,
+				n_end_dq,
+				n_end_ins,
+				n_end_fund,
+				n_end_fin,
+				n_end_fm,
+				add_hq,
+				add_dq,
+				add_ins,
+				add_fund,
+				add_fin,
+				add_fm,
+				(add_hq + add_dq + add_ins + add_fund + add_fin + add_fm) hj_add
+			from (
+				 select t.n_id,
+				 		d.fj_name,
+		        		d.wd_name,
+		        		<include refid="text_mask_sql"></include>,
+						<include refid="mob_mask_sql"/>,
+		        		c.v_pot_begin_date,
+		        		c.v_pot_end_date,
+						case f.n_is_bal_inc
+							when 0 then '否'
+							when 1 then '是'
+						end as is_bal_inc,
+						case f.n_is_allo_inc
+							when 0 then '否'
+							when 1 then '是'
+						end as is_allo_inc,
+						f.v_inc_prod,
+						coalesce(f.n_beg_hq,0) n_beg_hq,
+						coalesce(f.n_beg_dq,0) n_beg_dq,
+						coalesce(f.n_beg_ins,0) n_beg_ins,
+						coalesce(f.n_beg_fund,0) n_beg_fund,
+						coalesce(f.n_beg_fin,0) n_beg_fin,
+						coalesce(f.n_beg_fm,0) n_beg_fm,
+						coalesce(f.n_end_hq,0) n_end_hq,
+						coalesce(f.n_end_dq,0) n_end_dq,
+						coalesce(f.n_end_ins,0) n_end_ins,
+						coalesce(f.n_end_fund,0) n_end_fund,
+						coalesce(f.n_end_fin,0) n_end_fin,
+						coalesce(f.n_end_fm,0) n_end_fm,
+						(coalesce(f.n_end_hq, 0) - coalesce(f.n_beg_hq, 0)) add_hq,
+						(coalesce(f.n_end_dq, 0) - coalesce(f.n_beg_dq, 0)) add_dq,
+						(coalesce(f.n_end_ins, 0) - coalesce(f.n_beg_ins, 0)) add_ins,
+						(coalesce(f.n_end_fund, 0) - coalesce(f.n_beg_fund, 0)) add_fund,
+						(coalesce(f.n_end_fin, 0) - coalesce(f.n_beg_fin, 0)) add_fin,
+						(coalesce(f.n_end_fm, 0) - coalesce(f.n_beg_fm, 0)) add_fm
+		   			from tb_cstm_target_cust t
+		        		 inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+		        		 left join vorg_department_rel d on t.n_org_id = d.wd_id
+					  	 left join tb_cstm_target_cust_allo f on t.n_id = f.n_id
+		        		 where t.n_appr_id = #{nApprId}
+						<if test="isBalInc !=null and isBalInc != ''">
+							and f.n_is_bal_inc = cast(#{isBalInc} as int)
+						</if>
+						<if test="isAlloInc !=null and isAlloInc != ''">
+							and f.n_is_allo_inc = cast(#{isAlloInc} as int)
+						</if>
+						<if test="incProd !=null and incProd != ''">
+							and f.v_inc_prod like concat(concat('%',#{incProd}),'%')
+						</if>
+						and d.tree_no like concat(#{treeNo},'%')
+					 ) r
+</select>
+
+<select id="getListForCstmAssetsAddResultSummary" parameterType="com.routdata.financialdata.api.cstmappr.dto.CstmApprCustQuery" resultMap="CstmApprDataReportMap">
+			select
+					<if test='statType !=null and statType == "1"'>
+						fj_name,wd_name,
+					</if>
+	       		   v_pot_begin_date,
+			       v_pot_end_date,
+				   count(1) cust_num,
+				   sum(yx_num) yx_num,
+			       sum(n_is_bal_inc) n_is_bal_inc,
+			       sum(n_is_allo_inc) n_is_allo_inc,
+			       sum(add_hq) add_hq,
+			       sum(add_dq) add_dq,
+			       sum(add_ins) add_ins,
+			       sum(add_fund) add_fund,
+			       sum(add_fin) add_fin,
+			       sum(add_fm) add_fm,
+		           sum(hj_add) hj_add
+		 		from (
+					select fj_name,
+						wd_name,
+						v_cust_name,
+						yx_num,
+						v_cust_mob,
+						v_pot_begin_date,
+						v_pot_end_date,
+						n_is_bal_inc,
+						n_is_allo_inc,
+						is_bal_inc,
+						is_allo_inc,
+						v_inc_prod,
+						n_beg_hq,
+						n_beg_dq,
+						n_beg_ins,
+						n_beg_fund,
+						n_beg_fin,
+						n_beg_fm,
+						n_end_hq,
+						n_end_dq,
+						n_end_ins,
+						n_end_fund,
+						n_end_fin,
+						n_end_fm,
+						add_hq,
+						add_dq,
+						add_ins,
+						add_fund,
+						add_fin,
+						add_fm,
+						(add_hq + add_dq + add_ins + add_fund + add_fin + add_fm) hj_add
+					from (
+						select d.fj_name,
+		        			   d.wd_name,
+							   case
+							 	when t.v_cust_no_src is not null then 1
+							 	else 0
+							   end yx_num,
+							   <include refid="text_mask_sql"></include>,
+							   <include refid="mob_mask_sql"/>,
+		        			   c.v_pot_begin_date,
+		        			   c.v_pot_end_date,
+					  		   coalesce ( f.n_is_bal_inc, 0 ) n_is_bal_inc,
+							   coalesce ( f.n_is_allo_inc, 0 ) n_is_allo_inc,
+							   case f.n_is_bal_inc
+								when '0' then '否'
+								when '1' then '是'
+							   end as is_bal_inc,
+							   case f.n_is_allo_inc
+								when '0' then '否'
+								when '1' then '是'
+							   end as is_allo_inc,
+								f.v_inc_prod,
+								coalesce(f.n_beg_hq,0) n_beg_hq,
+								coalesce(f.n_beg_dq,0) n_beg_dq,
+								coalesce(f.n_beg_ins,0) n_beg_ins,
+								coalesce(f.n_beg_fund,0) n_beg_fund,
+								coalesce(f.n_beg_fin,0) n_beg_fin,
+								coalesce(f.n_beg_fm,0) n_beg_fm,
+								coalesce(f.n_end_hq,0) n_end_hq,
+								coalesce(f.n_end_dq,0) n_end_dq,
+								coalesce(f.n_end_ins,0) n_end_ins,
+								coalesce(f.n_end_fund,0) n_end_fund,
+								coalesce(f.n_end_fin,0) n_end_fin,
+								coalesce(f.n_end_fm,0) n_end_fm,
+								(coalesce(f.n_end_hq, 0) - coalesce(f.n_beg_hq, 0)) add_hq,
+								(coalesce(f.n_end_dq, 0) - coalesce(f.n_beg_dq, 0)) add_dq,
+								(coalesce(f.n_end_ins, 0) - coalesce(f.n_beg_ins, 0)) add_ins,
+								(coalesce(f.n_end_fund, 0) - coalesce(f.n_beg_fund, 0)) add_fund,
+								(coalesce(f.n_end_fin, 0) - coalesce(f.n_beg_fin, 0)) add_fin,
+								(coalesce(f.n_end_fm, 0) - coalesce(f.n_beg_fm, 0)) add_fm
+							from tb_cstm_target_cust t
+		        				inner join tb_cstm_appr_data c on t.n_appr_id = c.n_id
+								left join vorg_department_rel d on t.n_org_id = d.wd_id
+								left join tb_cstm_target_cust_allo f on t.n_id = f.n_id
+								where t.n_appr_id = #{nApprId}
+								<if test="isBalInc !=null and isBalInc != ''">
+									and f.n_is_bal_inc = cast(#{isBalInc} as int)
+								</if>
+								<if test="isAlloInc !=null and isAlloInc != ''">
+									and f.n_is_allo_inc = cast(#{isAlloInc} as int)
+								</if>
+								<if test="incProd !=null and incProd != ''">
+									and f.v_inc_prod like concat(concat('%',#{incProd}),'%')
+								</if>
+								and d.tree_no like concat(#{treeNo},'%')
+							) r
+						) r2
+						group by
+						<if test='statType !=null and statType == "1"'>
+							fj_name, wd_name,
+						</if>
+						v_pot_begin_date,v_pot_end_date
+</select>
+
+</mapper>
+
+
