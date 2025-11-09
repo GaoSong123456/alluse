@@ -5,3 +5,106 @@
 【记入月份】自动带出已有值且不可编辑，编辑处置决议时联动更新：当【处置决议】=Others时清空，【处置决议】≠Others时，设值为当前时间的上个月份；
  
 ③	保存：校验【处置决议】≠空，且当【处置决议】=Others时，清空【记入月份】自动重新计算处理后数据和核算数据，如当前是2025年8月，保存时自动根据2025年7月份的基础数据计算2025年7月份的处理后数据和核算数据；
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class DateListConverter {
+    // 支持的日期格式（注意：SimpleDateFormat 非线程安全，需每次创建新实例）
+    private static final List<String> PATTERNS = Arrays.asList(
+        "yyyy-MM-dd",
+        "yyyy/MM/dd"
+    );
+
+    // 尝试将字符串解析为 Date（返回 null 表示解析失败）
+    private static Date parseToDate(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        for (String pattern : PATTERNS) {
+            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+            sdf.setLenient(false); // 严格解析（避免 2023-13-01 被自动转换为有效日期）
+            try {
+                return sdf.parse(str);
+            } catch (ParseException e) {
+                continue; // 解析失败，尝试下一种格式
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList(
+            null, "", "2023-10-05", "2023/10/05", 
+            "invalid", "2023-10-05", "2023/12/31", " "
+        );
+
+        // Stream 处理流程：
+        List<Date> result = list.stream()
+            // 过滤 null 和空白字符串
+            .filter(str -> str != null && !str.isEmpty())
+            // 解析为 Date（解析失败返回 null，后续过滤掉）
+            .map(DateListConverter::parseToDate)
+            // 过滤解析失败的结果（null）
+            .filter(Objects::nonNull)
+            .distinct() // 去重（Stream 的 distinct() 方法）
+            .collect(Collectors.toList()); // 收集为列表
+
+        System.out.println(result);
+        // 输出示例：[Thu Oct 05 00:00:00 CST 2023, Thu Oct 05 00:00:00 CST 2023, Sun Dec 31 00:00:00 CST 2023]
+    }
+}
+
+
+
+
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class LocalDateListConverter {
+    // 支持的日期格式（DateTimeFormatter 线程安全，可复用）
+    private static final List<DateTimeFormatter> FORMATTERS = Arrays.asList(
+        DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+        DateTimeFormatter.ofPattern("yyyy/MM/dd")
+    );
+
+    // 尝试将字符串解析为 LocalDate（返回 null 表示失败）
+    private static LocalDate parseToLocalDate(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        for (DateTimeFormatter formatter : FORMATTERS) {
+            try {
+                return LocalDate.parse(str, formatter); // 继续使用 LocalDate.parse
+            } catch (DateTimeParseException e) {
+                continue;
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList(
+            null, "", "2023-10-05", "2023/10/05", 
+            "invalid", "2023-10-05", "2023/12/31", " "
+        );
+
+        // Stream 处理：过滤 -> 解析 -> 去重 -> 收集为 List<LocalDate>
+        List<LocalDate> result = list.stream()
+            .filter(str -> str != null && !str.isEmpty()) // 过滤空值和空串
+            .map(LocalDateListConverter::parseToLocalDate) // 解析为 LocalDate
+            .filter(Objects::nonNull) // 过滤解析失败的结果
+            .distinct() // 去重（Stream 的 distinct() 方法）
+            .collect(Collectors.toList()); // 收集为列表
+
+        System.out.println(result); 
+        // 输出：[2023-10-05, 2023-10-05, 2023-12-31]
+    }
+}
