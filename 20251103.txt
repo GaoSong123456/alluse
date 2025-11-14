@@ -12,3 +12,13 @@
   private String remark;
   private String type;
   private List<GenericPlanOrgInfoVo> children;写出vue2代码
+
+
+  
+  获取所有树节点数据
+  根据当前节点获取所有下级节点树数据
+  根据当前节点获取所有下级节点平面数据
+  根据当前节点修改信息
+  根据当前节点多条删除节点信息,存在删除多个下级
+  根据当前节点新增子节点信息,pid为当前节点id
+  根据当前节点新增同级节点信息,pid为当前节点pid
