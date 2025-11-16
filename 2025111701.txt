@@ -1,0 +1,690 @@
+<template>
+  <div class="org-management-container">
+    <!-- 全局loading -->
+    <a-spin :spinning="globalLoading" tip="加载中...">
+      <a-row class="full-height">
+        <!-- 左侧树形结构 (30%) -->
+        <a-col :span="7" class="tree-container">
+          <!-- 树加载状态 -->
+          <a-spin :spinning="treeLoading" tip="加载树形数据...">
+            <a-tree
+              ref="treeRef"
+              :tree-data="treeData"
+              :default-expand-all="false"
+              :selected-keys="selectedKeys"
+              @select="handleTreeSelect"
+              @right-click="handleRightClick"
+              :title-render="titleRender"
+              :disabled="treeLoading"
+            />
+          </a-spin>
+          
+          <!-- 右键菜单 -->
+          <a-dropdown
+            v-model:visible="contextMenuVisible"
+            :trigger="['contextmenu']"
+            :getPopupContainer="() => contextMenuContainer"
+            @visibleChange="handleContextMenuVisibleChange"
+          >
+            <template #overlay>
+              <a-menu @click="handleContextMenuClick">
+                <a-menu-item v-if="showAddChild" key="addChild">新增子节点</a-menu-item>
+                <a-menu-item v-if="showAddSibling" key="addSibling">新增同级节点</a-menu-item>
+                <a-menu-item v-if="showEdit" key="edit">修改节点</a-menu-item>
+                <a-menu-item v-if="showDelete" key="delete">删除节点</a-menu-item>
+                <a-menu-item v-if="showRefresh" key="refresh">刷新节点</a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </a-col>
+
+        <!-- 右侧内容区域 (70%) -->
+        <a-col :span="17" class="content-container">
+          <a-spin :spinning="contentLoading" tip="加载内容中...">
+            <a-tabs 
+              v-if="selectedNode && !isRootNode(selectedNode)" 
+              :activeKey="activeTabKey" 
+              @change="handleTabChange"
+              :disabled="contentLoading"
+            >
+              <!-- 节点信息表单 -->
+              <a-tab-pane key="info" tab="节点信息">
+                <a-form
+                  ref="formRef"
+                  :model="formData"
+                  :label-col="{ span: 6 }"
+                  :wrapper-col="{ span: 16 }"
+                >
+                  <a-form-item label="组织名称" name="orgName" :rules="[{ required: true, message: '请输入组织名称' }]">
+                    <a-input v-model:value="formData.orgName" />
+                  </a-form-item>
+                  <a-form-item label="组织层级" name="orgLevel">
+                    <a-input-number v-model:value="formData.orgLevel" disabled />
+                  </a-form-item>
+                  <a-form-item label="是否自动获取角色" name="isAutoGetRole">
+                    <a-select v-model:value="formData.isAutoGetRole" placeholder="请选择">
+                      <a-select-option value="1">是</a-select-option>
+                      <a-select-option value="0">否</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                  <a-form-item label="角色来源" name="roleOrigin">
+                    <a-input v-model:value="formData.roleOrigin" />
+                  </a-form-item>
+                  <a-form-item label="组织负责人" name="orgLeader">
+                    <a-input v-model:value="formData.orgLeader" />
+                  </a-form-item>
+                  <a-form-item label="组织角色" name="orgRole">
+                    <a-input v-model:value="formData.orgRole" />
+                  </a-form-item>
+                  <a-form-item label="备注" name="remark">
+                    <a-textarea v-model:value="formData.remark" rows="4" />
+                  </a-form-item>
+                  <a-form-item label="类型" name="type">
+                    <a-input v-model:value="formData.type" />
+                  </a-form-item>
+                  <a-form-item :wrapper-col="{ offset: 6 }">
+                    <a-button 
+                      type="primary" 
+                      @click="handleFormSubmit"
+                      :loading="formLoading"
+                    >
+                      保存
+                    </a-button>
+                  </a-form-item>
+                </a-form>
+              </a-tab-pane>
+
+              <!-- 子节点表格 -->
+              <a-tab-pane key="children" tab="子节点列表">
+                <div class="table-operations">
+                  <a-button 
+                    type="primary" 
+                    @click="handleAddChildFromTable"
+                    :loading="tableLoading"
+                  >
+                    新增子节点
+                  </a-button>
+                  <a-button 
+                    danger 
+                    @click="handleBatchDelete" 
+                    :disabled="selectedRowKeys.length === 0 || tableLoading"
+                    :loading="tableLoading"
+                  >
+                    批量删除
+                  </a-button>
+                </div>
+                <a-table
+                  :columns="childColumns"
+                  :data-source="childTableData"
+                  :row-key="record => record.id"
+                  :row-selection="{
+                    selectedRowKeys,
+                    onChange: handleRowSelectionChange,
+                    disabled: tableLoading
+                  }"
+                  :loading="tableLoading"
+                >
+                  <template #operation="record">
+                    <a-button 
+                      type="link" 
+                      @click="handleEditChild(record)"
+                      :disabled="tableLoading"
+                    >
+                      编辑
+                    </a-button>
+                    <a-button 
+                      type="link" 
+                      danger 
+                      @click="handleDeleteChild(record)"
+                      :disabled="tableLoading"
+                    >
+                      删除
+                    </a-button>
+                  </template>
+                </a-table>
+              </a-tab-pane>
+            </a-tabs>
+            <div v-else class="empty-content">
+              {{ selectedNode ? '根节点不支持操作' : '请选择一个节点' }}
+            </div>
+          </a-spin>
+        </a-col>
+      </a-row>
+    </a-spin>
+  </div>
+</template>
+
+<script>
+import { Tree, Table, Tabs, Form, Input, InputNumber, Select, Button, Textarea, Dropdown, Menu, message, Col, Row, Spin, Modal } from 'ant-design-vue'
+import { getFullOrgTree, getNodeAndChildren, addOrg, updateOrg, deleteOrg, getOrgChildren } from '@/api/org'
+
+export default {
+  components: {
+    'a-tree': Tree,
+    'a-table': Table,
+    'a-tabs': Tabs,
+    'a-tab-pane': Tabs.TabPane,
+    'a-form': Form,
+    'a-form-item': Form.Item,
+    'a-input': Input,
+    'a-input-number': InputNumber,
+    'a-select': Select,
+    'a-select-option': Select.Option,
+    'a-button': Button,
+    'a-textarea': Textarea,
+    'a-dropdown': Dropdown,
+    'a-menu': Menu,
+    'a-menu-item': Menu.Item,
+    'a-col': Col,
+    'a-row': Row,
+    'a-spin': Spin,
+    'a-modal': Modal
+  },
+  data() {
+    return {
+      // 树形数据
+      treeData: [],
+      selectedKeys: [],
+      selectedNode: null,
+      
+      // 右键菜单相关
+      contextMenuVisible: false,
+      contextMenuContainer: null,
+      currentRightClickNode: null,
+      
+      // 表单数据
+      formData: {
+        id: null,
+        pId: null,
+        orgName: '',
+        orgLevel: 0,
+        isAutoGetRole: 0,
+        roleOrigin: '',
+        orgLeader: '',
+        orgRole: '',
+        remark: '',
+        type: ''
+      },
+      
+      // 标签页
+      activeTabKey: 'info',
+      
+      // 子节点表格
+      childColumns: [
+        { title: '组织名称', dataIndex: 'orgName', key: 'orgName' },
+        { title: '组织层级', dataIndex: 'orgLevel', key: 'orgLevel' },
+        { title: '负责人', dataIndex: 'orgLeader', key: 'orgLeader' },
+        { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' } }
+      ],
+      childTableData: [],
+      selectedRowKeys: [],
+      
+      // Loading状态
+      globalLoading: false,       // 全局loading
+      treeLoading: false,         // 树加载loading
+      contentLoading: false,      // 右侧内容loading
+      formLoading: false,         // 表单操作loading
+      tableLoading: false,        // 表格操作loading
+      contextMenuLoading: false   // 右键菜单操作loading
+    }
+  },
+  computed: {
+    // 右键菜单显示控制
+    showAddChild() {
+      if (!this.currentRightClickNode) return false
+      return this.isRootNode(this.currentRightClickNode) || !this.isLeafNode(this.currentRightClickNode)
+    },
+    showAddSibling() {
+      if (!this.currentRightClickNode) return false
+      return !this.isRootNode(this.currentRightClickNode)
+    },
+    showEdit() {
+      if (!this.currentRightClickNode) return false
+      return !this.isRootNode(this.currentRightClickNode)
+    },
+    showDelete() {
+      if (!this.currentRightClickNode) return false
+      return !this.isRootNode(this.currentRightClickNode)
+    },
+    showRefresh() {
+      return !!this.currentRightClickNode
+    }
+  },
+  mounted() {
+    this.loadFullTreeData() // 初始加载全树
+  },
+  methods: {
+    // 加载完整树形数据（用于标签页操作后刷新）
+    async loadFullTreeData() {
+      this.treeLoading = true
+      try {
+        const res = await getFullOrgTree()
+        this.treeData = this.convertToTreeFormat(res.data)
+      } catch (err) {
+        message.error('加载树形数据失败')
+        console.error(err)
+      } finally {
+        this.treeLoading = false
+      }
+    },
+    
+    // 加载单个节点及子节点数据（用于右键操作后刷新）
+    async loadNodeAndChildren(nodeId) {
+      this.treeLoading = true
+      try {
+        const res = await getNodeAndChildren(nodeId)
+        const updatedNode = this.convertToTreeFormat([res.data])[0]
+        // 替换树中对应节点的数据
+        this.treeData = this.replaceNodeInTree(this.treeData, updatedNode)
+        message.success('节点刷新成功')
+      } catch (err) {
+        message.error('刷新节点失败')
+        console.error(err)
+      } finally {
+        this.treeLoading = false
+      }
+    },
+    
+    // 在树形数据中替换指定节点
+    replaceNodeInTree(tree, newNode) {
+      return tree.map(node => {
+        if (node.id === newNode.id) {
+          return { ...newNode, key: newNode.id, title: newNode.orgName }
+        }
+        if (node.children && node.children.length > 0) {
+          return {
+            ...node,
+            children: this.replaceNodeInTree(node.children, newNode)
+          }
+        }
+        return node
+      })
+    },
+    
+    // 转换为树形组件需要的格式
+    convertToTreeFormat(data) {
+      return data.map(item => ({
+        ...item,
+        key: item.id,
+        title: item.orgName,
+        children: item.children ? this.convertToTreeFormat(item.children) : []
+      }))
+    },
+    
+    // 树形节点选择
+    handleTreeSelect(selectedKeys, info) {
+      const node = info.node?.dataRef
+      if (!node) {
+        this.selectedNode = null
+        this.selectedKeys = []
+        return
+      }
+      
+      // 根节点点击无效
+      if (this.isRootNode(node)) {
+        this.selectedKeys = []
+        this.selectedNode = null
+        return
+      }
+      
+      this.selectedKeys = selectedKeys
+      this.selectedNode = node
+      this.activeTabKey = 'info'
+      this.loadNodeDetail(node.id)
+    },
+    
+    // 加载节点详情
+    async loadNodeDetail(id) {
+      this.contentLoading = true
+      try {
+        const res = await getNodeAndChildren(id)
+        this.formData = { ...res.data }
+        // 加载子节点表格数据
+        this.loadChildTableData(id)
+      } catch (err) {
+        message.error('加载节点详情失败')
+        console.error(err)
+      } finally {
+        this.contentLoading = false
+      }
+    },
+    
+    // 加载子节点表格数据
+    async loadChildTableData(parentId) {
+      this.tableLoading = true
+      try {
+        const res = await getOrgChildren(parentId)
+        this.childTableData = res.data
+        this.selectedRowKeys = []
+      } catch (err) {
+        message.error('加载子节点数据失败')
+        console.error(err)
+      } finally {
+        this.tableLoading = false
+      }
+    },
+    
+    // 标签页切换
+    handleTabChange(key) {
+      this.activeTabKey = key
+      if (key === 'children' && this.selectedNode) {
+        this.loadChildTableData(this.selectedNode.id)
+      }
+    },
+    
+    // 表单提交（标签页操作，需刷新全树）
+    async handleFormSubmit() {
+      this.formLoading = true
+      try {
+        await this.$refs.formRef.validate()
+        if (this.formData.id) {
+          // 修改节点
+          await updateOrg(this.formData)
+          message.success('修改成功')
+        } else {
+          // 新增节点（通过表格新增）
+          await addOrg(this.formData)
+          message.success('新增成功')
+        }
+        // 标签页操作刷新全树
+        await this.loadFullTreeData()
+        // 重新加载当前节点详情
+        if (this.selectedNode) {
+          this.loadNodeDetail(this.selectedNode.id)
+        }
+      } catch (err) {
+        message.error(err.message || '操作失败')
+        console.error(err)
+      } finally {
+        this.formLoading = false
+      }
+    },
+    
+    // 右键菜单相关
+    handleRightClick({ event, node }) {
+      event.preventDefault()
+      this.currentRightClickNode = node.dataRef
+      this.contextMenuVisible = true
+      this.contextMenuContainer = event.target
+      // 选中当前节点
+      this.selectedKeys = [node.key]
+      this.selectedNode = node.dataRef
+    },
+    
+    handleContextMenuVisibleChange(visible) {
+      if (!visible) {
+        this.currentRightClickNode = null
+      }
+    },
+    
+    async handleContextMenuClick({ key }) {
+      const node = this.currentRightClickNode
+      if (!node) return
+      
+      this.contextMenuLoading = true
+      this.contextMenuVisible = false
+      
+      try {
+        switch (key) {
+          case 'addChild':
+            await this.handleRightClickAddChild(node)
+            break
+          case 'addSibling':
+            await this.handleRightClickAddSibling(node)
+            break
+          case 'edit':
+            this.loadNodeDetail(node.id)
+            this.activeTabKey = 'info'
+            break
+          case 'delete':
+            await this.handleRightClickDelete(node)
+            break
+          case 'refresh':
+            await this.loadNodeAndChildren(node.id) // 右键刷新仅刷新当前节点及子节点
+            break
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        this.contextMenuLoading = false
+      }
+    },
+    
+    // 右键新增子节点
+    async handleRightClickAddChild(parentNode) {
+      this.globalLoading = true
+      try {
+        const newNode = {
+          id: null,
+          pId: parentNode.id,
+          orgName: `新子节点${Date.now().toString().slice(-4)}`,
+          orgLevel: parentNode.orgLevel + 1,
+          isAutoGetRole: 0,
+          roleOrigin: '',
+          orgLeader: '',
+          orgRole: '',
+          remark: '',
+          type: ''
+        }
+        
+        await addOrg(newNode)
+        message.success('新增子节点成功')
+        // 右键操作刷新当前节点及子节点
+        await this.loadNodeAndChildren(parentNode.id)
+      } catch (err) {
+        message.error('新增失败')
+        console.error(err)
+      } finally {
+        this.globalLoading = false
+      }
+    },
+    
+    // 右键新增同级节点
+    async handleRightClickAddSibling(node) {
+      this.globalLoading = true
+      try {
+        const newNode = {
+          id: null,
+          pId: node.pId,
+          orgName: `新同级节点${Date.now().toString().slice(-4)}`,
+          orgLevel: node.orgLevel,
+          isAutoGetRole: 0,
+          roleOrigin: '',
+          orgLeader: '',
+          orgRole: '',
+          remark: '',
+          type: ''
+        }
+        
+        await addOrg(newNode)
+        message.success('新增同级节点成功')
+        // 右键操作刷新父节点及子节点（包含新增的同级节点）
+        await this.loadNodeAndChildren(node.pId)
+      } catch (err) {
+        message.error('新增失败')
+        console.error(err)
+      } finally {
+        this.globalLoading = false
+      }
+    },
+    
+    // 右键删除节点
+    async handleRightClickDelete(node) {
+      this.globalLoading = true
+      try {
+        const confirmResult = await Modal.confirm({
+          title: '确认删除',
+          content: `确定要删除节点"${node.orgName}"吗？`,
+          okText: '确定',
+          cancelText: '取消'
+        })
+        
+        if (confirmResult) {
+          await deleteOrg(node.id)
+          message.success('删除成功')
+          // 右键操作刷新父节点及子节点
+          await this.loadNodeAndChildren(node.pId)
+          // 清除选中状态
+          this.selectedKeys = []
+          this.selectedNode = null
+        }
+      } catch (err) {
+        if (err !== 'cancel') {
+          message.error('删除失败')
+          console.error(err)
+        }
+      } finally {
+        this.globalLoading = false
+      }
+    },
+    
+    // 表格行选择变化
+    handleRowSelectionChange(keys) {
+      this.selectedRowKeys = keys
+    },
+    
+    // 表格编辑子节点
+    handleEditChild(record) {
+      this.formData = { ...record }
+      this.activeTabKey = 'info'
+    },
+    
+    // 表格删除子节点（标签页操作，刷新全树）
+    async handleDeleteChild(record) {
+      this.tableLoading = true
+      try {
+        const confirmResult = await Modal.confirm({
+          title: '确认删除',
+          content: `确定要删除节点"${record.orgName}"吗？`,
+          okText: '确定',
+          cancelText: '取消'
+        })
+        
+        if (confirmResult) {
+          await deleteOrg(record.id)
+          message.success('删除成功')
+          // 表格操作刷新全树
+          await this.loadFullTreeData()
+          this.loadChildTableData(this.selectedNode.id)
+        }
+      } catch (err) {
+        if (err !== 'cancel') {
+          message.error('删除失败')
+          console.error(err)
+        }
+      } finally {
+        this.tableLoading = false
+      }
+    },
+    
+    // 表格批量删除（标签页操作，刷新全树）
+    async handleBatchDelete() {
+      if (this.selectedRowKeys.length === 0) return
+      
+      this.tableLoading = true
+      try {
+        const confirmResult = await Modal.confirm({
+          title: '批量删除',
+          content: `确定要删除选中的${this.selectedRowKeys.length}个节点吗？`,
+          okText: '确定',
+          cancelText: '取消'
+        })
+        
+        if (confirmResult) {
+          await deleteOrg(this.selectedRowKeys.join(','))
+          message.success('批量删除成功')
+          // 表格操作刷新全树
+          await this.loadFullTreeData()
+          this.loadChildTableData(this.selectedNode.id)
+        }
+      } catch (err) {
+        if (err !== 'cancel') {
+          message.error('删除失败')
+          console.error(err)
+        }
+      } finally {
+        this.tableLoading = false
+      }
+    },
+    
+    // 表格新增子节点（标签页操作）
+    handleAddChildFromTable() {
+      if (!this.selectedNode) return
+      
+      this.formData = {
+        id: null,
+        pId: this.selectedNode.id,
+        orgName: '',
+        orgLevel: this.selectedNode.orgLevel + 1,
+        isAutoGetRole: 0,
+        roleOrigin: '',
+        orgLeader: '',
+        orgRole: '',
+        remark: '',
+        type: ''
+      }
+      this.activeTabKey = 'info'
+    },
+    
+    // 根节点判断
+    isRootNode(node) {
+      return node.orgLevel === 0 && node.id === 0
+    },
+    
+    // 叶子节点判断
+    isLeafNode(node) {
+      return node.orgLevel === 3 && (!node.children || node.children.length === 0)
+    },
+    
+    // 自定义节点渲染
+    titleRender(node) {
+      return node.orgName
+    }
+  }
+}
+</script>
+
+<style scoped>
+.org-management-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.tree-container {
+  height: 100%;
+  border-right: 1px solid #e8e8e8;
+  padding: 16px;
+  overflow: auto;
+}
+
+.content-container {
+  height: 100%;
+  padding: 16px;
+  overflow: auto;
+}
+
+.empty-content {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 16px;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+/* 防止loading覆盖右键菜单 */
+.ant-spin-nested-loading {
+  position: relative;
+  z-index: 1;
+}
+</style>
