@@ -24,7 +24,7 @@
           <a-dropdown
             :visible="contextMenuVisible"
             :trigger="['contextmenu']"
-            :getPopupContainer="() => contextMenuContainer"
+            placement="bottomLeft"
             @visibleChange="handleContextMenuVisibleChange"
           >
             <template #overlay>
@@ -36,6 +36,8 @@
                 <a-menu-item v-if="showRefresh" key="refresh">刷新节点</a-menu-item>
               </a-menu>
             </template>
+	    <!-- 用于定位的空元素 -->
+	    <div ref="contextMenuAnchor" style="position: absolute; z-index: 1000;"></div>
           </a-dropdown>
         </a-col>
 
@@ -145,7 +147,7 @@
                 <div class="table-operations">
                   <a-button 
                     type="primary" 
-                    @click="showAddChildModal = true"
+                    @click="handleAddChildFromTable"
                     :loading="tableLoading"
                   >
                     新增
@@ -160,7 +162,7 @@
                   </a-button>
                   <a-button 
                     type="primary" 
-                    @click="handleEditSelected" 
+                    @click="handleEditFromTable" 
                     :disabled="selectedRowKeys.length !== 1 || tableLoading"
                     :loading="tableLoading"
                   >
@@ -306,7 +308,6 @@ export default {
       
       // 右键菜单相关
       contextMenuVisible: false,
-      contextMenuContainer: null,
       currentRightClickNode: null,
       
       // 表单数据
@@ -514,13 +515,15 @@ export default {
       }
     },
     
-    // 表单提交（标签页操作，刷新全树）
-    handleFormSubmit() {
-      this.formLoading = true
-      this.$refs.detailFormRef.validate()
+// 表单提交（标签页操作，刷新全树）
+handleFormSubmit() {
+  this.$refs.detailFormRef.validateFields((err) => {
+    if (!err) {
+      // 校验通过，执行提交逻辑
+      this.formLoading = true;
       if (this.formData.id) {
-          updateGenericPlanOrgInfo(this.formData).then(res => {
-            if (res.data.success) {
+	updateGenericPlanOrgInfo(this.formData).then(res => {
+	  if (res.data.success) {
               this.$message.success('修改成功')
               const currentExpanded = [...this.expandedKeys]
               this.loadFullTreeData()
@@ -531,10 +534,11 @@ export default {
             } else {
               this.$message.error(res.data.message);
             }
-          });
-        } else {
-          addGenericPlanOrgInfo(this.formData).then(res => {
-            if (res.data.success) {
+	    this.formLoading = false;
+	});
+      } else {
+	addGenericPlanOrgInfo(this.formData).then(res => {
+	  if (res.data.success) {
               this.$message.success('新增成功')
               const currentExpanded = [...this.expandedKeys]
               this.loadFullTreeData()
@@ -545,10 +549,15 @@ export default {
             } else {
               this.$message.error(res.data.message);
             }
-          });
-        }
-        this.formLoading = false;
-    },
+	    this.formLoading = false;
+	});
+      }
+    } else {
+      this.$message.error('表单校验失败，请检查输入');
+    }
+  });
+},
+  
     
     // 右键菜单点击处理
     handleContextMenuClick({ key }) {
@@ -627,10 +636,11 @@ export default {
       this.modalVisible = true
     },
     
-    // 弹窗提交处理
-    handleModalSubmit() {
-      this.$refs.modalFormRef.validate()
-      this.modalLoading = true
+  // 弹窗提交处理
+ handleModalSubmit() {
+  this.$refs.modalFormRef.validateFields((err) => {
+    if (!err) {
+      this.modalLoading = true;
       if (this.modalAction === 'edit') {
         updateGenericPlanOrgInfo(this.modalFormData).then(res => {
           if (res.data.success) {
@@ -641,6 +651,7 @@ export default {
           } else {
             this.$message.error(res.data.message);
           }
+	  this.modalLoading = false
         });
       } else {
         addGenericPlanOrgInfo(this.modalFormData).then(res => {
@@ -652,10 +663,14 @@ export default {
           } else {
             this.$message.error(res.data.message);
           }
+	  this.modalLoading = false
         });
       }
-      this.modalLoading = false
-    },
+    } else {
+      this.$message.error('表单校验失败，请检查输入');
+    }
+  });
+}
     
     // 右键删除节点
     handleRightClickDelete(node) {
@@ -690,6 +705,12 @@ export default {
     //   this.formData = { ...record }
     //   this.activeTabKey = 'info'
     // },
+
+     // 新增表格新增按钮处理
+     handleAddChildFromTable() {
+	 if (!this.selectedNode) return;
+	 this.openAddChildModal(this.selectedNode);
+     },
     
     // 编辑选中的表格行
     handleEditSelected() {
@@ -699,6 +720,16 @@ export default {
         this.activeTabKey = 'info'
       }
     },
+
+    // 新增表格编辑按钮处理
+    handleEditFromTable() {
+      const selectedRecord = this.childTableData.find(
+	item => item.id === this.selectedRowKeys[0]
+      );
+      if (selectedRecord) {
+	this.openEditModal(selectedRecord);
+      }
+    }
     
     // 表格删除子节点
     // handleDeleteChild(record) {
@@ -754,15 +785,21 @@ export default {
     
     // 右键菜单显示/隐藏
     handleRightClick({ event, node }) {
-      event.preventDefault()
-      this.currentRightClickNode = node.dataRef
-      this.contextMenuVisible = true
-      this.contextMenuContainer = event.target
-      this.selectedKeys = [node.key]
-      this.selectedNode = node.dataRef
+      event.preventDefault();
+      this.currentRightClickNode = node.dataRef;
+      this.selectedKeys = [node.key];
+      this.selectedNode = node.dataRef;
+	  
+      const anchor = this.$refs.contextMenuAnchor;
+      if (anchor) {
+       anchor.style.left = `${event.clientX}px`;
+       anchor.style.top = `${event.clientY}px`;
+      }
+      this.contextMenuVisible = true;
     },
     
     handleContextMenuVisibleChange(visible) {
+      this.contextMenuVisible = visible;
       if (!visible) {
         this.currentRightClickNode = null
       }
