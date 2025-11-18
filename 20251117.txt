@@ -43,6 +43,41 @@
                 >
               </a-menu>
             </template>
+	    <template #overlay>
+	      <a-menu @click="handleContextMenuClick">
+		<!-- 根目录（level=0）菜单 -->
+		<template v-if="currentRightClickNode?.orgLevel === 0">
+		  <a-menu-item key="addChild">添加一级组织</a-menu-item>
+		  <a-menu-item key="refresh">刷新</a-menu-item>
+		</template>
+
+		<!-- 一级目录（level=1）菜单 -->
+		<template v-else-if="currentRightClickNode?.orgLevel === 1">
+		  <a-menu-item key="addChild">添加二级组织</a-menu-item>
+		  <a-menu-item key="addSibling">添加一级组织</a-menu-item>
+		  <a-menu-item key="edit">修改一级组织</a-menu-item>
+		  <a-menu-item key="delete">删除一级组织</a-menu-item>
+		  <a-menu-item key="refresh">刷新</a-menu-item>
+		</template>
+
+		<!-- 二级目录（level=2）菜单 -->
+		<template v-else-if="currentRightClickNode?.orgLevel === 2">
+		  <a-menu-item key="addChild">添加三级组织</a-menu-item>
+		  <a-menu-item key="addSibling">添加二级组织</a-menu-item>
+		  <a-menu-item key="edit">修改二级组织</a-menu-item>
+		  <a-menu-item key="delete">删除二级组织</a-menu-item>
+		  <a-menu-item key="refresh">刷新</a-menu-item>
+		</template>
+
+		<!-- 三级目录（level=3）菜单 -->
+		<template v-else-if="currentRightClickNode?.orgLevel === 3">
+		  <a-menu-item key="addSibling">添加三级组织</a-menu-item>
+		  <a-menu-item key="edit">修改三级组织</a-menu-item>
+		  <a-menu-item key="delete">删除三级组织</a-menu-item>
+		  <a-menu-item key="refresh">刷新</a-menu-item>
+		</template>
+	      </a-menu>
+	    </template>
             <!-- 添加一个具有尺寸的锚点元素 -->
             <div
               ref="contextMenuAnchor"
@@ -440,8 +475,21 @@ export default {
       childColumns: [
         { title: '组织名称', dataIndex: 'orgName', key: 'orgName' },
         { title: '组织级别', dataIndex: 'orgLevel', key: 'orgLevel' },
-        { title: '是否自动获取角色', dataIndex: 'isAutoGetRole', key: 'isAutoGetRole' },
-        { title: '角色来源', dataIndex: 'roleOrigin', key: 'roleOrigin' },
+        { 
+          title: '是否自动获取角色', 
+          dataIndex: 'isAutoGetRole', 
+          key: 'isAutoGetRole',
+          render: (text) => text === '1' ? '是' : '否'
+        },
+        { 
+          title: '角色来源', 
+          dataIndex: 'roleOrigin', 
+          key: 'roleOrigin',
+          render: (text) => {
+            const item = this.roleOriginList.find(item => item.code === text)
+            return item ? item.name : text
+          }
+        },
         { title: '组织负责人', dataIndex: 'orgLeader', key: 'orgLeader' },
         { title: '组织角色', dataIndex: 'orgRole', key: 'orgRole' },
         { title: '排序', dataIndex: 'sort', key: 'sort' },
@@ -490,7 +538,7 @@ export default {
     // 右键菜单显示控制
     showAddChild() {
       if (!this.currentRightClickNode) return false
-      return this.isRootNode(this.currentRightClickNode) || !this.isLeafNode(this.currentRightClickNode)
+      return this.currentRightClickNode.orgLevel < 3
     },
     showAddSibling() {
       if (!this.currentRightClickNode) return false
@@ -658,6 +706,10 @@ export default {
         if (!err) {
           // 校验通过，执行提交逻辑
           this.formLoading = true;
+	  const submitData = { ...this.formData };
+	      if (submitData.isAutoGetRole === '1') {
+		submitData.orgRole = ''; // 置空组织角色
+	      }
           if (this.formData.id) {
               updateGenericPlanOrgInfo(this.formData).then(res => {
               if (res.data.success) {
