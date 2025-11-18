@@ -107,7 +107,13 @@
                     </a-col>
                     <a-col :span="12">
                       <a-form-item label="角色来源" name="roleOrigin">
-                        <a-input v-model="formData.roleOrigin" />
+                        <a-select v-model="formData.roleOrigin" placeholder="请选择">
+                          <a-select-option
+                            v-for="(item, index) in roleOriginList"
+                            :key="index"
+                            :value="item.code"
+                          >{{item.name}}</a-select-option>
+                        </a-select>
                       </a-form-item>
                     </a-col>
                   </a-row>
@@ -317,7 +323,13 @@
           </a-col>
           <a-col :span="12">
             <a-form-item label="角色来源" name="roleOrigin">
-              <a-input v-model="modalFormData.roleOrigin" />
+              <a-select v-model="modalFormData.roleOrigin" placeholder="请选择">
+                <a-select-option
+                  v-for="(item, index) in roleOriginList"
+                  :key="index"
+                  :value="item.code"
+                >{{item.name}}</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -376,7 +388,9 @@ import {
   updateGenericPlanOrgInfo, 
   deleteInfoByIds, 
   getGenericPlanOrgInfoChildById, 
-  getGenericPlanOrgInfoById } from "./service";
+  getGenericPlanOrgInfoById,
+  getDictDataByCode
+  } from "./service";
 import Cookie from "js-cookie";
 
 export default {
@@ -398,6 +412,7 @@ export default {
       anchorX: 0,
       anchorY: 0,
       
+      roleOriginList:[],
       // 表单数据
       formData: {
         id: null,
@@ -497,7 +512,8 @@ export default {
     this.user = JSON.parse( Cookie.get(process.env.VUE_APP_USER_KEY) || '{}')
   },
   created(){
-    this.loadFullTreeData()
+    this.loadFullTreeData();
+    this.queryRoleOriginList();
   },
   methods: {
     // 加载完整树形数据
@@ -957,6 +973,13 @@ export default {
           this.modalFormData.orgRole = ''
       }
 		},
+
+    // 查询数据字典
+    queryRoleOriginList(){
+        getDictDataByCode({identity: 'ERC',code: 'GENERIC_PLAN_ROLE_ORIGIN'}).then(res => {
+            this.roleOriginList = res.data.data;
+        });
+    },
   }
 }
 </script>
