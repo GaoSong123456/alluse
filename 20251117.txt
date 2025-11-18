@@ -1,7 +1,6 @@
 <template>
   <div class="org-management-container">
     <!-- 全局loading -->
-    <a-spin :spinning="globalLoading" tip="加载中...">
       <a-row class="full-height">
         <!-- 左侧树形结构 (30%) -->
         <a-col :span="7" class="tree-container">
@@ -19,7 +18,7 @@
               :autoExpandparent="false"
             />
           </a-spin>
-          
+
           <!-- 右键菜单 -->
           <a-dropdown
             :visible="contextMenuVisible"
@@ -29,24 +28,36 @@
           >
             <template #overlay>
               <a-menu @click="handleContextMenuClick">
-                <a-menu-item v-if="showAddChild" key="addChild">新增子节点</a-menu-item>
-                <a-menu-item v-if="showAddSibling" key="addSibling">新增同级节点</a-menu-item>
+                <a-menu-item v-if="showAddChild" key="addChild"
+                  >新增子节点</a-menu-item
+                >
+                <a-menu-item v-if="showAddSibling" key="addSibling"
+                  >新增同级节点</a-menu-item
+                >
                 <a-menu-item v-if="showEdit" key="edit">修改节点</a-menu-item>
-                <a-menu-item v-if="showDelete" key="delete">删除节点</a-menu-item>
-                <a-menu-item v-if="showRefresh" key="refresh">刷新节点</a-menu-item>
+                <a-menu-item v-if="showDelete" key="delete"
+                  >删除节点</a-menu-item
+                >
+                <a-menu-item v-if="showRefresh" key="refresh"
+                  >刷新节点</a-menu-item
+                >
               </a-menu>
             </template>
-	    <!-- 用于定位的空元素 -->
-	    <div ref="contextMenuAnchor" style="position: absolute; z-index: 1000;"></div>
+            <!-- 添加一个具有尺寸的锚点元素 -->
+            <div
+              ref="contextMenuAnchor"
+              style="position: fixed; width: 1px; height: 1px; z-index: -1;"
+              :style="{ left: anchorX + 'px', top: anchorY + 'px' }"
+            ></div>
           </a-dropdown>
         </a-col>
 
         <!-- 右侧内容区域 (70%) -->
         <a-col :span="17" class="content-container">
           <a-spin :spinning="contentLoading" tip="加载中...">
-            <a-tabs 
-              v-if="selectedNode && !isRootNode(selectedNode)" 
-              :activeKey="activeTabKey" 
+            <a-tabs
+              v-if="selectedNode && !isRootNode(selectedNode)"
+              :activeKey="activeTabKey"
               @change="handleTabChange"
               :disabled="contentLoading"
             >
@@ -58,111 +69,148 @@
                   :label-col="{ span: 6 }"
                   :wrapper-col="{ span: 16 }"
                 >
-                <a-row>
-                  <a-col :span="12">
-                    <a-form-item label="组织名称" name="orgName" 
-                                :rules="[{ required: true, message: '请输入组织名称' }]">
-                      <a-input v-model="formData.orgName" />
-                    </a-form-item>
-                  </a-col>
-                  <a-col :span="12">  
-                    <a-form-item label="排序号" name="sort"
-                                :rules="[{ 
-                                  validator: (rule, value, callback) => {
-                                    if (value === null || value === undefined || value === '') {
-                                      callback()
-                                      return
-                                    }
-                                    if (!Number.isInteger(+value)) {
-                                      callback('请输入整数')
-                                    } else {
-                                      callback()
-                                    }
-                                  }
-                                }]">
-                      <a-input v-model="formData.sort" placeholder="请输入整数，非必填" />
-                    </a-form-item>
-                  </a-col>
-                 </a-row>
-                 <a-row>
-                   <a-col :span="12">
-                     <a-form-item label="组织层级" name="orgLevel">
-                      <a-input v-model.number="formData.orgLevel" disabled />
-                    </a-form-item>
-                   </a-col>
-                   <a-col :span="12">
-                     <a-form-item label="是否自动获取角色" name="isAutoGetRole">
-                      <a-select v-model="formData.isAutoGetRole" placeholder="请选择">
-                        <a-select-option value="1">是</a-select-option>
-                        <a-select-option value="0">否</a-select-option>
-                      </a-select>
-                    </a-form-item>
-                   </a-col>
-                 </a-row>
-                  
-                 <a-row>
-                   <a-col :span="12">
-                     <a-form-item label="角色来源" name="roleOrigin">
-                      <a-input v-model="formData.roleOrigin" />
-                    </a-form-item>
-                   </a-col>
-                   <a-col :span="12">
-                     <a-form-item label="组织负责人" name="orgLeader">
-                      <a-input v-model="formData.orgLeader" />
-                    </a-form-item>
-                   </a-col>
-                 </a-row>
-
-                 <a-row>
-                   <a-col :span="12">
-                     <a-form-item label="组织角色" name="orgRole">
-                      <a-input v-model="formData.orgRole" />
-                    </a-form-item>
-                   </a-col>
-                   <a-col :span="12">
-                    <a-form-item label="备注" name="remark">
-                      <a-textarea v-model="formData.remark" rows="4" />
-                    </a-form-item>
-                   </a-col>
-                 </a-row>
-
-                 <a-row>
-                   <a-col :span="12">
-                     <a-form-item label="类型" name="type">
-                      <a-input v-model="formData.type" />
-                    </a-form-item>
-                   </a-col>
-                 </a-row>
-                  
-                 <a-row>
-                    <a-col :span="24" style="display: flex; justify-content: center;margin-top: 4px; margin-bottom: 20px;">
-                      <a-button  type="primary" @click="handleFormSubmit" :loading="formLoading">保存</a-button>
+                  <a-row>
+                    <a-col :span="12">
+                      <a-form-item
+                        label="组织名称"
+                        name="orgName"
+                        :rules="[{ required: true, message: '请输入组织名称' }]"
+                      >
+                        <a-input v-model="formData.orgName" placeholder="请输入组织名称" maxLength=85 />
+                      </a-form-item>
                     </a-col>
-                </a-row> 
+                    <a-col :span="12">
+                      <a-form-item 
+                        label="组织级别" 
+                        name="orgLevel"
+                        :rules="[{ required: true, message: '组织级别不能为空' }]"
+                      >
+                        <a-input-number v-model="formData.orgLevel" style="width: 100%;" disabled />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                  <a-row>
+                    <a-col :span="12">
+                      <a-form-item
+                        label="是否自动获取角色"
+                        name="isAutoGetRole"
+                        :rules="[{ required: true, message: '请选择是否自动获取角色' }]"
+                      >
+                        <a-select
+                          v-model="formData.isAutoGetRole"
+                          placeholder="请选择"
+                        >
+                          <a-select-option value="1">是</a-select-option>
+                          <a-select-option value="0">否</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                      <a-form-item label="角色来源" name="roleOrigin">
+                        <a-input v-model="formData.roleOrigin" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+
+                  <a-row v-if="formData.isAutoGetRole === '0'">
+                    <a-col :span="12">
+                      <a-form-item label="组织角色" name="orgRole">
+                        <commonchooseuser ref="chooseuser" 
+                          v-model="formData.orgRole"
+                          :default-data="defaultData()"
+                          v-on:getdata="(val)=>getdata(val)">
+                        </commonchooseuser>
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+
+                  <a-row>
+                    <a-col :span="12">
+                      <a-form-item
+                        label="排序"
+                        name="sort"
+                        :rules="[
+                          {
+                            validator: (rule, value, callback) => {
+                              if (
+                                value === null ||
+                                value === undefined ||
+                                value === ''
+                              ) {
+                                callback();
+                                return;
+                              }
+                              if (!Number.isInteger(+value)) {
+                                callback('请输入整数');
+                              } else {
+                                callback();
+                              }
+                            },
+                          },
+                        ]"
+                      >
+                        <a-input-number
+                          v-model="formData.sort"
+                          :min="0"
+                          placeholder="请输入排序"
+                          style="width: 100%;"
+                        />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                      <a-form-item label="备注" name="remark">
+                        <a-textarea
+                          v-model="formData.remark"
+                          :auto-size="{ minRows: 3, maxRows: 6 }"
+                          placeholder="请输入备注"
+                          maxLength=1333
+                        />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+
+                  <a-row>
+                    <a-col
+                      :span="24"
+                      style="
+                        display: flex;
+                        justify-content: center;
+                        margin-top: 4px;
+                        margin-bottom: 20px;
+                      "
+                    >
+                      <a-button
+                        type="primary"
+                        @click="handleFormSubmit"
+                        :loading="formLoading"
+                        >保存</a-button
+                      >
+                    </a-col>
+                  </a-row>
                 </a-form>
               </a-tab-pane>
 
               <!-- 下级组织表格 -->
               <a-tab-pane key="children" tab="下级组织列表">
                 <div class="table-operations">
-                  <a-button 
-                    type="primary" 
+                  <a-button
+                    type="primary"
                     @click="handleAddChildFromTable"
                     :loading="tableLoading"
                   >
                     新增
                   </a-button>
-                  <a-button 
-                    danger 
-                    @click="handleBatchDelete" 
+                  <a-button
+                    danger
+                    @click="handleBatchDelete"
                     :disabled="selectedRowKeys.length === 0 || tableLoading"
                     :loading="tableLoading"
                   >
                     删除
                   </a-button>
-                  <a-button 
-                    type="primary" 
-                    @click="handleEditFromTable" 
+                  <a-button
+                    type="primary"
+                    @click="handleEditFromTable"
                     :disabled="selectedRowKeys.length !== 1 || tableLoading"
                     :loading="tableLoading"
                   >
@@ -172,11 +220,12 @@
                 <a-table
                   :columns="childColumns"
                   :data-source="childTableData"
-                  :row-key="record => record.id"
+                  :pagination="false"
+                  :row-key="(record) => record.id"
                   :row-selection="{
                     selectedRowKeys,
                     onChange: handleRowSelectionChange,
-                    disabled: tableLoading
+                    disabled: tableLoading,
                   }"
                   :loading="tableLoading"
                 >
@@ -198,18 +247,31 @@
                     </a-button>
                   </template> -->
                 </a-table>
+                <!-- 通用的分页组件 -->
+                <a-pagination
+                  show-size-changer
+                  v-model="current"
+                  :page-size.sync="currentPageSize"
+                  :total="total"
+                  :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} items`"
+                  @showSizeChange="onShowSizeChange"
+                  @change="onPaginationChange"
+                  class="pagintion_pos"
+                  :pageSizeOptions="pageSizeOptions"
+                />
               </a-tab-pane>
             </a-tabs>
           </a-spin>
         </a-col>
       </a-row>
-    </a-spin>
+    
 
     <!-- 通用弹窗表单 -->
     <a-modal
       :visible="modalVisible"
       :title="modalTitle"
       :confirm-loading="modalLoading"
+      width="50%"
       @ok="handleModalSubmit"
       @cancel="modalVisible = false"
     >
@@ -219,54 +281,95 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 16 }"
       >
-        <a-form-item label="组织名称" name="orgName" 
-                     :rules="[{ required: true, message: '请输入组织名称' }]">
-          <a-input v-model="modalFormData.orgName" />
-        </a-form-item>
-        <a-form-item label="排序号" name="sort"
-                     :rules="[{ 
-                       validator: (rule, value, callback) => {
-                         if (value === null || value === undefined || value === '') {
-                           callback()
-                           return
-                         }
-                         if (!Number.isInteger(+value)) {
-                           callback('请输入整数')
-                         } else {
-                           callback()
-                         }
-                       }
-                     }]">
-          <a-input v-model="modalFormData.sort" placeholder="请输入整数" />
-        </a-form-item>
-        <a-form-item label="是否自动获取角色" name="isAutoGetRole">
-          <a-select v-model="modalFormData.isAutoGetRole" placeholder="请选择">
-            <a-select-option value="1">是</a-select-option>
-            <a-select-option value="0">否</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="角色来源" name="roleOrigin">
-          <a-input v-model="modalFormData.roleOrigin" />
-        </a-form-item>
-        <a-form-item label="组织负责人" name="orgLeader">
-          <a-input v-model="modalFormData.orgLeader" />
-        </a-form-item>
-        <a-form-item label="组织角色" name="orgRole">
-          <a-input v-model="modalFormData.orgRole" />
-        </a-form-item>
-        <a-form-item label="备注" name="remark">
-          <a-textarea v-model="modalFormData.remark" rows="4" />
-        </a-form-item>
-        <a-form-item label="类型" name="type">
-          <a-input v-model="modalFormData.type" />
-        </a-form-item>
+        <a-row>
+          <a-col :span="12">
+            <a-form-item
+              label="组织名称"
+              name="orgName"
+              :rules="[{ required: true, message: '请输入组织名称' }]"
+            >
+              <a-input v-model="modalFormData.orgName" placeholder="请输入组织名称" maxLength=85 />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item 
+              label="组织级别" 
+              name="orgLevel"
+              :rules="[{ required: true, message: '组织级别不能为空' }]"
+            >
+              <a-input-number v-model="modalFormData.orgLevel" style="width: 100%;" disabled />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row>
+          <a-col :span="12">
+            <a-form-item 
+              label="是否自动获取角色" 
+              name="isAutoGetRole"
+              :rules="[{ required: true, message: '请选择是否自动获取角色' }]"
+            >
+              <a-select v-model="modalFormData.isAutoGetRole" placeholder="请选择">
+                <a-select-option value="1">是</a-select-option>
+                <a-select-option value="0">否</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="角色来源" name="roleOrigin">
+              <a-input v-model="modalFormData.roleOrigin" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row v-if="modalFormData.isAutoGetRole === '0'">
+          <a-col :span="12">
+            <a-form-item label="组织角色" name="orgRole">
+              <commonchooseuser ref="chooseuser" 
+                v-model="modalFormData.orgRole"
+                :default-data="defaultData()"
+                v-on:getdata="(val)=>getdata2(val)">
+              </commonchooseuser>
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row>
+          <a-col :span="12">
+            <a-form-item
+              label="排序"
+              name="sort"
+              :rules="[
+                {
+                  validator: (rule, value, callback) => {
+                    if (value === null || value === undefined || value === '') {
+                      callback();
+                      return;
+                    }
+                    if (!Number.isInteger(+value)) {
+                      callback('请输入整数');
+                    } else {
+                      callback();
+                    }
+                  },
+                },
+              ]"
+            >
+              <a-input-number v-model="modalFormData.sort" placeholder="请输入排序" style="width: 100%;"/>
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="备注" name="remark">
+              <a-textarea v-model="modalFormData.remark" rows="4" />
+            </a-form-item>
+          </a-col>
+        </a-row>
       </a-form>
     </a-modal>
   </div>
 </template>
 
 <script>
-import { Tree, Table, Tabs, Form, Input, InputNumber, Select, Button, Textarea, Dropdown, Menu, message, Col, Row, Spin, Modal } from 'ant-design-vue'
 import { 
   getGenericPlanOrgInfoTree, 
   addGenericPlanOrgInfo, 
@@ -274,32 +377,15 @@ import {
   deleteInfoByIds, 
   getGenericPlanOrgInfoChildById, 
   getGenericPlanOrgInfoById } from "./service";
+import Cookie from "js-cookie";
 
 export default {
   name: "genericPlanOrgInfo",
   components: {
-    'a-tree': Tree,
-    'a-table': Table,
-    'a-tabs': Tabs,
-    'a-tab-pane': Tabs.TabPane,
-    'a-form': Form,
-    'a-form-item': Form.Item,
-    'a-input': Input,
-    'a-input-number': InputNumber,
-    'a-select': Select,
-    'a-select-option': Select.Option,
-    'a-button': Button,
-    'a-textarea': Textarea,
-    'a-dropdown': Dropdown,
-    'a-menu': Menu,
-    'a-menu-item': Menu.Item,
-    'a-col': Col,
-    'a-row': Row,
-    'a-spin': Spin,
-    'a-modal': Modal
   },
   data() {
     return {
+      user:{},
       // 树形数据
       treeData: [],
       selectedKeys: [],
@@ -309,31 +395,43 @@ export default {
       // 右键菜单相关
       contextMenuVisible: false,
       currentRightClickNode: null,
+      anchorX: 0,
+      anchorY: 0,
       
       // 表单数据
       formData: {
         id: null,
         pId: null,
         orgName: '',
-        orgLevel: 0,
-        isAutoGetRole: 0,
+        orgLevel: null,
+        isAutoGetRole: '',
         roleOrigin: '',
         orgLeader: '',
         orgRole: '',
         remark: '',
-        type: '',
         sort: null
       },
       
       // 标签页
       activeTabKey: 'info',
       
+      currentPageSize: 20,
+      current: 1,
+      total: 0,
+      pageSizeOptions: ["10", "20", "30","40"],
+      sortField: "",
+      sortOrder: "",
       // 子节点表格
       childColumns: [
         { title: '组织名称', dataIndex: 'orgName', key: 'orgName' },
-        { title: '排序号', dataIndex: 'sort', key: 'sort' },
-        { title: '组织层级', dataIndex: 'orgLevel', key: 'orgLevel' },
-        { title: '负责人', dataIndex: 'orgLeader', key: 'orgLeader' },
+        { title: '组织级别', dataIndex: 'orgLevel', key: 'orgLevel' },
+        { title: '是否自动获取角色', dataIndex: 'isAutoGetRole', key: 'isAutoGetRole' },
+        { title: '角色来源', dataIndex: 'roleOrigin', key: 'roleOrigin' },
+        { title: '组织负责人', dataIndex: 'orgLeader', key: 'orgLeader' },
+        { title: '组织角色', dataIndex: 'orgRole', key: 'orgRole' },
+        { title: '排序', dataIndex: 'sort', key: 'sort' },
+        { title: '最后修改人', dataIndex: 'lastModifierId', key: 'lastModifierId' },
+        { title: '最后修改时间', dataIndex: 'lastModifyTime', key: 'lastModifyTime' },
         // { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' } }
       ],
       childTableData: [],
@@ -346,20 +444,18 @@ export default {
         id: null,
         pId: null,
         orgName: '',
-        orgLevel: 0,
-        isAutoGetRole: 0,
+        orgLevel: null,
+        isAutoGetRole: '',
         roleOrigin: '',
         orgLeader: '',
         orgRole: '',
         remark: '',
-        type: '',
         sort: null
       },
       modalAction: '', // addChild, addSibling, edit
       modalTargetNode: null,
       
       // Loading状态
-      globalLoading: false,
       treeLoading: false,
       contentLoading: false,
       formLoading: false,
@@ -368,6 +464,14 @@ export default {
     }
   },
   computed: {
+    pageParam() {
+      return {
+        page: this.current,
+        pageSize: this.currentPageSize,
+        sortField: this.sortField,
+        sortOrder: this.sortOrder
+      };
+    },
     // 右键菜单显示控制
     showAddChild() {
       if (!this.currentRightClickNode) return false
@@ -390,7 +494,7 @@ export default {
     }
   },
   mounted() {
-    
+    this.user = JSON.parse( Cookie.get(process.env.VUE_APP_USER_KEY) || '{}')
   },
   created(){
     this.loadFullTreeData()
@@ -494,13 +598,30 @@ export default {
        }); 
       this.contentLoading = false;
     },
+
+    //表格分页
+    onPaginationChange(page, pageSize) {
+      this.current = page;
+      this.currentPageSize = pageSize;
+      if (this.selectedNode) {
+        this.loadChildTableData(this.selectedNode.id)
+      }
+    },
+    onShowSizeChange(page, pageSize) {
+      this.current = page;
+      this.currentPageSize = pageSize;
+      if (this.selectedNode) {
+        this.loadChildTableData(this.selectedNode.id)
+      }
+    },
     
     // 加载子节点表格数据
     loadChildTableData(id) {
       this.tableLoading = true
-      getGenericPlanOrgInfoChildById({id:id}).then(res => {
+      getGenericPlanOrgInfoChildById({id:id},this.pageParam).then(res => {
         if (res.data.success) {
-          this.childTableData = res.data.data
+          this.total = res.data.data.size;
+          this.childTableData = res.data.data.list;
           this.selectedRowKeys = []
         }
        }); 
@@ -515,48 +636,48 @@ export default {
       }
     },
     
-// 表单提交（标签页操作，刷新全树）
-handleFormSubmit() {
-  this.$refs.detailFormRef.validateFields((err) => {
-    if (!err) {
-      // 校验通过，执行提交逻辑
-      this.formLoading = true;
-      if (this.formData.id) {
-	updateGenericPlanOrgInfo(this.formData).then(res => {
-	  if (res.data.success) {
-              this.$message.success('修改成功')
-              const currentExpanded = [...this.expandedKeys]
-              this.loadFullTreeData()
-              this.expandedKeys = currentExpanded
-              if (this.selectedNode) {
-                this.loadNodeDetail(this.selectedNode.id)
+    // 表单提交（标签页操作，刷新全树）
+    handleFormSubmit() {
+      this.$refs.detailFormRef.validateFields((err) => {
+        if (!err) {
+          // 校验通过，执行提交逻辑
+          this.formLoading = true;
+          if (this.formData.id) {
+              updateGenericPlanOrgInfo(this.formData).then(res => {
+              if (res.data.success) {
+                  this.$message.success('修改成功')
+                  const currentExpanded = [...this.expandedKeys]
+                  this.loadFullTreeData()
+                  this.expandedKeys = currentExpanded
+                  if (this.selectedNode) {
+                    this.loadNodeDetail(this.selectedNode.id)
+                  }
+              } else {
+                  this.$message.error(res.data.message);
               }
-            } else {
-              this.$message.error(res.data.message);
-            }
-	    this.formLoading = false;
-	});
-      } else {
-	addGenericPlanOrgInfo(this.formData).then(res => {
-	  if (res.data.success) {
-              this.$message.success('新增成功')
-              const currentExpanded = [...this.expandedKeys]
-              this.loadFullTreeData()
-              this.expandedKeys = currentExpanded
-              if (this.selectedNode) {
-                this.loadNodeDetail(this.selectedNode.id)
-              }
-            } else {
-              this.$message.error(res.data.message);
-            }
-	    this.formLoading = false;
-	});
-      }
-    } else {
-      this.$message.error('表单校验失败，请检查输入');
-    }
-  });
-},
+              this.formLoading = false;
+              });
+          } else {
+              addGenericPlanOrgInfo(this.formData).then(res => {
+                if (res.data.success) {
+                  this.$message.success('新增成功')
+                  const currentExpanded = [...this.expandedKeys]
+                  this.loadFullTreeData()
+                  this.expandedKeys = currentExpanded
+                  if (this.selectedNode) {
+                    this.loadNodeDetail(this.selectedNode.id)
+                  }
+                } else {
+                  this.$message.error(res.data.message);
+                }
+                this.formLoading = false;
+              });
+          }
+        } else {
+          this.$message.error('表单校验失败，请检查输入');
+        }
+      });
+    },
   
     
     // 右键菜单点击处理
@@ -595,12 +716,11 @@ handleFormSubmit() {
         pId: parentNode.id,
         orgName: '',
         orgLevel: parentNode.orgLevel + 1,
-        isAutoGetRole: 0,
+        isAutoGetRole: '1',
         roleOrigin: '',
         orgLeader: '',
         orgRole: '',
         remark: '',
-        type: '',
         sort: null
       }
       this.modalVisible = true
@@ -616,12 +736,11 @@ handleFormSubmit() {
         pId: node.pId,
         orgName: '',
         orgLevel: node.orgLevel,
-        isAutoGetRole: 0,
+        isAutoGetRole: '1',
         roleOrigin: '',
         orgLeader: '',
         orgRole: '',
         remark: '',
-        type: '',
         sort: null
       }
       this.modalVisible = true
@@ -636,41 +755,41 @@ handleFormSubmit() {
       this.modalVisible = true
     },
     
-  // 弹窗提交处理
- handleModalSubmit() {
-  this.$refs.modalFormRef.validateFields((err) => {
-    if (!err) {
-      this.modalLoading = true;
-      if (this.modalAction === 'edit') {
-        updateGenericPlanOrgInfo(this.modalFormData).then(res => {
-          if (res.data.success) {
-            this.$message.success('修改成功')
-            this.loadNodeAndChildren(this.modalTargetNode.pId)
-            this.expandNode(this.modalTargetNode.pId)
-            this.modalVisible = false
+    // 弹窗提交处理
+    handleModalSubmit() {
+      this.$refs.modalFormRef.validateFields((err) => {
+        if (!err) {
+          this.modalLoading = true;
+          if (this.modalAction === 'edit') {
+            updateGenericPlanOrgInfo(this.modalFormData).then(res => {
+              if (res.data.success) {
+                this.$message.success('修改成功')
+                this.loadNodeAndChildren(this.modalTargetNode.pId)
+                this.expandNode(this.modalTargetNode.pId)
+                this.modalVisible = false
+              } else {
+                this.$message.error(res.data.message);
+              }
+              this.modalLoading = false
+            });
           } else {
-            this.$message.error(res.data.message);
+            addGenericPlanOrgInfo(this.modalFormData).then(res => {
+              if (res.data.success) {
+                this.$message.success('新增成功')
+                this.loadNodeAndChildren(this.modalTargetNode.id)
+                this.expandNode(this.modalTargetNode.id)
+                this.modalVisible = false
+              } else {
+                this.$message.error(res.data.message);
+              }
+              this.modalLoading = false
+            });
           }
-	  this.modalLoading = false
-        });
-      } else {
-        addGenericPlanOrgInfo(this.modalFormData).then(res => {
-          if (res.data.success) {
-            this.$message.success('新增成功')
-            this.loadNodeAndChildren(this.modalTargetNode.id)
-            this.expandNode(this.modalTargetNode.id)
-            this.modalVisible = false
-          } else {
-            this.$message.error(res.data.message);
-          }
-	  this.modalLoading = false
-        });
-      }
-    } else {
-      this.$message.error('表单校验失败，请检查输入');
-    }
-  });
-}
+        } else {
+          this.$message.error('表单校验失败，请检查输入');
+        }
+      });
+    },
     
     // 右键删除节点
     handleRightClickDelete(node) {
@@ -680,7 +799,7 @@ handleFormSubmit() {
         okText: '确定',
         cancelText: '取消'
       })
-      this.globalLoading = true
+      this.treeLoading = true
       deleteInfoByIds(node.id).then(res => {
         if (res.data.success) {
           this.$message.success('删除成功')
@@ -692,7 +811,7 @@ handleFormSubmit() {
           this.$message.error(res.data.message);
         }
       }); 
-      this.globalLoading = false
+      this.treeLoading = false
     },
     
     // 表格行选择变化
@@ -706,30 +825,21 @@ handleFormSubmit() {
     //   this.activeTabKey = 'info'
     // },
 
-     // 新增表格新增按钮处理
+     // 表格新增按钮处理
      handleAddChildFromTable() {
-	 if (!this.selectedNode) return;
-	 this.openAddChildModal(this.selectedNode);
+	    if (!this.selectedNode) return;
+	      this.openAddChildModal(this.selectedNode);
      },
-    
-    // 编辑选中的表格行
-    handleEditSelected() {
-      const selectedRecord = this.childTableData.find(item => item.id === this.selectedRowKeys[0])
-      if (selectedRecord) {
-        this.formData = { ...selectedRecord }
-        this.activeTabKey = 'info'
-      }
-    },
 
-    // 新增表格编辑按钮处理
+    // 表格编辑按钮处理
     handleEditFromTable() {
       const selectedRecord = this.childTableData.find(
-	item => item.id === this.selectedRowKeys[0]
+	      item => item.id === this.selectedRowKeys[0]
       );
       if (selectedRecord) {
-	this.openEditModal(selectedRecord);
+	      this.openEditModal(selectedRecord);
       }
-    }
+    },
     
     // 表格删除子节点
     // handleDeleteChild(record) {
@@ -789,12 +899,9 @@ handleFormSubmit() {
       this.currentRightClickNode = node.dataRef;
       this.selectedKeys = [node.key];
       this.selectedNode = node.dataRef;
-	  
-      const anchor = this.$refs.contextMenuAnchor;
-      if (anchor) {
-       anchor.style.left = `${event.clientX}px`;
-       anchor.style.top = `${event.clientY}px`;
-      }
+      // 更新锚点位置
+      this.anchorX = event.clientX;
+      this.anchorY = event.clientY;
       this.contextMenuVisible = true;
     },
     
@@ -818,7 +925,38 @@ handleFormSubmit() {
     // 自定义节点渲染
     titleRender(node) {
       return node.orgName
-    }
+    },
+
+    //选择组件参数
+    defaultData(){
+      const obj = {
+          currentUser:this.user.userid, 
+          multiple: true,
+      }
+      return obj
+    },
+    //获取选择组件数据并赋值
+    getdata(data,item){
+			if(data && data.length > 0){
+          let arr = data.map(obj => {
+              return obj.empCode
+          })
+          this.formData.orgRole = arr.toString()
+      }else{
+          this.formData.orgRole = ''
+      }
+		},
+    //获取选择组件数据并赋值
+    getdata2(data,item){
+			if(data && data.length > 0){
+          let arr = data.map(obj => {
+              return obj.empCode
+          })
+          this.modalFormData.orgRole = arr.toString()
+      }else{
+          this.modalFormData.orgRole = ''
+      }
+		},
   }
 }
 </script>
