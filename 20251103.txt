@@ -27,32 +27,6 @@
 
 this.searchForm.defaultShippingBin = this.searchForm.defaultShippingBinArr.join(',');
 
-
-
-
-// 请求字典 获取下拉数据
-export function getDictDataByCode(params) {
-  return request(
-    `${BASE_URL}/api/sys/dict/getDictByDictType`,
-    METHOD.GET,
-    params,
-    {},
-  );
-}
-
-
-const { data } = await getDictDataByCode({
-      identity: 'ERC',
-      code: 'AREA',
-    });
-    if (data.code === 200) {
-      this.positionList = data.data.map((item) => ({
-        value: item.code,
-        label: item.name,
-      }));
-    }
-	
-	差个数据字典
 	表单提交时是否自动获取角色为组织角色再赋值
 	列表值翻译
 	
