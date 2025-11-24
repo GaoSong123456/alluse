@@ -89,15 +89,15 @@ $$ LANGUAGE plpgsql;
 
  select 
 CONCAT(
--- ���η�
+-- 修饰符
 		'private ',
--- ��������
+-- 数据类型
 		dataTypeMapping(b.DATA_TYPE),
 		' ',
--- ����
+-- 属性
 		transform_underline(b.COLUMN_NAME),
 		';',
--- ע�Ͳ���
+-- 注释部分
 		'//',
 		a.comment
 	)
@@ -105,8 +105,8 @@ from
 (select COLUMN_NAME,DATA_TYPE from
 	information_schema.COLUMNS
 WHERE
-	TABLE_SCHEMA = 'jyzs' -- SCHEMA��
-AND TABLE_NAME = 'org_menu' -- ����
+	TABLE_SCHEMA = 'jyzs' -- SCHEMA名
+AND TABLE_NAME = 'org_menu' -- 表名
 order by ordinal_position) b,
 
 ( SELECT A.attname AS COLUMN_NAME,
@@ -130,6 +130,33 @@ where b.COLUMN_NAME=a.COLUMN_NAME
 select COLUMN_NAME from
 	information_schema.COLUMNS
 WHERE
-	TABLE_SCHEMA = 'jyzs' --SCHEMA��
-AND TABLE_NAME = 'org_menu' -- ����
+	TABLE_SCHEMA = 'jyzs' --SCHEMA名
+AND TABLE_NAME = 'org_menu' -- 表名
 order by ordinal_position
+
+
+DECLARE
+    v_main_id NUMBER;
+BEGIN
+    -- 1. 显式获取主表序列的下一个值
+    v_main_id := main_seq.NEXTVAL;
+    
+    -- 2. 使用这个ID插入主表
+    INSERT INTO main_table (main_id, name, description)
+    VALUES (v_main_id, '主表记录', '测试数据');
+    
+    -- 3. 使用同一个ID插入子表
+    INSERT INTO sub_table (sub_id, main_id, item_name, quantity)
+    VALUES (sub_seq.NEXTVAL, v_main_id, '子表记录1', 10);
+    
+    -- 可以插入多条子表记录
+    INSERT INTO sub_table (sub_id, main_id, item_name, quantity)
+    VALUES (sub_seq.NEXTVAL, v_main_id, '子表记录2', 20);
+    
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
