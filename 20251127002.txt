@@ -1,16 +1,149 @@
-select 
-   		ID, CASE_NO, EMP_ID, 
-   		ORG_SEQ, STATUS, ORG_ID, 
-   		ORG_NAME_EN, ORG_NAME_CH, 
-   		DATA_SOURCE, CREATERCODE, CREATERNAME, CREATERDATE, 
-   		OPTRCODE, OPTRNAME, OPTDATE ,biz_type
-   		from  epm_tele_working_white_list
-   		where status = 'effective' 
-   		and expire_time is not null 
-   		and sysdate &gt;= to_date(expire_time , 'yyyy-mm-dd HH24:mi')
-   		and emp_id not in 
-		(
-		select distinct m.emp_id from epm_tele_working_white_list m 
-		where m.status='effective' and m.expire_time is not null 
-		and to_date(m.expire_time , 'yyyy-mm-dd HH24:mi') &gt; sysdate
-		)
+
+
+
+<template>
+  <div class="org-management-container">
+    <!-- 全局loading -->
+    <a-row class="full-height">
+      <!-- 组织架构树 (30%) -->
+      <a-col :span="7" class="tree-container">
+        <!-- 新增搜索框 -->
+        <div class="tree-search-container" style="margin-bottom: 16px;">
+          <a-input
+            v-model="searchKeyword"
+            placeholder="搜索组织名称..."
+            allowClear
+            @change="handleSearch"
+            @pressEnter="handleSearch"
+            prefix-icon="search"
+          />
+        </div>
+        
+        <a-spin :spinning="treeLoading" tip="加载中...">
+          <a-tree
+            ref="treeRef"
+            v-if="treeData.length"
+            :treeData="treeData"
+            :expandedKeys="expandedKeys"
+            :selectedKeys="selectedKeys"
+            @select="handleTreeSelect"
+            @expand="handleTreeExpand"
+            @rightClick="handleRightClick"
+            :titleRender="titleRender"
+            :disabled="treeLoading"
+            :autoExpandparent="false"
+          />
+        </a-spin>
+
+        <!-- 右键菜单 -->
+        <!-- 原有右键菜单代码保持不变 -->
+      </a-col>
+
+      <!-- 右侧内容区域 (70%) -->
+      <!-- 原有右侧内容代码保持不变 -->
+    </a-row>
+
+    <!-- 原有模态框代码保持不变 -->
+  </div>
+</template>
+
+<script>
+// 原有导入保持不变
+export default {
+  name: 'genericPlanOrgInfo',
+  components: {},
+  data() {
+    return {
+      // 新增搜索相关数据
+      searchKeyword: '',
+      // 移除 originalExpandedKeys，不再保存原始状态
+      // 原有数据保持不变
+      // ...
+    };
+  },
+  // 移除 created 钩子，不需要保存初始状态
+  // 原有computed保持不变
+  // ...
+  methods: {
+    // 新增搜索处理方法
+    handleSearch() {
+      const keyword = this.searchKeyword.trim();
+      
+      if (!keyword) {
+        // 搜索内容为空时，不修改展开状态，直接返回
+        return;
+      }
+      
+      // 查找所有匹配的节点
+      const matchedNodes = [];
+      this.findMatchedNodes(this.treeData, keyword, matchedNodes);
+      
+      if (matchedNodes.length > 0) {
+        // 只有匹配到结果时，才修改展开节点
+        const expandKeys = new Set();
+        matchedNodes.forEach(node => {
+          this.collectAncestorKeys(node, expandKeys);
+          expandKeys.add(node.id); // 确保匹配节点自身也被展开
+        });
+        
+        this.expandedKeys = Array.from(expandKeys);
+      } else {
+        // 没有匹配到结果时，不修改展开状态
+        this.$message.info('未找到匹配的组织');
+      }
+    },
+    
+    // 递归查找匹配的节点
+    findMatchedNodes(nodes, keyword, result) {
+      nodes.forEach(node => {
+        // 模糊匹配组织名称（不区分大小写）
+        if (node.orgName && node.orgName.toLowerCase().includes(keyword.toLowerCase())) {
+          result.push(node);
+        }
+        
+        // 递归查找子节点
+        if (node.children && node.children.length > 0) {
+          this.findMatchedNodes(node.children, keyword, result);
+        }
+      });
+    },
+    
+    // 收集节点的所有祖先节点ID
+    collectAncestorKeys(node, expandKeys) {
+      if (node.pId && node.pId !== 0) { // 排除根节点
+        expandKeys.add(node.pId);
+        // 查找父节点并继续收集
+        const parentNode = this.findNodeById(this.treeData, node.pId);
+        if (parentNode) {
+          this.collectAncestorKeys(parentNode, expandKeys);
+        }
+      }
+    },
+    
+    // 根据ID查找节点
+    findNodeById(nodes, id) {
+      for (const node of nodes) {
+        if (node.id === id) {
+          return node;
+        }
+        if (node.children && node.children.length > 0) {
+          const found = this.findNodeById(node.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    },
+
+    // 原有方法保持不变
+    // ...
+  },
+};
+</script>
+
+<style scoped>
+/* 原有样式保持不变 */
+/* 可以根据需要添加搜索框样式 */
+.tree-search-container {
+  width: 100%;
+}
+</style>
