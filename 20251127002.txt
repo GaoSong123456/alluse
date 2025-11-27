@@ -1,0 +1,16 @@
+select 
+   		ID, CASE_NO, EMP_ID, 
+   		ORG_SEQ, STATUS, ORG_ID, 
+   		ORG_NAME_EN, ORG_NAME_CH, 
+   		DATA_SOURCE, CREATERCODE, CREATERNAME, CREATERDATE, 
+   		OPTRCODE, OPTRNAME, OPTDATE ,biz_type
+   		from  epm_tele_working_white_list
+   		where status = 'effective' 
+   		and expire_time is not null 
+   		and sysdate &gt;= to_date(expire_time , 'yyyy-mm-dd HH24:mi')
+   		and emp_id not in 
+		(
+		select distinct m.emp_id from epm_tele_working_white_list m 
+		where m.status='effective' and m.expire_time is not null 
+		and to_date(m.expire_time , 'yyyy-mm-dd HH24:mi') &gt; sysdate
+		)
