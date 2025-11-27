@@ -1,0 +1,1128 @@
+<template>
+  <div class="org-management-container">
+    <!-- 全局loading -->
+    <a-row class="full-height">
+      <!-- 左侧树形结构 (30%) -->
+      <a-col :span="7" class="tree-container">
+        <a-spin :spinning="treeLoading" tip="加载中...">
+          <a-tree
+            ref="treeRef"
+            v-if="treeData.length"
+            :treeData="treeData"
+            :expandedKeys="expandedKeys"
+            :selectedKeys="selectedKeys"
+            @select="handleTreeSelect"
+            @expand="handleTreeExpand"
+            @rightClick="handleRightClick"
+            :titleRender="titleRender"
+            :disabled="treeLoading"
+            :autoExpandparent="false"
+          />
+        </a-spin>
+
+        <!-- 右键菜单 -->
+        <a-dropdown
+          :visible="contextMenuVisible"
+          :trigger="['contextmenu']"
+          placement="bottomLeft"
+          @visibleChange="handleContextMenuVisibleChange"
+        >
+          <template #overlay>
+            <a-menu @click="handleContextMenuClick">
+              <a-menu-item v-for="item in contextMenuItems" :key="item.key">
+                {{ item.label }}
+              </a-menu-item>
+            </a-menu>
+          </template>
+          <!-- 添加一个具有尺寸的锚点元素 -->
+          <div
+            ref="contextMenuAnchor"
+            style="position: fixed; width: 1px; height: 1px; z-index: -1"
+            :style="{ left: anchorX + 'px', top: anchorY + 'px' }"
+          ></div>
+        </a-dropdown>
+      </a-col>
+
+      <!-- 右侧内容区域 (70%) -->
+      <a-col :span="17" class="content-container">
+        <a-spin :spinning="contentLoading" tip="加载中...">
+          <a-tabs
+            v-if="selectedNode"
+            :activeKey="activeTabKey"
+            @change="handleTabChange"
+            :disabled="contentLoading"
+          >
+            <!-- 组织信息表单 -->
+            <a-tab-pane v-if="selectedNode && !isRootNode(selectedNode)" key="info" tab="组织信息">
+              <a-form-model
+                ref="detailFormRef"
+                :rules="formDataRules"
+                :model="formData"
+                :label-col="{ span: 6 }"
+                :wrapper-col="{ span: 16 }"
+              >
+                <a-row>
+                  <a-col :span="12">
+                    <a-form-model-item label="组织名称" prop="orgName">
+                      <a-input
+                        v-model.trim="formData.orgName"
+                        placeholder="请输入组织名称"
+                        maxLength="85"
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="组织级别" prop="orgLevel">
+                      <a-input-number
+                        v-model="formData.orgLevel"
+                        style="width: 100%"
+                        disabled
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row>
+                  <a-col :span="12">
+                    <a-form-model-item
+                      label="是否自动获取角色"
+                      prop="isAutoGetRole"
+                    >
+                      <a-select
+                        v-model="formData.isAutoGetRole"
+                        placeholder="请选择"
+                      >
+                        <a-select-option value="0">否</a-select-option>
+                        <a-select-option value="1">是</a-select-option>
+                      </a-select>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12" v-show="formData.isAutoGetRole === '1'">
+                    <a-form-model-item label="角色来源" prop="roleOrigin">
+                      <a-select
+                        v-model="formData.roleOrigin"
+                        placeholder="请选择"
+                        allowClear
+                        @change="handleRoleOriginChange"
+                      >
+                        <a-select-option
+                          v-for="(item, index) in roleOriginList"
+                          :key="index"
+                          :value="item.code"
+                          >{{ item.name }}</a-select-option
+                        >
+                      </a-select>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+
+                <a-row v-show="formData.isAutoGetRole === '0'">
+                  <a-col :span="12">
+                    <a-form-model-item label="组织角色" prop="orgRole">
+                      <commonchooseuser
+                        ref="chooseuser"
+                        :default-data="{ ...defaultData(), empList: formData.orgRole||'' }"
+                        v-on:getdata="(val) => getdata(val)"
+                      >
+                      </commonchooseuser>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+
+                <a-row>
+                  <a-col :span="12">
+                    <a-form-model-item label="排序" prop="sort">
+                      <a-input-number
+                        v-model="formData.sort"
+                        :min="0"
+                        placeholder="请输入排序"
+                        style="width: 100%"
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="备注" prop="remark">
+                      <a-textarea
+                        v-model="formData.remark"
+                        :auto-size="{ minRows: 3, maxRows: 6 }"
+                        placeholder="请输入备注"
+                        maxLength="1333"
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+
+                <a-row>
+                  <a-col
+                    :span="24"
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      margin-top: 4px;
+                      margin-bottom: 20px;
+                    "
+                  >
+                    <a-button
+                      type="primary"
+                      @click="handleFormSubmit"
+                      :loading="formLoading"
+                      >保存</a-button
+                    >
+                  </a-col>
+                </a-row>
+              </a-form-model>
+            </a-tab-pane>
+
+            <!-- 下级组织表格 -->
+            <a-tab-pane
+              v-if="
+                selectedNode &&
+                !isLeafNode(selectedNode)
+              "
+              key="children"
+              tab="下级组织列表"
+            >
+              <div class="table-operations">
+                <a-button
+                  type="primary"
+                  @click="handleAddChildFromTable"
+                  :loading="tableLoading"
+                >
+                  增加
+                </a-button>
+                <a-button
+                  type="primary"
+                  @click="handleEditFromTable"
+                  :disabled="selectedRowKeys.length !== 1 || tableLoading"
+                  :loading="tableLoading"
+                >
+                  编辑
+                </a-button>
+                <a-button
+                  @click="handleBatchDelete"
+                  :disabled="selectedRowKeys.length === 0 || tableLoading"
+                  :loading="tableLoading"
+                >
+                  删除
+                </a-button>
+              </div>
+              <a-table
+                :columns="childColumns"
+                :data-source="childTableData"
+                :pagination="false"
+                :row-key="(record) => record.id"
+                :row-selection="{
+                  selectedRowKeys,
+                  onChange: handleRowSelectionChange,
+                  disabled: tableLoading,
+                }"
+                :loading="tableLoading"
+              >
+              <!-- 自动获取角色列的自定义渲染 -->
+              <a slot="isAutoGetRole" slot-scope="text">{{ getIsAutoGetRole(text) }}</a>
+
+              <!-- 角色来源列的自定义渲染 -->
+              <a slot="roleOrigin" slot-scope="text">{{ getRoleOriginName(text) }}</a>
+                <!-- <template #operation="record">
+                    <a-button 
+                      type="link" 
+                      @click="handleEditChild(record)"
+                      :disabled="tableLoading"
+                    >
+                      编辑
+                    </a-button>
+                    <a-button 
+                      type="link" 
+                      danger 
+                      @click="handleDeleteChild(record)"
+                      :disabled="tableLoading"
+                    >
+                      删除
+                    </a-button>
+                  </template> -->
+              </a-table>
+              <!-- 通用的分页组件 -->
+              <a-pagination
+                show-size-changer
+                v-model="current"
+                :page-size.sync="currentPageSize"
+                :total="total"
+                :show-total="
+                  (total, range) => `${range[0]}-${range[1]} of ${total} items`
+                "
+                @showSizeChange="onShowSizeChange"
+                @change="onPaginationChange"
+                class="pagintion_pos"
+                :pageSizeOptions="pageSizeOptions"
+              />
+            </a-tab-pane>
+          </a-tabs>
+        </a-spin>
+      </a-col>
+    </a-row>
+
+    <!-- 通用弹窗表单 -->
+    <a-modal
+      :visible="modalVisible"
+      :title="modalTitle"
+      :confirm-loading="modalLoading"
+      width="50%"
+      @ok="handleModalSubmit"
+      @cancel="handleModalCancel"
+    >
+      <a-form-model
+        ref="modalFormRef"
+        :model="modalFormData"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 14 }"
+        :rules="modalFormRules"
+      >
+        <a-row>
+          <a-col :span="12">
+            <a-form-model-item label="组织名称" prop="orgName">
+              <a-input
+                v-model.trim="modalFormData.orgName"
+                placeholder="请输入组织名称"
+                maxLength="85"
+              />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-model-item label="组织级别" prop="orgLevel">
+              <a-input-number
+                v-model="modalFormData.orgLevel"
+                style="width: 100%"
+                disabled
+              />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+
+        <a-row>
+          <a-col :span="12">
+            <a-form-model-item label="是否自动获取角色" prop="isAutoGetRole">
+              <a-select
+                v-model="modalFormData.isAutoGetRole"
+                placeholder="请选择"
+              >
+                <a-select-option value="0">否</a-select-option>
+                <a-select-option value="1">是</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="12" v-show="modalFormData.isAutoGetRole === '1'">
+            <a-form-model-item label="角色来源" prop="roleOrigin">
+              <a-select v-model="modalFormData.roleOrigin" allowClear placeholder="请选择" @change="handleRoleOriginChange2">
+                <a-select-option
+                  v-for="(item, index) in roleOriginList"
+                  :key="index"
+                  :value="item.code"
+                  >{{ item.name }}</a-select-option
+                >
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+
+        <a-row v-show="modalFormData.isAutoGetRole === '0'">
+          <a-col :span="12">
+            <a-form-model-item label="组织角色" prop="orgRole">
+              <commonchooseuser
+                ref="chooseuser2"
+                :default-data="{ ...defaultData(), empList: modalFormData.orgRole||'' }"
+                v-on:getdata="(val) => getdata2(val)"
+              >
+              </commonchooseuser>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+
+        <a-row>
+          <a-col :span="12">
+            <a-form-model-item label="排序" prop="sort">
+              <a-input-number
+                v-model="modalFormData.sort"
+                placeholder="请输入排序"
+                style="width: 100%"
+              />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-model-item label="备注" prop="remark">
+              <a-textarea
+                v-model="modalFormData.remark"
+                :auto-size="{ minRows: 3, maxRows: 6 }"
+                placeholder="请输入备注"
+                maxLength="1333"
+              />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+      </a-form-model>
+    </a-modal>
+  </div>
+</template>
+
+<script>
+import {
+  getGenericPlanOrgInfoTree,
+  addGenericPlanOrgInfo,
+  updateGenericPlanOrgInfo,
+  deleteInfoByIds,
+  getGenericPlanOrgInfoChildById,
+  getGenericPlanOrgInfoById,
+  getDictDataByCode,
+} from './service';
+import Cookie from 'js-cookie';
+import { Modal } from 'ant-design-vue';
+
+export default {
+  name: 'genericPlanOrgInfo',
+  components: {},
+  data() {
+    return {
+      user: {},
+      // 树形数据
+      treeData: [],
+      selectedKeys: [],
+      expandedKeys: [],
+      selectedNode: null,
+
+      // 右键菜单相关
+      contextMenuVisible: false,
+      currentRightClickNode: null,
+      anchorX: 0,
+      anchorY: 0,
+
+      roleOriginList: [],
+
+      formDataRules: {
+        orgName: [
+          { required: true, message: '请输入组织名称', trigger: 'blur' },
+        ],
+        orgLevel: [
+          { required: true, message: '组织级别不能为空', trigger: 'blur' },
+        ],
+        isAutoGetRole: [
+          {
+            required: true,
+            message: '请选择是否自动获取角色',
+            trigger: 'change',
+          },
+        ],
+        sort: [
+          // 自定义验证规则
+          {
+            validator: (rule, value, callback) => {
+              // 非必填，如果为空则直接通过
+              if (value === null || value === undefined || value === '') {
+                callback();
+                return;
+              }
+              // 检查是否为整数
+              if (Number.isInteger(value)) {
+                callback();
+              } else {
+                callback(new Error('请输入整数'));
+              }
+            },
+            trigger: 'blur',
+          },
+        ],
+      },
+      // 表单数据
+      formData: {
+        id: null,
+        pId: null,
+        orgName: '',
+        orgLevel: null,
+        isAutoGetRole: '0',
+        roleOrigin: '',
+        orgLeader: '',
+        orgRole: '',
+        remark: '',
+        sort: null,
+      },
+
+      // 标签页
+      activeTabKey: 'info',
+
+      currentPageSize: 20,
+      current: 1,
+      total: 0,
+      pageSizeOptions: ['10', '20', '30', '40'],
+      sortField: '',
+      sortOrder: '',
+      // 子节点表格
+      childColumns: [
+        { title: '组织名称', dataIndex: 'orgName', key: 'orgName' },
+        { title: '组织级别', dataIndex: 'orgLevel', key: 'orgLevel'},
+        {
+          title: '是否自动获取角色',
+          dataIndex: 'isAutoGetRole',
+          key: 'isAutoGetRole',
+          scopedSlots: {
+            customRender: 'isAutoGetRole'
+          },
+        },
+        {
+          title: '角色来源',
+          dataIndex: 'roleOrigin',
+          key: 'roleOrigin',
+          scopedSlots: {
+            customRender: 'roleOrigin'
+          },
+        },
+        { title: '组织负责人', dataIndex: 'orgLeader', key: 'orgLeader' },
+        { title: '组织角色', dataIndex: 'orgRole', key: 'orgRole' },
+        { title: '排序', dataIndex: 'sort', key: 'sort' },
+        {
+          title: '最后修改人',
+          dataIndex: 'lastModifierId',
+          key: 'lastModifierId',
+        },
+        {
+          title: '最后修改时间',
+          dataIndex: 'lastModifyTime',
+          key: 'lastModifyTime',
+        },
+        // { title: '操作', key: 'operation', scopedSlots: { customRender: 'operation' } }
+      ],
+      childTableData: [],
+      selectedRowKeys: [],
+
+      // 弹窗相关
+      modalVisible: false,
+      modalTitle: '',
+      modalFormData: {
+        id: null,
+        pId: null,
+        orgName: '',
+        orgLevel: null,
+        isAutoGetRole: '0',
+        roleOrigin: '',
+        orgLeader: '',
+        orgRole: '',
+        remark: '',
+        sort: null,
+      },
+      modalAction: '', // addChild, addSibling, edit
+      modalTargetNode: null,
+
+      modalFormRules: {
+        orgName: [
+          { required: true, message: '请输入组织名称', trigger: 'blur' },
+        ],
+        orgLevel: [
+          { required: true, message: '组织级别不能为空', trigger: 'blur' },
+        ],
+        isAutoGetRole: [
+          {
+            required: true,
+            message: '请选择是否自动获取角色',
+            trigger: 'change',
+          },
+        ],
+        sort: [
+          // 自定义验证规则
+          {
+            validator: (rule, value, callback) => {
+              // 非必填，如果为空则直接通过
+              if (value === null || value === undefined || value === '') {
+                callback();
+                return;
+              }
+              // 检查是否为整数
+              if (Number.isInteger(value)) {
+                callback();
+              } else {
+                callback(new Error('请输入整数'));
+              }
+            },
+            trigger: 'blur',
+          },
+        ],
+      },
+
+      // Loading状态
+      treeLoading: false,
+      contentLoading: false,
+      formLoading: false,
+      tableLoading: false,
+      modalLoading: false,
+    };
+  },
+  computed: {
+    pageParam() {
+      return {
+        page: this.current,
+        pageSize: this.currentPageSize,
+        sortField: this.sortField,
+        sortOrder: this.sortOrder,
+      };
+    },
+    contextMenuItems() {
+      const node = this.currentRightClickNode;
+      if (!node) return [];
+
+      const level = node.orgLevel;
+      const isRoot = level === 0 && node.id === 0;
+
+      if (isRoot) {
+        return [
+          { key: 'addChild', label: '添加一级组织' },
+          { key: 'refresh', label: '刷新' },
+        ];
+      } else if (level === 1) {
+        return [
+          { key: 'addChild', label: '添加二级组织' },
+          { key: 'addSibling', label: '添加一级组织' },
+          { key: 'edit', label: '修改一级组织' },
+          { key: 'delete', label: '删除一级组织' },
+          { key: 'refresh', label: '刷新' },
+        ];
+      } else if (level === 2) {
+        return [
+          { key: 'addChild', label: '添加三级组织' },
+          { key: 'addSibling', label: '添加二级组织' },
+          { key: 'edit', label: '修改二级组织' },
+          { key: 'delete', label: '删除二级组织' },
+          { key: 'refresh', label: '刷新' },
+        ];
+      } else if (level === 3) {
+        return [
+          { key: 'addSibling', label: '添加三级组织' },
+          { key: 'edit', label: '修改三级组织' },
+          { key: 'delete', label: '删除三级组织' },
+          { key: 'refresh', label: '刷新' },
+        ];
+      }
+
+      return [];
+    },
+  },
+  mounted() {
+    this.user = JSON.parse(Cookie.get(process.env.VUE_APP_USER_KEY) || '{}');
+  },
+  created() {
+    this.loadFullTreeData();
+    this.queryRoleOriginList();
+  },
+  methods: {
+    // 加载完整树形数据
+    loadFullTreeData() {
+      this.treeLoading = true;
+      getGenericPlanOrgInfoTree({}).then((res) => {
+        if (res.data.success) {
+          this.treeData = this.convertToTreeFormat(res.data.data);
+          this.expandedKeys = [];
+        }
+        this.treeLoading = false;
+      });
+    },
+
+    // 加载单个节点及子节点数据
+    loadNodeAndChildren(nodeId) {
+      this.treeLoading = true;
+      const data = { id: nodeId };
+      getGenericPlanOrgInfoTree(data).then((res) => {
+        if (res.data.success) {
+          this.treeData = this.updateNodeChildren(
+            this.treeData,
+            nodeId,
+            res.data.data[0]?.children || [],
+          );
+          this.expandNode(nodeId);
+        }
+        this.treeLoading = false;
+      });
+    },
+
+    // 仅更新节点的children数据
+    updateNodeChildren(tree, targetId, newChildren) {
+      return tree.map((node) => {
+        if (node.id === targetId) {
+          return {
+            ...node,
+            children: newChildren ? this.convertToTreeFormat(newChildren) : [],
+          };
+        }
+        if (node.children && node.children.length > 0) {
+          return {
+            ...node,
+            children: this.updateNodeChildren(
+              node.children,
+              targetId,
+              newChildren,
+            ),
+          };
+        }
+        return node;
+      });
+    },
+
+    // 转换为树形组件需要的格式
+    convertToTreeFormat(data) {
+      return data.map((item) => ({
+        ...item,
+        key: item.id,
+        title: item.orgName,
+        children: item.children ? this.convertToTreeFormat(item.children) : [],
+      }));
+    },
+
+    // 树形节点选择
+    handleTreeSelect(selectedKeys, info) {
+      const node = info.node?.dataRef;
+      if (!node) {
+        this.selectedNode = null;
+        this.selectedKeys = [];
+        return;
+      }
+
+      this.selectedKeys = selectedKeys;
+      this.selectedNode = node;
+      if (this.isRootNode(node)) {
+        this.activeTabKey = 'children';
+      }else{
+        this.activeTabKey = 'info';
+      }
+      this.loadNodeDetail(node.id);
+    },
+
+    // 树形节点展开/折叠事件
+    handleTreeExpand(expandedKeys) {
+      this.expandedKeys = expandedKeys;
+    },
+
+    // 强制展开指定节点
+    expandNode(nodeId) {
+      if (!this.expandedKeys.includes(nodeId)) {
+        this.expandedKeys = [...this.expandedKeys, nodeId];
+      }
+    },
+
+    // 加载节点详情
+    loadNodeDetail(id) {
+      this.contentLoading = true;
+      getGenericPlanOrgInfoById({ id: id }).then((res) => {
+        if (res.data.success) {
+          this.formData = { ...res.data.data };
+          this.loadChildTableData(id);
+        }
+        this.contentLoading = false;
+      });
+    },
+
+    //表格分页
+    onPaginationChange(page, pageSize) {
+      this.current = page;
+      this.currentPageSize = pageSize;
+      if (this.selectedNode) {
+        this.loadChildTableData(this.selectedNode.id);
+      }
+    },
+    onShowSizeChange(page, pageSize) {
+      this.current = page;
+      this.currentPageSize = pageSize;
+      if (this.selectedNode) {
+        this.loadChildTableData(this.selectedNode.id);
+      }
+    },
+
+    // 加载子节点表格数据
+    loadChildTableData(id) {
+      this.tableLoading = true;
+      getGenericPlanOrgInfoChildById({ id: id }, this.pageParam).then((res) => {
+        if (res.data.success) {
+          this.total = res.data.data.size;
+          this.childTableData = res.data.data.list;
+          this.selectedRowKeys = [];
+        }
+        this.tableLoading = false;
+      });
+    },
+
+    // 标签页切换
+    handleTabChange(key) {
+      this.activeTabKey = key;
+      if (key === 'children' && this.selectedNode) {
+        this.loadChildTableData(this.selectedNode.id);
+      }
+    },
+
+    // 表单提交（标签页操作）
+    handleFormSubmit() {
+      this.$refs.detailFormRef.validate((valid) => {
+        // 如果效验合法
+        if (valid) {
+          // 校验通过，执行提交逻辑
+          this.formLoading = true;
+          if (this.formData.isAutoGetRole === '1') {
+            this.formData.orgRole = '';
+          }else if(this.formData.isAutoGetRole === '0'){
+            this.formData.roleOrigin = '';
+          }
+          updateGenericPlanOrgInfo(this.formData).then((res) => {
+            if (res.data.success) {
+              this.$message.success('修改成功');
+              this.$refs.detailFormRef.clearValidate();
+              if (this.selectedNode) {
+                this.loadNodeAndChildren(this.selectedNode.pId);
+              }
+            } else {
+              this.$message.error(res.data.message);
+            }
+            this.formLoading = false;
+          });
+        }
+      });
+    },
+
+    // 右键菜单点击处理
+    handleContextMenuClick({ key }) {
+      const node = this.currentRightClickNode;
+      if (!node) return;
+
+      this.contextMenuVisible = false;
+
+      switch (key) {
+        case 'addChild':
+          this.openAddChildModal(node);
+          break;
+        case 'addSibling':
+          this.openAddSiblingModal(node);
+          break;
+        case 'edit':
+          this.openEditModal(node);
+          break;
+        case 'delete':
+          this.handleRightClickDelete(node);
+          break;
+        case 'refresh':
+          this.loadNodeAndChildren(node.id);
+          break;
+      }
+    },
+
+    // 打开新增下级组织信息弹窗
+    openAddChildModal(parentNode) {
+      this.modalAction = 'addChild';
+      this.modalTargetNode = parentNode;
+      this.modalTitle = '新增组织信息';
+      this.modalFormData = {
+        id: null,
+        pId: parentNode.id,
+        orgName: '',
+        orgLevel: parentNode.orgLevel + 1,
+        isAutoGetRole: '0',
+        roleOrigin: '',
+        orgLeader: '',
+        orgRole: '',
+        remark: '',
+        sort: null,
+      };
+
+      this.modalVisible = true;
+    },
+
+    // 打开新增同级组织信息弹窗
+    openAddSiblingModal(node) {
+      this.modalAction = 'addSibling';
+      this.modalTargetNode = node;
+      this.modalTitle = '新增组织信息';
+      this.modalFormData = {
+        id: null,
+        pId: node.pId,
+        orgName: '',
+        orgLevel: node.orgLevel,
+        isAutoGetRole: '0',
+        roleOrigin: '',
+        orgLeader: '',
+        orgRole: '',
+        remark: '',
+        sort: null,
+      };
+      this.modalVisible = true;
+    },
+
+    // 打开编辑组织信息弹窗
+    openEditModal(node) {
+      this.modalAction = 'edit';
+      this.modalTargetNode = node;
+      this.modalTitle = '编辑组织信息';
+      this.modalFormData = { ...node };
+      this.modalVisible = true;
+    },
+
+    // 弹窗提交处理
+    handleModalSubmit() {
+      this.$refs.modalFormRef.validate((valid) => {
+        // 如果效验合法
+        if (valid) {
+          this.modalLoading = true;
+          if (this.modalFormData.isAutoGetRole === '1') {
+            this.modalFormData.orgRole = '';
+          }else if(this.modalFormData.isAutoGetRole === '0'){
+            this.modalFormData.roleOrigin = '';
+          }
+          if (this.modalAction === 'edit') {
+            updateGenericPlanOrgInfo(this.modalFormData).then((res) => {
+              if (res.data.success) {
+                this.$message.success('修改成功');
+                this.loadNodeAndChildren(this.modalTargetNode.pId);
+                this.handleModalCancel();
+                if (this.selectedNode) {
+                  this.loadNodeDetail(this.selectedNode.id);
+                }
+              } else {
+                this.$message.error(res.data.message);
+              }
+              this.modalLoading = false;
+            });
+          } else {
+            addGenericPlanOrgInfo(this.modalFormData).then((res) => {
+              if (res.data.success) {
+                this.$message.success('新增成功');
+                if (this.modalAction === 'addChild') {
+                  this.loadNodeAndChildren(this.modalTargetNode.id);
+                  if (this.selectedNode) {
+                    this.loadNodeDetail(this.selectedNode.id);
+                  }
+                } else if (this.modalAction === 'addSibling') {
+                  this.loadNodeAndChildren(this.modalTargetNode.pId);
+                  if (this.selectedNode) {
+                    this.loadNodeDetail(this.selectedNode.id);
+                  }
+                }
+                this.handleModalCancel();
+              } else {
+                this.$message.error(res.data.message);
+              }
+              this.modalLoading = false;
+            });
+          }
+        }
+      });
+    },
+
+    //弹窗关闭
+    handleModalCancel() {
+      this.modalVisible = false;
+      this.$refs.modalFormRef.resetFields();
+      this.$refs.modalFormRef.clearValidate();
+    },
+
+    // 右键删除节点
+    handleRightClickDelete(node) {
+      Modal.confirm({
+        title: '确定要删除组织吗？',
+        onOk: () => {
+          this.treeLoading = true;
+          deleteInfoByIds({ ids: node.id }).then((res) => {
+            if (res.data.success) {
+              this.$message.success('删除成功');
+              this.loadNodeAndChildren(node.pId);
+              this.selectedKeys = [];
+              this.selectedNode = null;
+            } else {
+              this.$message.error(res.data.message);
+            }
+            this.treeLoading = false;
+          });
+        },
+      });
+    },
+
+    // 表格行选择变化
+    handleRowSelectionChange(keys) {
+      this.selectedRowKeys = keys;
+    },
+
+    // 表格新增按钮处理
+    handleAddChildFromTable() {
+      if (!this.selectedNode) return;
+      this.openAddChildModal(this.selectedNode);
+    },
+
+    // 表格编辑按钮处理
+    handleEditFromTable() {
+      const selectedRecord = this.childTableData.find(
+        (item) => item.id === this.selectedRowKeys[0],
+      );
+      if (selectedRecord) {
+        this.openEditModal(selectedRecord);
+      }
+    },
+
+    // 表格批量删除
+    handleBatchDelete() {
+      if (this.selectedRowKeys.length === 0) {
+        this.$message.error('请选择要删除的行数据');
+        return;
+      }
+
+      Modal.confirm({
+        title: '确定要删除组织吗？',
+        onOk: () => {
+          this.tableLoading = true;
+          const ids = this.selectedRowKeys.join(',');
+          deleteInfoByIds({ ids: ids }).then((res) => {
+            if (res.data.success) {
+              this.$message.success('删除成功');
+              if (this.selectedNode) {
+                this.loadNodeAndChildren(this.selectedNode.id);
+                this.loadChildTableData(this.selectedNode.id);
+              }
+            } else {
+              this.$message.error(res.data.message);
+            }
+            this.tableLoading = false;
+          });
+        },
+      });
+    },
+
+    // 右键菜单显示/隐藏
+    handleRightClick({ event, node }) {
+      event.preventDefault();
+      this.currentRightClickNode = node.dataRef;
+      this.selectedKeys = [node.key];
+      // 更新锚点位置
+      this.anchorX = event.clientX;
+      this.anchorY = event.clientY;
+      this.contextMenuVisible = true;
+    },
+
+    handleContextMenuVisibleChange(visible) {
+      this.contextMenuVisible = visible;
+      if (!visible) {
+        this.currentRightClickNode = null;
+      }
+    },
+
+    // 根节点判断
+    isRootNode(node) {
+      return node.orgLevel === 0 && node.id === 0;
+    },
+
+    // // 叶子节点判断
+    isLeafNode(node) {
+      return node.orgLevel === 3;
+    },
+
+    // 自定义节点渲染
+    titleRender(node) {
+      return node.orgName;
+    },
+
+    //选择组件参数
+    defaultData() {
+      const obj = {
+        currentUser: this.user.userid,
+        multiple: true,
+      };
+      return obj;
+    },
+    //获取选择组件数据并赋值
+    getdata(data, item) {
+      if (data && data.length > 0) {
+        let arr = data.map((obj) => {
+          return obj.empCode;
+        });
+        this.formData.orgRole = arr.toString();
+      } else {
+        this.formData.orgRole = '';
+      }
+    },
+    //获取选择组件数据并赋值
+    getdata2(data, item) {
+      if (data && data.length > 0) {
+        let arr = data.map((obj) => {
+          return obj.empCode;
+        });
+        this.modalFormData.orgRole = arr.toString();
+      } else {
+        this.modalFormData.orgRole = '';
+      }
+    },
+
+    // 查询数据字典
+    queryRoleOriginList() {
+      getDictDataByCode({
+        identity: 'ERC',
+        code: 'GENERIC_PLAN_ROLE_ORIGIN',
+      }).then((res) => {
+        this.roleOriginList = res.data.data;
+      });
+    },
+
+    handleRoleOriginChange(value) {
+      if (value === undefined) {
+        this.formData.roleOrigin = "";
+      } else {
+        this.formData.roleOrigin = value;
+      }
+    },
+
+    handleRoleOriginChange2(value) {
+      if (value === undefined) {
+        this.modalFormData.roleOrigin = "";
+      } else {
+        this.modalFormData.roleOrigin = value;
+      }
+    },
+
+     //获取是否自动获取角色名称
+     getIsAutoGetRole(value) {
+      if (value === '1') {
+        return '是';
+      } else if (value === '0') {
+        return '否';
+      } else {
+        return '';
+      }
+    },
+    //获取角色来源名称
+    getRoleOriginName(value) {
+      const item = this.roleOriginList.find((item) => item.code === value);
+      return item ? item.name : value;
+    },
+  },
+};
+</script>
+
+<style scoped>
+.org-management-container {
+  background-color: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.tree-container {
+  height: calc(100vh - 215px);
+  border: 1px solid #e8ecef;
+  padding: 16px;
+  overflow: auto;
+}
+
+.content-container {
+  height: 100%;
+  padding: 16px;
+  overflow: auto;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.ant-spin-nested-loading {
+  position: relative;
+  z-index: 1;
+}
+</style>
