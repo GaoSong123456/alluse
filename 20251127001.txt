@@ -181,79 +181,79 @@
               key="children"
               tab="下级组织列表"
             >
-              <div class="table-operations">
-                <a-button
-                  type="primary"
-                  @click="handleAddChildFromTable"
+                <div class="table-operations">
+                  <a-button
+                    type="primary"
+                    @click="handleAddChildFromTable"
+                    :loading="tableLoading"
+                  >
+                    增加
+                  </a-button>
+                  <a-button
+                    type="primary"
+                    @click="handleEditFromTable"
+                    :disabled="selectedRowKeys.length !== 1 || tableLoading"
+                    :loading="tableLoading"
+                  >
+                    编辑
+                  </a-button>
+                  <a-button
+                    @click="handleBatchDelete"
+                    :disabled="selectedRowKeys.length === 0 || tableLoading"
+                    :loading="tableLoading"
+                  >
+                    删除
+                  </a-button>
+                </div>
+                <a-table
+                  :columns="childColumns"
+                  :data-source="childTableData"
+                  :pagination="false"
+                  :row-key="(record) => record.id"
+                  :row-selection="{
+                    selectedRowKeys,
+                    onChange: handleRowSelectionChange,
+                    disabled: tableLoading,
+                  }"
                   :loading="tableLoading"
                 >
-                  增加
-                </a-button>
-                <a-button
-                  type="primary"
-                  @click="handleEditFromTable"
-                  :disabled="selectedRowKeys.length !== 1 || tableLoading"
-                  :loading="tableLoading"
-                >
-                  编辑
-                </a-button>
-                <a-button
-                  @click="handleBatchDelete"
-                  :disabled="selectedRowKeys.length === 0 || tableLoading"
-                  :loading="tableLoading"
-                >
-                  删除
-                </a-button>
-              </div>
-              <a-table
-                :columns="childColumns"
-                :data-source="childTableData"
-                :pagination="false"
-                :row-key="(record) => record.id"
-                :row-selection="{
-                  selectedRowKeys,
-                  onChange: handleRowSelectionChange,
-                  disabled: tableLoading,
-                }"
-                :loading="tableLoading"
-              >
-              <!-- 自动获取角色列的自定义渲染 -->
-              <a slot="isAutoGetRole" slot-scope="text">{{ getIsAutoGetRole(text) }}</a>
+                <!-- 自动获取角色列的自定义渲染 -->
+                <a slot="isAutoGetRole" slot-scope="text">{{ getIsAutoGetRole(text) }}</a>
 
-              <!-- 角色来源列的自定义渲染 -->
-              <a slot="roleOrigin" slot-scope="text">{{ getRoleOriginName(text) }}</a>
-                <!-- <template #operation="record">
-                    <a-button 
-                      type="link" 
-                      @click="handleEditChild(record)"
-                      :disabled="tableLoading"
-                    >
-                      编辑
-                    </a-button>
-                    <a-button 
-                      type="link" 
-                      danger 
-                      @click="handleDeleteChild(record)"
-                      :disabled="tableLoading"
-                    >
-                      删除
-                    </a-button>
-                  </template> -->
-              </a-table>
-              <!-- 通用的分页组件 -->
-              <a-pagination
-                show-size-changer
-                v-model="current"
-                :page-size.sync="currentPageSize"
-                :total="total"
-                :show-total="
-                  (total, range) => `${range[0]}-${range[1]} of ${total} items`
-                "
-                @showSizeChange="onShowSizeChange"
-                @change="onPaginationChange"
-                class="pagintion_pos"
-                :pageSizeOptions="pageSizeOptions"
-              />
+                <!-- 角色来源列的自定义渲染 -->
+                <a slot="roleOrigin" slot-scope="text">{{ getRoleOriginName(text) }}</a>
+                  <!-- <template #operation="record">
+                      <a-button 
+                        type="link" 
+                        @click="handleEditChild(record)"
+                        :disabled="tableLoading"
+                      >
+                        编辑
+                      </a-button>
+                      <a-button 
+                        type="link" 
+                        danger 
+                        @click="handleDeleteChild(record)"
+                        :disabled="tableLoading"
+                      >
+                        删除
+                      </a-button>
+                    </template> -->
+                </a-table>
+                <!-- 通用的分页组件 -->
+                <div class="pagination-container">
+                    <a-pagination
+                      show-size-changer
+                      v-model="current"
+                      :page-size.sync="currentPageSize"
+                      :total="total"
+                      :show-total="total => `共 ${total} 条`"
+                      @showSizeChange="onShowSizeChange"
+                      @change="onPaginationChange"
+                      class="pagintion_pos"
+                      :pageSizeOptions="pageSizeOptions"
+                />
+                </div>
             </a-tab-pane>
           </a-tabs>
         </a-spin>
@@ -419,10 +419,10 @@ export default {
                 return;
               }
               // 检查是否为整数
-              if (Number.isInteger(value)) {
+              if (Number.isInteger(value) && value>=0) {
                 callback();
               } else {
-                callback(new Error('请输入整数'));
+                callback(new Error('请输入正整数'));
               }
             },
             trigger: 'blur',
@@ -532,10 +532,10 @@ export default {
                 return;
               }
               // 检查是否为整数
-              if (Number.isInteger(value)) {
+              if (Number.isInteger(value) && value>=0) {
                 callback();
               } else {
-                callback(new Error('请输入整数'));
+                callback(new Error('请输入正整数'));
               }
             },
             trigger: 'blur',
@@ -1025,18 +1025,18 @@ export default {
     },
     //获取选择组件数据并赋值
     getdata(data, item) {
-      if (data && data.length > 0) {
+      if (data && data.length > 0 && data.length < 32) {
         let arr = data.map((obj) => {
-          return obj.empCode;
-        });
-        this.formData.orgRole = arr.toString();
+            return obj.empCode;
+          });
+          this.formData.orgRole = arr.toString();
       } else {
         this.formData.orgRole = '';
       }
     },
     //获取选择组件数据并赋值
     getdata2(data, item) {
-      if (data && data.length > 0) {
+      if (data && data.length > 0 && data.length < 32) {
         let arr = data.map((obj) => {
           return obj.empCode;
         });
@@ -1094,7 +1094,7 @@ export default {
 <style scoped>
 .org-management-container {
   background-color: #fff;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -1103,14 +1103,14 @@ export default {
 }
 
 .tree-container {
-  height: calc(100vh - 215px);
+  height: calc(100vh - 200px);
   border: 1px solid #e8ecef;
   padding: 16px;
   overflow: auto;
 }
 
 .content-container {
-  height: 100%;
+  height: calc(100vh - 200px);
   padding: 16px;
   overflow: auto;
 }
@@ -1119,6 +1119,11 @@ export default {
   margin-bottom: 16px;
   display: flex;
   gap: 8px;
+}
+
+.pagination-container {
+  text-align: right;
+  margin-top: 16px;
 }
 
 .ant-spin-nested-loading {
