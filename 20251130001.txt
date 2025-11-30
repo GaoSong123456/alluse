@@ -1,0 +1,79 @@
+<div class="content-container">
+  <div class="table-operations">
+    <!-- 操作按钮 -->
+  </div>
+  
+  <!-- 表格容器：添加滚动包裹层 -->
+  <div class="table-container">
+    <div class="table-scroll-wrapper">
+      <a-table
+        :columns="childColumns"
+        :data-source="childTableData"
+        :pagination="false"
+        :row-key="(record) => record.id"
+        :loading="tableLoading"
+        size="middle"
+      >
+        <!-- 表格内容 -->
+      </a-table>
+    </div>
+  </div>
+  
+  <!-- 分页容器 -->
+  <div class="pagination-container">
+    <a-pagination ... />
+  </div>
+</div>
+
+
+.content-container {
+  height: calc(100vh - 200px); /* 与左侧tree高度保持一致 */
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 禁止容器整体滚动 */
+}
+
+/* 表格操作区 */
+.table-operations {
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+/* 表格容器 - 关键：让表格内容可滚动 */
+.table-container {
+  flex: 1; /* 占满剩余空间 */
+  overflow: hidden; /* 避免容器本身滚动 */
+  position: relative;
+}
+
+/* 表格内容区 - 核心滚动设置 */
+.table-scroll-wrapper {
+  height: 100%;
+  overflow: auto;
+}
+
+/* 确保antd表格适应容器高度 */
+.ant-table-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-table-body {
+  flex: 1;
+  overflow-y: auto !important; /* 强制表格内容滚动 */
+}
+
+/* 分页容器 - 固定在底部 */
+.pagination-container {
+  text-align: right;
+  padding: 12px 0;
+  margin-top: auto; /* 固定在容器底部 */
+}
