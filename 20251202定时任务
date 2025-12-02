@@ -1,0 +1,154 @@
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
+
+@Component
+public class MonthlyLastWeekTask {
+
+    // 定时任务：6月、12月的每周一凌晨0点执行
+    @Scheduled(cron = "0 0 0 ? 6,12 MON") 
+    public void executeTask() {
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Shanghai")); // 指定时区（避免时区问题）
+        
+        // 1. 双重校验：确保是6月或12月（防止Cron表达式误触发）
+        int month = today.getMonthValue();
+        if (month != 6 && month != 12) {
+            System.out.println("当前月份不是6月/12月，跳过任务");
+            return;
+        }
+        
+        // 2. 判断是否为当月最后1周（自然周：周一至周日）
+        boolean isLastWeekOfMonth = isLastWeekOfMonth(today);
+        if (isLastWeekOfMonth) {
+            System.out.println("执行6月/12月最后1周周一的任务：" + today);
+            // 执行核心业务逻辑...
+        } else {
+            System.out.println("当前不是6月/12月最后1周，跳过任务：" + today);
+        }
+    }
+
+    /**
+     * 判断当前日期是否为所在月份的最后1周（自然周：周一至周日）
+     * @param date 当前日期
+     * @return true=最后1周，false=非最后1周
+     */
+    private boolean isLastWeekOfMonth(LocalDate date) {
+        // 步骤1：获取当月最后1天
+        LocalDate lastDayOfMonth = date.with(TemporalAdjusters.lastDayOfMonth());
+        
+        // 步骤2：获取当前日期所在的周（以周一为一周的第一天）
+        int currentWeek = date.get(WeekFields.ISO.weekOfMonth());
+        
+        // 步骤3：获取当月最后1天所在的周（以周一为一周的第一天）
+        int lastWeekOfMonth = lastDayOfMonth.get(WeekFields.ISO.weekOfMonth());
+        
+        // 步骤4：判断当前周是否等于当月最后1周
+        return currentWeek == lastWeekOfMonth;
+    }
+}
+
+
+
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+@Component
+public class MonthlyLastWeekTask {
+
+    // 时区（避免服务器时区差异，指定Asia/Shanghai）
+    private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("Asia/Shanghai");
+
+    // 定时任务：6月、12月的每周一凌晨0点执行（根据框架调整Cron的星期字段）
+    // Spring Scheduler 用：@Scheduled(cron = "0 0 0 ? 6,12 MON")
+    // Quartz 用：@Scheduled(cron = "0 0 0 ? 6,12 2")
+    @Scheduled(cron = "0 0 0 ? 6,12 MON")
+    public void executeTask() {
+        // 获取当前日期（指定时区）
+        Calendar calendar = Calendar.getInstance(TIME_ZONE);
+        int month = calendar.get(Calendar.MONTH) + 1; // Calendar月份是0-11，需+1转为1-12
+
+        // 1. 双重校验：确保是6月或12月
+        if (month != 6 && month != 12) {
+            System.out.println("当前月份不是6月/12月，跳过任务");
+            return;
+        }
+
+        // 2. 判断是否为当月最后1周（自然周：周一至周日）
+        boolean isLastWeekOfMonth = isLastWeekOfMonth(calendar);
+        if (isLastWeekOfMonth) {
+            System.out.println("执行6月/12月最后1周周一的任务：" + new Date());
+            // 执行核心业务逻辑...
+        } else {
+            System.out.println("当前不是6月/12月最后1周，跳过任务：" + new Date());
+        }
+    }
+
+    /**
+     * JDK7 实现：判断当前日期是否为所在月份的最后1周（自然周：周一至周日）
+     * @param calendar 当前日期的Calendar对象（已指定时区）
+     * @return true=最后1周，false=非最后1周
+     */
+    private boolean isLastWeekOfMonth(Calendar calendar) {
+        // 步骤1：复制当前Calendar，避免修改原对象
+        Calendar tempCal = (Calendar) calendar.clone();
+
+        // 步骤2：获取当月最后1天
+        int currentMonth = tempCal.get(Calendar.MONTH);
+        tempCal.set(Calendar.DATE, tempCal.getActualMaximum(Calendar.DATE)); // 设为当月最后1天
+        Date lastDayOfMonth = tempCal.getTime();
+
+        // 步骤3：获取当前日期所在的周（以周一为一周第一天）
+        int currentWeek = getWeekOfMonth(calendar);
+
+        // 步骤4：获取当月最后1天所在的周（以周一为一周第一天）
+        int lastWeekOfMonth = getWeekOfMonth(tempCal);
+
+        // 步骤5：当前周 == 当月最后1周 → 是最后1周
+        return currentWeek == lastWeekOfMonth;
+    }
+
+    /**
+     * JDK7 辅助方法：计算日期在当月的第几周（以周一为一周的第一天）
+     * @param calendar 待计算的日期
+     * @return 周数（1开始）
+     */
+    private int getWeekOfMonth(Calendar calendar) {
+        Calendar tempCal = (Calendar) calendar.clone();
+        tempCal.setFirstDayOfWeek(Calendar.MONDAY); // 设周一为一周第一天
+        tempCal.setMinimalDaysInFirstWeek(1); // 第一周至少1天（避免跨月周数计算异常）
+        return tempCal.get(Calendar.WEEK_OF_MONTH);
+    }
+
+    /**
+     * 可选：如果业务需要「严格当月内的最后1周」（最后1周所有天数都在当月）
+     * 可替换上面的 isLastWeekOfMonth 方法为以下实现
+     */
+    private boolean isStrictLastWeekOfMonth(Calendar calendar) {
+        Calendar tempCal = (Calendar) calendar.clone();
+        tempCal.setFirstDayOfWeek(Calendar.MONDAY);
+        tempCal.setMinimalDaysInFirstWeek(1);
+
+        // 步骤1：获取当月最后1天
+        int currentMonth = tempCal.get(Calendar.MONTH);
+        tempCal.set(Calendar.DATE, tempCal.getActualMaximum(Calendar.DATE));
+        int lastDay = tempCal.get(Calendar.DATE);
+
+        // 步骤2：获取当月最后1个周一（从最后1天向前找最近的周一）
+        while (tempCal.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+            tempCal.add(Calendar.DATE, -1);
+            // 防止无限循环（理论上每月至少有4个周一）
+            if (tempCal.get(Calendar.DATE) < 1) {
+                break;
+            }
+        }
+
+        // 步骤3：判断当前日期是否等于当月最后1个周一
+        return calendar.get(Calendar.DATE) == tempCal.get(Calendar.DATE)
+                && calendar.get(Calendar.MONTH) == tempCal.get(Calendar.MONTH);
+    }
+}
