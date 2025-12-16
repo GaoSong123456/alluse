@@ -1,0 +1,128 @@
+<template>
+  <div class="org-management-container">
+    <a-row class="full-height">
+      <a-col :span="7" class="tree-container">
+        <!-- 搜索框 -->
+        <div class="tree-search-container">
+          <a-input
+            v-model="searchValue"
+            placeholder="输入组织名称搜索"
+            allowClear
+            @change="handleSearch"
+            @pressEnter="handleSearch"
+          >
+            <a-icon slot="prefix" type="search" />
+          </a-input>
+        </div>
+        
+        <a-spin :spinning="treeLoading" tip="加载中...">
+          <a-tree
+            ref="treeRef"
+            v-if="treeData.length"
+            :treeData="treeData"
+            :expandedKeys="expandedKeys"
+            :selectedKeys="selectedKeys"
+            @select="handleTreeSelect"
+            @expand="handleTreeExpand"
+            @rightClick="handleRightClick"
+            :titleRender="titleRender"
+            :disabled="treeLoading"
+            :autoExpandparent="false"
+          />
+        </a-spin>
+      </a-col>
+      <!-- 右侧内容区域（原有代码不变） -->
+    </a-row>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'genericPlanOrgInfo',
+  components: {},
+  data() {
+    return {
+      searchValue: '',
+      treeData: [],
+      treeLoading: false,
+      expandedKeys: [],
+      selectedKeys: [],
+      selectedNode: null
+      // 其他原有数据...
+    };
+  },
+  methods: {
+    // 核心：搜索处理（仅展开上级节点，不选中、不展开自身/下级）
+    handleSearch() {
+      const keyword = this.searchValue.trim();
+      if (!keyword) {
+        // 无搜索内容时不修改任何状态
+        return;
+      }
+      
+      const expandKeys = new Set();
+      // 递归收集所有匹配节点的上级节点ID（排除匹配节点自身）
+      this.collectParentKeys(this.treeData, keyword, expandKeys);
+      
+      if (expandKeys.size > 0) {
+	    this.expandedKeys = Array.from(expandKeys);
+	  } else {
+	    // 可选：提示用户“无需要展开的节点”（非必须，看产品需求）
+	    // this.$message.info('未找到需要展开的上级节点');
+	  }
+    },
+
+    // 递归查找匹配节点，并收集其所有上级节点ID（修复核心逻辑）
+    collectParentKeys(nodes, keyword, expandKeys) {
+      if (!nodes || !nodes.length) return false;
+
+      let hasMatchedChild = false;
+      nodes.forEach(node => {
+        // 1. 判断当前节点是否匹配
+        const isMatched = node.orgName && node.orgName.toLowerCase()
+          .includes(keyword.toLowerCase());
+
+        // 2. 递归处理子节点（仅收集上级，不处理下级展开）
+        const childMatched = this.collectParentKeys(node.children, keyword, expandKeys);
+        hasMatchedChild = hasMatchedChild || childMatched;
+
+        // 🔴 核心修复：仅当「子节点匹配」时，才加入当前节点（即匹配节点的上级）
+        // 完全排除「当前节点匹配」的情况，避免匹配节点自身被加入
+        if (childMatched) {
+          expandKeys.add(node.id); // 只加匹配节点的父/祖节点，不加匹配节点自身
+        }
+      });
+
+      // 返回「当前节点是否匹配」或「子节点是否匹配」（供父节点判断）
+      return hasMatchedChild || (nodes.some(node => 
+        node.orgName && node.orgName.toLowerCase().includes(keyword.toLowerCase())
+      ));
+    },
+  }
+};
+</script>
+
+<style scoped>
+.tree-search-container {
+  margin-bottom: 16px;
+}
+.org-management-container {
+  background-color: #fff;
+  height: 100%;
+  overflow: hidden;
+}
+.full-height {
+  height: 100%;
+}
+.tree-container {
+  height: calc(100vh - 200px);
+  border: 1px solid #e8ecef;
+  padding: 16px;
+  overflow: auto;
+}
+::v-deep .ant-tree-node-content-wrapper {
+  &.ant-tree-node-selected {
+    background-color: #e6f7ff;
+  }
+}
+</style>
