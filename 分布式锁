@@ -1,0 +1,123 @@
+package com.example.device.service;
+
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+@Service
+public class LockService {
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public RLock getLock(String key) {
+        return redissonClient.getLock(key);
+    }
+
+    public boolean lockWithTimeout(String key, long waitTime, long leaseTime, TimeUnit timeUnit) {
+        RLock lock = getLock(key);
+        try {
+            return lock.tryLock(waitTime, leaseTime, timeUnit);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    public void unlock(String key) {
+        RLock lock = getLock(key);
+        lock.unlock();
+    }
+}
+
+
+
+
+package com.example.device.service;
+
+import com.example.device.entity.AllocationDetail;
+import com.example.device.entity.AllocationMain;
+import com.example.device.entity.DeviceInfo;
+import com.example.device.repository.AllocationDetailRepository;
+import com.example.device.repository.AllocationMainRepository;
+import com.example.device.repository.DeviceInfoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
+import java.util.UUID;
+
+@Service
+public class AllocationService {
+    @Autowired
+    private AllocationMainRepository allocationMainRepository;
+
+    @Autowired
+    private AllocationDetailRepository allocationDetailRepository;
+
+    @Autowired
+    private DeviceInfoRepository deviceInfoRepository;
+
+    @Autowired
+    private LockService lockService;
+
+    @Transactional
+    public AllocationMain allocateDevices(String allocatedBy, Set<AllocationDetail> allocationDetails) {
+        AllocationMain allocationMain = new AllocationMain();
+        allocationMain.setAllocatedBy(allocatedBy);
+
+        for (AllocationDetail detail : allocationDetails) {
+            String lockKey = "device_lock:" + detail.getDeviceInfo().getId();
+            if (lockService.lockWithTimeout(lockKey, 5, 10, TimeUnit.SECONDS)) {
+                try {
+                    DeviceInfo deviceInfo = deviceInfoRepository.findById(detail.getDeviceInfo().getId())
+                            .orElseThrow(() -> new RuntimeException("Device not found"));
+
+                    if (deviceInfo.getStatus().equals("available")) {
+                        deviceInfo.setStatus("allocated");
+                        deviceInfo.setAllocation(allocationMain);
+                        deviceInfoRepository.save(deviceInfo);
+                        allocationMain.addDetail(detail);
+                    } else {
+                        throw new RuntimeException("Device " + deviceInfo.getId() + " is not available");
+                    }
+                } finally {
+                    lockService.unlock(lockKey);
+                }
+            } else {
+                throw new RuntimeException("Failed to acquire lock for device " + detail.getDeviceInfo().getId());
+            }
+        }
+
+        allocationMain = allocationMainRepository.save(allocationMain);
+        return allocationMain;
+    }
+
+    @Transactional
+    public void approveAllocation(Long allocationId) {
+        String lockKey = "allocation_lock:" + allocationId;
+        if (lockService.lockWithTimeout(lockKey, 5, 10, TimeUnit.SECONDS)) {
+            try {
+                AllocationMain allocationMain = allocationMainRepository.findById(allocationId)
+                        .orElseThrow(() -> new RuntimeException("Allocation not found"));
+
+                if (allocationMain.getStatus().equals("pending")) {
+                    allocationMain.setStatus("approved");
+                    allocationMainRepository.save(allocationMain);
+                } else {
+                    throw new RuntimeException("Allocation is not pending");
+                }
+            } finally {
+                lockService.unlock(lockKey);
+            }
+        } else {
+            throw new RuntimeException("Failed to acquire lock for allocation " + allocationId);
+        }
+    }
+}
