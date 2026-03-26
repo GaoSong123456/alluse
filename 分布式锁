@@ -1,3 +1,93 @@
+乐观锁
+@Version
+private int version;
+
+悲观锁
+@Lock(LockModeType.PESSIMISTIC_WRITE) 注解是用于在 JPA 查询中指定悲观锁的。我们可以使用这个注解来确保在读取数据时加锁，防止其他事务修改数据。
+package com.example.device.repository;
+
+import com.example.device.entity.DeviceInfo;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.stereotype.Repository;
+import javax.persistence.LockModeType;
+
+@Repository
+public interface DeviceInfoRepository extends JpaRepository<DeviceInfo, Long> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<DeviceInfo> findById(Long id);
+}
+
+
+
+package com.example.device.service;
+
+import com.example.device.entity.AllocationDetail;
+import com.example.device.entity.AllocationMain;
+import com.example.device.entity.DeviceInfo;
+import com.example.device.repository.AllocationDetailRepository;
+import com.example.device.repository.AllocationMainRepository;
+import com.example.device.repository.DeviceInfoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
+
+@Service
+public class AllocationService {
+    @Autowired
+    private AllocationMainRepository allocationMainRepository;
+
+    @Autowired
+    private AllocationDetailRepository allocationDetailRepository;
+
+    @Autowired
+    private DeviceInfoRepository deviceInfoRepository;
+
+    @Transactional
+    public AllocationMain allocateDevices(String allocatedBy, Set<AllocationDetail> allocationDetails) {
+        AllocationMain allocationMain = new AllocationMain();
+        allocationMain.setAllocatedBy(allocatedBy);
+
+        for (AllocationDetail detail : allocationDetails) {
+            DeviceInfo deviceInfo = deviceInfoRepository.findById(detail.getDeviceInfo().getId())
+                    .orElseThrow(() -> new RuntimeException("Device not found"));
+
+            if (deviceInfo.getStatus().equals("available")) {
+                deviceInfo.setStatus("allocated");
+                deviceInfo.setAllocation(allocationMain);
+                deviceInfoRepository.save(deviceInfo);
+                allocationMain.addDetail(detail);
+            } else {
+                throw new RuntimeException("Device " + deviceInfo.getId() + " is not available");
+            }
+        }
+
+        allocationMain = allocationMainRepository.save(allocationMain);
+        return allocationMain;
+    }
+
+    @Transactional
+    public void approveAllocation(Long allocationId) {
+        AllocationMain allocationMain = allocationMainRepository.findById(allocationId)
+                .orElseThrow(() -> new RuntimeException("Allocation not found"));
+
+        if (allocationMain.getStatus().equals("pending")) {
+            allocationMain.setStatus("approved");
+            allocationMainRepository.save(allocationMain);
+        } else {
+            throw new RuntimeException("Allocation is not pending");
+        }
+    }
+}
+
+
+事务隔离级别
+@Transactional(isolation = Isolation.SERIALIZABLE) 注解来设置事务隔离级别为 Serializable，这是最严格的隔离级别，可以防止所有并发问题，但可能会降低性能
+
+
+redis分布式锁
 package com.example.device.service;
 
 import org.redisson.Redisson;
