@@ -1,0 +1,43 @@
+select
+		pfc.fab_id,
+		pfc.fab_name,
+		a.company_code,
+		a.company_name,
+		a."year",
+		a.product_category,
+		a.inout_category as business_category,
+		'CP' AS basicType,
+		TRUNCATE(nvl(SUM(a.january * b_q1.standard_cost), 0), 2) AS january,
+		TRUNCATE(nvl(SUM(a.february * b_q1.standard_cost), 0), 2) AS february,
+		TRUNCATE(nvl(SUM(a.march * b_q1.standard_cost), 0), 2) AS march,
+		TRUNCATE(nvl(SUM(a.april * b_q1.standard_cost), 0), 2) AS april,
+		TRUNCATE(nvl(SUM(a.may * b_q1.standard_cost), 0), 2) AS may,
+		TRUNCATE(nvl(SUM(a.june * b_q1.standard_cost), 0), 2) AS june,
+		TRUNCATE(nvl(SUM(a.july * b_q1.standard_cost), 0), 2) AS july,
+		TRUNCATE(nvl(SUM(a.august * b_q1.standard_cost), 0), 2) AS august,
+		TRUNCATE(nvl(SUM(a.september * b_q1.standard_cost), 0), 2) AS september,
+		TRUNCATE(nvl(SUM(a.october * b_q1.standard_cost), 0), 2) AS october,
+		TRUNCATE(nvl(SUM(a.november * b_q1.standard_cost), 0), 2) AS november,
+		TRUNCATE(nvl(SUM(a.december * b_q1.standard_cost), 0), 2) AS december
+		FROM
+		qcmuser.qcm_business_data_total_inout a
+		LEFT JOIN qcmuser.qcm_finance_data_cost_price b_q1
+		ON a.year = b_q1.year
+		AND b_q1.quarter = 'Q1'
+		AND b_q1.archive = 0
+		left join qcm_project_fab_config pfc 
+		on a.company_code = pfc.company_code and a.company_name = pfc.company_name and a."year" = pfc."year" and a.project = pfc.project
+		WHERE
+		a.year = '2025'
+		AND a.archive = 0
+		and a.product_category is not null
+		GROUP BY
+		a.company_code,
+		a.company_name,
+		a.year,
+		pfc.fab_id,
+		pfc.fab_name, 
+		a.product_category,
+		a.inout_category
+		
+		我还需要进一步统计，当inout_category分别为'投入'和'产出'时january，february，march，april，may，june，july，august，september，october，november，december对应的值乘以standard_cost的总和,product_category为总投入和总产出
