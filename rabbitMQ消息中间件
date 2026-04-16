@@ -1,0 +1,237 @@
+一、技术选型与架构设计
+1. 核心功能需求
+功能	实现方式
+消息幂等性	Redis 缓存记录消息ID
+消息顺序性	单队列 + 单消费者处理
+可靠性	生产者确认 + 消费者手动确认
+延迟队列	TTL + 死信队列
+死信队列	自动转发异常消息
+二、Spring Boot 配置
+1. Maven 依赖
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+2. application.yml 配置
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-confirm-type: correlated  # 生产者确认
+    publisher-returns: true
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    lettuce:
+      pool:
+        max-idle: 10
+三、消息队列与交换机声明
+1. 配置队列和交换机
+@Configuration
+public class RabbitConfig {
+
+    // 正常队列
+    @Bean
+    public DirectExchange normalExchange() {
+        return new DirectExchange("normal_exchange");
+    }
+
+    @Bean
+    public Queue normalQueue() {
+        return QueueBuilder.durable("normal_queue")
+                .withArgument("x-dead-letter-exchange", "dead_letter_exchange")  // 死信交换机
+                .withArgument("x-message-ttl", 10000)  // 10秒后进入死信队列
+                .build();
+    }
+
+    @Bean
+    public Binding bindingNormal(Queue normalQueue, DirectExchange normalExchange) {
+        return BindingBuilder.bind(normalQueue).to(normalExchange).with("normal_key").noargs();
+    }
+
+    // 死信队列
+    @Bean
+    public DirectExchange deadLetterExchange() {
+        return new DirectExchange("dead_letter_exchange");
+    }
+
+    @Bean
+    public Queue deadLetterQueue() {
+        return QueueBuilder.durable("dead_letter_queue").build();
+    }
+
+    @Bean
+    public Binding bindingDeadLetter(Queue deadLetterQueue, DirectExchange deadLetterExchange) {
+        return BindingBuilder.bind(deadLetterQueue).to(deadLetterExchange).with("dead_key").noargs();
+    }
+}
+四、消息生产者（幂等性 + 可靠性）
+1. 生成唯一消息ID
+@Component
+public class IdGenerator {
+    public String generateId() {
+        return UUID.randomUUID().toString();
+    }
+}
+2. 发送消息（带幂等性校验）
+@Service
+public class MessageProducer {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    public void sendMessage(String message) {
+        String messageId = UUID.randomUUID().toString();
+        String key = "message_id:" + messageId;
+
+        // 1. 校验消息ID是否已存在（幂等性）
+        if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, "1", 1, TimeUnit.MINUTES))) {
+            // 2. 发送消息到队列
+            rabbitTemplate.convertAndSend("normal_exchange", "normal_key", message, msg -> {
+                msg.getMessageProperties().setMessageId(messageId);
+                return msg;
+            });
+
+            // 3. 确认消息发送成功
+            rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+                if (ack) {
+                    System.out.println("消息发送成功: " + correlationData.getId());
+                } else {
+                    System.err.println("消息发送失败: " + cause);
+                }
+            });
+        } else {
+            System.out.println("消息已存在，拒绝发送");
+        }
+    }
+}
+五、消息消费者（顺序性 + 异常处理）
+1. 配置单消费者保证顺序性
+@Configuration
+public class ConsumerConfig {
+
+    @Bean
+    public DirectExchange orderExchange() {
+        return new DirectExchange("order_exchange");
+    }
+
+    @Bean
+    public Queue orderQueue() {
+        return QueueBuilder.durable("order_queue").build();
+    }
+
+    @Bean
+    public Binding bindingOrder(Queue orderQueue, DirectExchange orderExchange) {
+        return BindingBuilder.bind(orderQueue).to(orderExchange).with("order_key").noargs();
+    }
+}
+2. 消费消息（手动确认 + 幂等性校验）
+@Component
+public class MessageConsumer {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @RabbitListener(
+        queues = "normal_queue",
+        containerFactory = "rabbitListenerContainerFactory",
+        ackMode = "manual"
+    )
+    public void onMessage(Message message, Channel channel) throws IOException {
+        String messageId = message.getMessageProperties().getMessageId();
+        String body = new String(message.getBody());
+
+        try {
+            // 1. 幂等性校验
+            if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent("processed_msg:" + messageId, "1", 1, TimeUnit.MINUTES))) {
+                // 2. 处理业务逻辑
+                processMessage(body);
+                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);  // 手动确认
+            } else {
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);  // 丢弃重复消息
+            }
+        } catch (Exception e) {
+            // 3. 处理异常并转发到死信队列
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+        }
+    }
+
+    private void processMessage(String message) {
+        System.out.println("Processing: " + message);
+        // 模拟处理失败
+        if (message.contains("error")) {
+            throw new RuntimeException("模拟处理失败");
+        }
+    }
+}
+六、延迟队列实现（TTL + 死信队列）
+1. 订单超时示例
+@Service
+public class OrderService {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    public void createOrder(String orderId) {
+        rabbitTemplate.convertAndSend("normal_exchange", "normal_key", orderId, msg -> {
+            msg.getMessageProperties().setHeaders("x-delay", 5000);  // 5秒后过期
+            return msg;
+        });
+    }
+}
+2. 死信队列处理
+@Component
+public class DeadLetterConsumer {
+
+    @RabbitListener(
+        queues = "dead_letter_queue",
+        containerFactory = "rabbitListenerContainerFactory",
+        ackMode = "manual"
+    )
+    public void onMessage(Message message, Channel channel) throws IOException {
+        String orderId = new String(message.getBody());
+        System.out.println("Dead Letter: 订单超时未支付: " + orderId);
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    }
+}
+七、完整测试案例
+1. 测试消息幂等性
+@RestController
+public class TestController {
+
+    @Autowired
+    private MessageProducer messageProducer;
+
+    @GetMapping("/send")
+    public String sendMessage() {
+        messageProducer.sendMessage("订单支付成功");
+        return "消息已发送";
+    }
+}
+2. 测试重复消息
+发送相同 messageId 的消息会被 Redis 拦截。
+
+八、关键设计点总结
+1. 幂等性保障
+使用 Redis 缓存已处理的 messageId，避免重复处理。
+2. 消息顺序性
+单队列 + 单消费者处理消息，确保顺序。
+3. 可靠性
+生产者确认：publisher-confirm-type: correlated
+消费者手动确认：ackMode = manual
+消息持久化：队列和消息设置 durable = true
+4. 延迟队列
+通过 TTL 设置消息存活时间，超时后进入死信队列。
+5. 死信队列
+捕获未确认、被拒绝或超时的消息，进行异常处理。
