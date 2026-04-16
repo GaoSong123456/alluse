@@ -5,3 +5,137 @@ TCC	最终一致性	同步	高	电商高频交易
 Saga	最终一致性	异步	高	长流程（如订单履约）
 本地表	最终一致性	同步	低	异步任务（如日志）
 MQ事务	最终一致性	异步	中	跨系统通知（如订单同步）
+
+
+
+Seata 四种事务模式对比
+模式	典型特点	适用场景	优点	缺点
+AT	自动补偿，无需开发者实现补偿逻辑	本地事务为主，跨服务调用	实现简单，兼容性强	异步回滚延迟
+TCC	手动实现Try/Confirm/Cancel	高并发、高频交易（如电商）	高性能、异步非阻塞	业务侵入性强，开发复杂
+Saga	长流程事务，按步骤执行和回滚	多步骤流程（如订单履约）	高可用、最终一致性	补偿链复杂
+XA	严格遵循 XA 协议	金融核心系统（对强一致性要求极高）	强一致性	同步阻塞、性能差
+
+
+二、AT 模式（最常用）
+特点：
+业务代码无需修改，Seata 自动记录事务日志进行回滚。
+适合本地事务与跨服务调用的场景。
+示例：订单服务（协调者）
+@RestController
+public class OrderController {
+
+    @GlobalTransactional(name = "order-tx", rollbackFor = Exception.class)
+    @PostMapping("/createOrder")
+    public String createOrder(@RequestParam String userId, @RequestParam String commodityCode, @RequestParam int count) {
+        orderService.createOrder(userId, commodityCode, count); // 本地事务
+        paymentService.deductPayment(userId, 100L); // 分布式事务
+        inventoryService.deductInventory(commodityCode, count); // 分布式事务
+        return "Order created successfully";
+    }
+}
+示例：库存服务（参与者）
+@Service
+public class InventoryServiceImpl implements InventoryService {
+
+    @Autowired
+    private InventoryMapper inventoryMapper;
+
+    @Transactional
+    public void deductInventory(String commodityCode, int count) {
+        // 1. 查询库存
+        Inventory inventory = inventoryMapper.selectByCommodityCode(commodityCode);
+        if (inventory.getCount() < count) {
+            throw new RuntimeException("库存不足");
+        }
+        // 2. 扣减库存
+        inventory.setCount(inventory.getCount() - count);
+        inventoryMapper.updateById(inv);
+    }
+}
+三、TCC 模式（高性能方案）
+特点：
+需手动实现 Try、Confirm、Cancel 三个阶段。
+适合高频交易场景（如秒杀、支付）。
+示例：库存服务（TCC 实现）
+@Service
+public class InventoryServiceImpl implements InventoryService {
+
+    @TccBusinessAction(name = "deductInventory")
+    public boolean deductInventory(String commodityCode, int count) {
+        return tryDeductInventory(commodityCode, count);
+    }
+
+    // Try 阶段：预扣库存
+    public boolean tryDeductInventory(String commodityCode, int count) {
+        Inventory inventory = inventoryMapper.selectByCode(commodityCode);
+        if (inventory.getCount() < count) {
+            return false;
+        }
+        // 冻结库存
+        inventory.setReservedCount(count);
+        inventory.setStatus("RESERVED");
+        inventoryMapper.updateById(inventory);
+        return true;
+    }
+
+    // Confirm 阶段：正式扣减
+    public boolean confirmDeductInventory(String commodityCode, int count) {
+        Inventory inventory = inventoryMapper.selectByCode(commodityCode);
+        inventory.setCount(inventory.getCount() - count);
+        inventory.setStatus("DEDUCTED");
+        inventoryMapper.updateById(inventory);
+        return true;
+    }
+
+    // Cancel 阶段：释放库存
+    public boolean cancelDeductInventory(String commodityCode, int count) {
+        Inventory inventory = inventoryMapper.selectByCode(commodityCode);
+        inventory.setReservedCount(0);
+        inventory.setStatus("AVAILABLE");
+        inventoryMapper.updateById(inventory);
+        return true;
+    }
+}
+四、Saga 模式（长流程事务）
+特点：
+将分布式事务拆分为多个子事务（步骤）。
+支持按业务状态实现回滚。
+示例：订单履约流程
+# 伪代码
+class OrderSaga:
+    def start(self, order_id):
+        try:
+            self.book_flight(order_id)
+            self.book_hotel(order_id)
+            self.rent_car(order_id)
+        except Exception:
+            self.cancel_rent_car(order_id)
+            self.cancel_hotel(order_id)
+            self.cancel_flight(order_id)
+
+    def book_flight(self, order_id):
+        # 预订机票
+        pass
+
+    def cancel_flight(self, order_id):
+        # 取消机票
+        pass
+
+    # 其他步骤类似...
+五、XA 模式（强一致性）
+特点：
+严格遵循 XA 协议，适合金融核心系统。
+事务同步阻塞，性能较低。
+示例：订单服务（XA 模式）
+@RestController
+public class OrderController {
+
+    @XaGlobalTransaction
+    @PostMapping("/createOrder")
+    public String createOrder(@RequestParam String userId, @RequestParam String commodityCode, @RequestParam int count) {
+        orderService.createOrder(userId, commodityCode, count); // 本地事务
+        paymentService.deductPayment(userId, 100L); // 分布式事务
+        inventoryService.deductInventory(commodityCode, count); // 分布式事务
+        return "Order created successfully";
+    }
+}
