@@ -88,126 +88,124 @@ public class AllocationService {
 
 
 redis分布式锁
-package com.example.device.service;
+1. 配置文件
+在application.yml中添加Redis的配置信息：
+
+spring:
+  redis:
+    mode: single  # 或者 cluster
+    nodes: localhost:6379  # 单节点或集群节点列表，例如 "localhost:6379,localhost:6380"
+    password:  # 如果有密码
+    database: 0  # 默认数据库
+2. 创建Redisson配置类
+创建一个配置类来初始化Redisson客户端，并从配置文件中读取Redis的连接信息：
 
 import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
+import org.redisson.config.ClusterServersConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RedissonConfig {
+
+    @Value("${spring.redis.mode}")
+    private String mode;
+
+    @Value("${spring.redis.nodes}")
+    private String nodes;
+
+    @Value("${spring.redis.password}")
+    private String password;
+
+    @Value("${spring.redis.database}")
+    private int database;
+
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        if ("single".equalsIgnoreCase(mode)) {
+            SingleServerConfig singleServerConfig = config.useSingleServer()
+                    .setAddress("redis://" + nodes)
+                    .setPassword(password)
+                    .setDatabase(database);
+            // 可以添加更多配置项
+        } else if ("cluster".equalsIgnoreCase(mode)) {
+            ClusterServersConfig clusterServersConfig = config.useClusterServers()
+                    .addNodeAddress("redis://" + nodes.split(","))
+                    .setPassword(password)
+                    .setDatabase(database);
+            // 可以添加更多配置项
+        } else {
+            throw new IllegalArgumentException("Unsupported Redis mode: " + mode);
+        }
+        return Redisson.create(config);
+    }
+}
+3. 使用分布式锁
+在需要使用分布式锁的业务逻辑中，注入RedissonClient并使用它来获取锁：
+
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class LockService {
+public class DistributedLockService {
+
     @Autowired
     private RedissonClient redissonClient;
 
-    public RLock getLock(String key) {
-        return redissonClient.getLock(key);
-    }
+    @Transactional
+    public void performTask() {
+        // 获取锁
+        RLock lock = redissonClient.getLock("myLock");
 
-    public boolean lockWithTimeout(String key, long waitTime, long leaseTime, TimeUnit timeUnit) {
-        RLock lock = getLock(key);
         try {
-            return lock.tryLock(waitTime, leaseTime, timeUnit);
+            // 尝试获取锁，最多等待10秒，锁的有效期为30秒
+            boolean isLocked = lock.tryLock(10, 30, TimeUnit.SECONDS);
+            if (!isLocked) {
+                throw new RuntimeException("无法获取锁，任务失败...");
+            }
+
+            // 执行业务逻辑
+            System.out.println("执行业务逻辑...");
+            // 模拟业务逻辑中的异常
+            // int i = 1 / 0;
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return false;
+            throw new RuntimeException("线程被中断: " + e.getMessage(), e);
+        } finally {
+            // 释放锁
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-    }
-
-    public void unlock(String key) {
-        RLock lock = getLock(key);
-        lock.unlock();
     }
 }
+4. 调用服务
+在控制器或其他地方调用DistributedLockService中的方法：
 
-
-
-
-package com.example.device.service;
-
-import com.example.device.entity.AllocationDetail;
-import com.example.device.entity.AllocationMain;
-import com.example.device.entity.DeviceInfo;
-import com.example.device.repository.AllocationDetailRepository;
-import com.example.device.repository.AllocationMainRepository;
-import com.example.device.repository.DeviceInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
-import java.util.UUID;
-
-@Service
-public class AllocationService {
-    @Autowired
-    private AllocationMainRepository allocationMainRepository;
+@RestController
+public class LockController {
 
     @Autowired
-    private AllocationDetailRepository allocationDetailRepository;
+    private DistributedLockService distributedLockService;
 
-    @Autowired
-    private DeviceInfoRepository deviceInfoRepository;
-
-    @Autowired
-    private LockService lockService;
-
-    @Transactional
-    public AllocationMain allocateDevices(String allocatedBy, Set<AllocationDetail> allocationDetails) {
-        AllocationMain allocationMain = new AllocationMain();
-        allocationMain.setAllocatedBy(allocatedBy);
-
-        for (AllocationDetail detail : allocationDetails) {
-            String lockKey = "device_lock:" + detail.getDeviceInfo().getId();
-            if (lockService.lockWithTimeout(lockKey, 5, 10, TimeUnit.SECONDS)) {
-                try {
-                    DeviceInfo deviceInfo = deviceInfoRepository.findById(detail.getDeviceInfo().getId())
-                            .orElseThrow(() -> new RuntimeException("Device not found"));
-
-                    if (deviceInfo.getStatus().equals("available")) {
-                        deviceInfo.setStatus("allocated");
-                        deviceInfo.setAllocation(allocationMain);
-                        deviceInfoRepository.save(deviceInfo);
-                        allocationMain.addDetail(detail);
-                    } else {
-                        throw new RuntimeException("Device " + deviceInfo.getId() + " is not available");
-                    }
-                } finally {
-                    lockService.unlock(lockKey);
-                }
-            } else {
-                throw new RuntimeException("Failed to acquire lock for device " + detail.getDeviceInfo().getId());
-            }
-        }
-
-        allocationMain = allocationMainRepository.save(allocationMain);
-        return allocationMain;
-    }
-
-    @Transactional
-    public void approveAllocation(Long allocationId) {
-        String lockKey = "allocation_lock:" + allocationId;
-        if (lockService.lockWithTimeout(lockKey, 5, 10, TimeUnit.SECONDS)) {
-            try {
-                AllocationMain allocationMain = allocationMainRepository.findById(allocationId)
-                        .orElseThrow(() -> new RuntimeException("Allocation not found"));
-
-                if (allocationMain.getStatus().equals("pending")) {
-                    allocationMain.setStatus("approved");
-                    allocationMainRepository.save(allocationMain);
-                } else {
-                    throw new RuntimeException("Allocation is not pending");
-                }
-            } finally {
-                lockService.unlock(lockKey);
-            }
-        } else {
-            throw new RuntimeException("Failed to acquire lock for allocation " + allocationId);
-        }
+    @GetMapping("/execute-task")
+    public String executeTask() {
+        distributedLockService.performTask();
+        return "任务执行完毕";
     }
 }
