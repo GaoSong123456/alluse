@@ -1,0 +1,193 @@
+2. 关键代码
+（1）application.yml
+server:
+  port: 8080
+
+excel:
+  temp-dir: ${java.io.tmpdir}/excel/
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/excel_db?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+（2）FileUploadController.java
+@RestController
+@RequestMapping("/api/upload")
+public class FileUploadController {
+
+    @Value("${excel.temp-dir}")
+    private String tempDir;
+
+    @PostMapping("/checkChunks")
+    public ResponseEntity<List<Integer>> checkChunks(@RequestParam("fileName") String fileName,
+                                                     @RequestParam("totalChunks") int totalChunks) {
+        File dir = new File(tempDir + fileName);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        List<Integer> uploadedChunks = new ArrayList<>();
+        for (int i = 0; i < totalChunks; i++) {
+            File chunk = new File(dir, String.valueOf(i));
+            if (chunk.exists()) {
+                uploadedChunks.add(i);
+            }
+        }
+        return ResponseEntity.ok(uploadedChunks);
+    }
+
+    @PostMapping("/uploadChunk")
+    public ResponseEntity<String> uploadChunk(@RequestParam("file") MultipartFile file,
+                                              @RequestParam("chunkIndex") int chunkIndex,
+                                              @RequestParam("fileName") String fileName) throws IOException {
+        File dir = new File(tempDir + fileName);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File chunkFile = new File(dir, String.valueOf(chunkIndex));
+        file.transferTo(chunkFile);
+        return ResponseEntity.ok("Chunk " + chunkIndex + " uploaded.");
+    }
+
+    @PostMapping("/merge")
+    public ResponseEntity<String> mergeFile(@RequestParam("fileName") String fileName) {
+        File dir = new File(tempDir + fileName);
+        File mergedFile = new File(dir, fileName + ".xlsx");
+        try (FileOutputStream fos = new FileOutputStream(mergedFile)) {
+            for (File chunk : dir.listFiles()) {
+                if (!chunk.getName().equals(mergedFile.getName())) {
+                    Files.copy(chunk.toPath(), fos);
+                    chunk.delete(); // 删除分片文件
+                }
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("合并文件失败");
+        }
+        // 解析并保存 Excel
+        parseAndSaveExcel(mergedFile);
+        return ResponseEntity.ok("Upload and save completed.");
+    }
+}
+（3）ExcelService.java
+@Service
+public class ExcelService {
+
+    @Autowired
+    private UserService userService;
+
+    public void parseAndSaveExcel(File excelFile) {
+        EasyExcel.read(excelFile, User.class, new ReadListener<User>() {
+            @Override
+            public void invoke(User user, AnalysisContext context) {
+                userService.save(user);
+            }
+
+            @Override
+            public void doAfterAllAnalysed(AnalysisContext context) {
+                System.out.println("Excel 解析完成");
+            }
+        }).sheet().doRead();
+    }
+}
+3. Vue2 + Element-UI 项目结构
+vue-excel-upload/
+├── public/
+├── src/
+│   ├── components/
+│   │   └── ExcelUpload.vue
+│   ├── App.vue
+│   ├── main.js
+│   └── vue.config.js
+├── package.json
+└── README.md
+4. ExcelUpload.vue（Element-UI）
+<template>
+  <div>
+    <el-upload
+      class="upload-demo"
+      :auto-upload="false"
+      :on-change="handleFileChange"
+    >
+      <el-button slot="trigger">选择 Excel 文件</el-button>
+      <el-button @click="uploadFile" :disabled="isUploading">上传</el-button>
+    </el-upload>
+    <el-progress :percentage="progress" v-if="isUploading"></el-progress>
+    <p v-if="message" class="message">{{ message }}</p>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      file: null,
+      isUploading: false,
+      progress: 0,
+      message: "",
+    };
+  },
+  methods: {
+    handleFileChange(file) {
+      this.file = file.raw;
+    },
+    async uploadFile() {
+      if (!this.file) {
+        this.message = "请选择文件";
+        return;
+      }
+      this.isUploading = true;
+      this.progress = 0;
+      this.message = "";
+
+      const chunkSize = 2 * 1024 * 1024; // 2MB per chunk
+      const totalChunks = Math.ceil(this.file.size / chunkSize);
+      const fileName = this.file.name;
+
+      // 检查已上传的分片
+      const response = await axios.post("/api/upload/checkChunks", {
+        fileName,
+        totalChunks
+      });
+      const uploadedChunks = response.data;
+
+      // 仅上传未上传的分片
+      for (let i = 0; i < totalChunks; i++) {
+        if (uploadedChunks.includes(i)) continue;
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, this.file.size);
+        const chunk = this.file.slice(start, end);
+
+        await this.uploadChunk(chunk, i, totalChunks, fileName);
+      }
+
+      await this.mergeChunks(fileName, totalChunks);
+      this.message = "上传成功";
+      this.isUploading = false;
+    },
+    async uploadChunk(chunk, chunkIndex, totalChunks, fileName) {
+      const formData = new FormData();
+      formData.append("file", chunk);
+      formData.append("chunkIndex", chunkIndex);
+      formData.append("totalChunks", totalChunks);
+      formData.append("fileName", fileName);
+
+      const response = await axios.post("/api/upload/uploadChunk", formData, {
+        onUploadProgress: (progressEvent) => {
+          this.progress = Math.round(
+            ((progressEvent.loaded / progressEvent.total) * 100) / totalChunks
+          );
+        },
+      });
+      console.log(response.data);
+    },
+    async mergeChunks(fileName, totalChunks) {
+      await axios.post("/api/upload/merge", {
+        fileName,
+        totalChunks,
+      });
+    },
+  },
+};
+</script>
