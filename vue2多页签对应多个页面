@@ -1,0 +1,188 @@
+创建 Tab1 页面组件
+
+<!-- accountingDataSummaryTab1.vue -->
+<template>
+  <div>
+    <div :class="advanced ? 'search' : null">
+      <a-form-model
+        layout="horizontal"
+        ref="searchForm"
+        :model="searchForm"
+        label-align="right"
+      >
+        <!-- 表单内容... -->
+      </a-form-model>
+    </div>
+    
+    <div>
+      <a-spin :tip="$t('loading')" :spinning="spinning">
+        <basic-table
+          :columns="columnsOne"
+          :dataSource="dataSource"
+          :selectedRows="selectedRows"
+          rowKey="id"
+          :pagination="false"
+          :scroll="{ y: 460 }"
+          @selectedRowChange="onSelectChange" size="small"
+        ></basic-table>
+      </a-spin>
+      
+      <a-pagination
+        show-size-changer
+        v-model="current"
+        :page-size.sync="currentPageSize"
+        :total="total"
+        :show-total="
+          (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`
+        "
+        @showSizeChange="onShowSizeChange"
+        @change="onPaginationChange"
+        class="pagintion_pos"
+        :pageSizeOptions="pageSizeOptions"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+// 此处只展示部分代码，完整组件需要复制原文件中的相关逻辑
+import BasicTable from "@/components/table/BasicTable/BasicTable";
+import { 
+  findDictListBy,
+  findList1,
+  findListForRecord,
+  // 其他导入...
+} from "./services";
+
+export default {
+  name: "AccountingDataSummaryTab1",
+  components: { BasicTable },
+  data() {
+    return {
+      // 数据定义...
+      searchForm: {
+        companyName: "1000 YMTC",
+        year: this.getThisYear(),
+        businessCategory: null,
+        secondSubject: null,
+        thirdSubject: null,
+        costFeeType: null,
+        productType: null,
+        project: null,
+        center: null,
+        ext1: null,
+      },
+      // 其他数据...
+    }
+  },
+  methods: {
+    // 方法实现...
+    getThisYear() {
+      return new Date().getFullYear();
+    },
+    // 其他方法...
+  },
+  computed: {
+    // 计算属性...
+    columnsOne() {
+      // 返回列定义...
+    }
+  },
+  created() {
+    // 初始化方法...
+  }
+}
+</script>
+
+
+
+主页面
+<template>
+  <a-card
+    size="small"
+    :title="$t('lable')"
+    :bodyStyle="{ 'min-height': '70vh' }"
+  >
+    <div>
+      <div style="margin-bottom: 30px">
+        <a-radio-group v-model="activeTab" @change="handleTabChange">
+          <a-radio-button value="1">
+            {{ $t("accountingDataSummary") }}
+          </a-radio-button>
+          <a-radio-button value="2">
+            {{ $t("byProductSubjectSummary") }}
+          </a-radio-button>
+          <a-radio-button value="3">
+            {{ $t("byDeptSubjectSummary") }}
+          </a-radio-button>
+          <a-radio-button value="4">
+            {{ $t("bySubjectSummary") }}
+          </a-radio-button>
+          <a-radio-button value="5">
+            {{ $t("mecSummary") }}
+          </a-radio-button>
+        </a-radio-group>
+      </div>
+      
+      <!-- 使用动态组件来加载不同页面 -->
+      <component 
+        :is="currentComponent" 
+        v-if="currentComponent"
+        :ref="currentComponent"
+      />
+    </div>
+  </a-card>
+</template>
+
+<script>
+import AccountingDataSummaryTab1 from './accountingDataSummaryTab1.vue'
+import AccountingDataSummaryTab2 from './accountingDataSummaryTab2.vue'
+import AccountingDataSummaryTab3 from './accountingDataSummaryTab3.vue'
+import AccountingDataSummaryTab4 from './accountingDataSummaryTab4.vue'
+import AccountingDataSummaryTab5 from './accountingDataSummaryTab5.vue'
+
+export default {
+  name: "accountingDataSummary",
+  components: {
+    AccountingDataSummaryTab1,
+    AccountingDataSummaryTab2,
+    AccountingDataSummaryTab3,
+    AccountingDataSummaryTab4,
+    AccountingDataSummaryTab5
+  },
+  data() {
+    return {
+      activeTab: "1",
+      // 其他原有数据保持不变...
+    }
+  },
+  computed: {
+    // 添加动态组件计算属性
+    currentComponent() {
+      switch(this.activeTab) {
+        case "1":
+          return "AccountingDataSummaryTab1"
+        case "2":
+          return "AccountingDataSummaryTab2"
+        case "3":
+          return "AccountingDataSummaryTab3"
+        case "4":
+          return "AccountingDataSummaryTab4"
+        case "5":
+          return "AccountingDataSummaryTab5"
+        default:
+          return "AccountingDataSummaryTab1"
+      }
+    }
+  },
+  methods: {
+    // 添加 Tab 切换处理方法
+    handleTabChange(e) {
+      // 当 Tab 切换时可以执行一些操作
+      console.log(`切换到 Tab ${e.target.value}`)
+    },
+    // 保持原来的其他方法不变...
+  }
+}
+</script>
