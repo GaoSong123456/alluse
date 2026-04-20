@@ -50,12 +50,13 @@ public class FileUploadController {
     }
 
     @PostMapping("/merge")
-    public ResponseEntity<String> mergeFile(@RequestParam("uuid") String uuid, @RequestParam("fileName") String fileName) {
+    public ResponseEntity<String> mergeFile(@RequestParam("uuid") String uuid, @RequestParam("totalChunks") int totalChunks,@RequestParam("fileName") String fileName) {
         File dir = new File(tempDir + uuid);
         File mergedFile = new File(dir, fileName + ".xlsx");
         try (FileOutputStream fos = new FileOutputStream(mergedFile)) {
-            for (File chunk : dir.listFiles()) {
-                if (!chunk.getName().equals(mergedFile.getName())) {
+            for (int i = 0; i < totalChunks; i++) {
+                File chunk = new File(dir, String.valueOf(i));
+                if (chunk.exists()) {
                     Files.copy(chunk.toPath(), fos);
                     chunk.delete(); // 删除分片文件
                 }
