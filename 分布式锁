@@ -163,9 +163,11 @@ public class DistributedLockService {
     private RedissonClient redissonClient;
 
     @Transactional
-    public void performTask() {
+    public void performTask(Long id) {
+        // 使用记录的 id 作为锁的键
+        String lockKey = "lock:" + id;
         // 获取锁
-        RLock lock = redissonClient.getLock("myLock");
+        RLock lock = redissonClient.getLock(lockKey);
 
         try {
             // 尝试获取锁，最多等待10秒，锁的有效期为30秒
@@ -204,8 +206,8 @@ public class LockController {
     private DistributedLockService distributedLockService;
 
     @GetMapping("/execute-task")
-    public String executeTask() {
-        distributedLockService.performTask();
+    public String executeTask(@RequestParam Long id) {
+        distributedLockService.performTask(id);
         return "任务执行完毕";
     }
 }
