@@ -20,9 +20,9 @@ public class FileUploadController {
     private String tempDir;
 
     @PostMapping("/checkChunks")
-    public ResponseEntity<List<Integer>> checkChunks(@RequestParam("fileName") String fileName,
+    public ResponseEntity<List<Integer>> checkChunks(@RequestParam("uuid") String uuid,
                                                      @RequestParam("totalChunks") int totalChunks) {
-        File dir = new File(tempDir + fileName);
+        File dir = new File(tempDir + uuid);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -39,8 +39,8 @@ public class FileUploadController {
     @PostMapping("/uploadChunk")
     public ResponseEntity<String> uploadChunk(@RequestParam("file") MultipartFile file,
                                               @RequestParam("chunkIndex") int chunkIndex,
-                                              @RequestParam("fileName") String fileName) throws IOException {
-        File dir = new File(tempDir + fileName);
+                                              @RequestParam("uuid") String uuid) throws IOException {
+        File dir = new File(tempDir + uuid);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -50,8 +50,8 @@ public class FileUploadController {
     }
 
     @PostMapping("/merge")
-    public ResponseEntity<String> mergeFile(@RequestParam("fileName") String fileName) {
-        File dir = new File(tempDir + fileName);
+    public ResponseEntity<String> mergeFile(@RequestParam("uuid") String uuid, @RequestParam("fileName") String fileName) {
+        File dir = new File(tempDir + uuid);
         File mergedFile = new File(dir, fileName + ".xlsx");
         try (FileOutputStream fos = new FileOutputStream(mergedFile)) {
             for (File chunk : dir.listFiles()) {
@@ -66,6 +66,12 @@ public class FileUploadController {
         // 解析并保存 Excel
         parseAndSaveExcel(mergedFile);
         return ResponseEntity.ok("Upload and save completed.");
+    }
+
+    private void parseAndSaveExcel(File excelFile) {
+        // 调用解析和保存 Excel 的服务
+        ExcelService excelService = new ExcelService();
+        excelService.parseAndSaveExcel(excelFile);
     }
 }
 （3）ExcelService.java
@@ -118,6 +124,7 @@ vue-excel-upload/
 
 <script>
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   data() {
@@ -126,6 +133,7 @@ export default {
       isUploading: false,
       progress: 0,
       message: "",
+      uuid: ""
     };
   },
   methods: {
@@ -140,6 +148,7 @@ export default {
       this.isUploading = true;
       this.progress = 0;
       this.message = "";
+      this.uuid = uuidv4(); // 生成唯一标识符
 
       const chunkSize = 2 * 1024 * 1024; // 2MB per chunk
       const totalChunks = Math.ceil(this.file.size / chunkSize);
@@ -147,7 +156,7 @@ export default {
 
       // 检查已上传的分片
       const response = await axios.post("/api/upload/checkChunks", {
-        fileName,
+        uuid: this.uuid,
         totalChunks
       });
       const uploadedChunks = response.data;
@@ -162,7 +171,7 @@ export default {
         await this.uploadChunk(chunk, i, totalChunks, fileName);
       }
 
-      await this.mergeChunks(fileName, totalChunks);
+      await this.mergeChunks(this.uuid, fileName, totalChunks);
       this.message = "上传成功";
       this.isUploading = false;
     },
@@ -170,8 +179,7 @@ export default {
       const formData = new FormData();
       formData.append("file", chunk);
       formData.append("chunkIndex", chunkIndex);
-      formData.append("totalChunks", totalChunks);
-      formData.append("fileName", fileName);
+      formData.append("uuid", this.uuid);
 
       const response = await axios.post("/api/upload/uploadChunk", formData, {
         onUploadProgress: (progressEvent) => {
@@ -182,8 +190,9 @@ export default {
       });
       console.log(response.data);
     },
-    async mergeChunks(fileName, totalChunks) {
+    async mergeChunks(uuid, fileName, totalChunks) {
       await axios.post("/api/upload/merge", {
+        uuid,
         fileName,
         totalChunks,
       });
