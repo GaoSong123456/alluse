@@ -1,0 +1,382 @@
+1️⃣ 依赖配置（pom.xml）
+<dependencies>
+    <!-- Spring Boot Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- Spring Data JPA -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- PostgreSQL JDBC -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>42.2.26</version>
+    </dependency>
+
+    <!-- ShardingSphere-JDBC -->
+    <dependency>
+        <groupId>org.apache.shardingsphere</groupId>
+        <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+        <version>5.3.1</version>
+    </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.24</version>
+    </dependency>
+
+    <!-- AOP支持 -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <!-- HikariCP连接池 -->
+    <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>5.0.1</version>
+    </dependency>
+
+    <!-- Twitter Snowflake Java -->
+    <dependency>
+        <groupId>com.github.beyond</groupId>
+        <artifactId>snowflake</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+	
+	<!-- Seata 核心依赖 -->
+	<dependency>
+		<groupId>io.seata</groupId>
+		<artifactId>seata-spring-boot-starter</artifactId>
+		<version>1.8.0</version>
+	</dependency>
+
+	<!-- Seata JDBC 适配器 -->
+	<dependency>
+		<groupId>io.seata</groupId>
+		<artifactId>seata-jdbc</artifactId>
+		<version>1.8.0</version>
+	</dependency>
+</dependencies>
+2️⃣ 动态数据源管理
+DynamicDataSourceContextHolder.java
+package com.example.util;
+
+public class DynamicDataSourceContextHolder {
+    private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
+
+    public static void setDataSource(String dataSource) {
+        contextHolder.set(dataSource);
+    }
+
+    public static String getDataSource() {
+        return contextHolder.get();
+    }
+
+    public static void clearDataSource() {
+        contextHolder.remove();
+    }
+}
+3️⃣ 自定义注解（ReadOnly.java）
+package com.example.aspect;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ReadOnly {}
+4️⃣ AOP 切面（DataSourceAspect.java）
+package com.example.aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class DataSourceAspect {
+
+    @Around("@annotation(readOnly)")
+    public Object readOperation(ProceedingJoinPoint joinPoint, ReadOnly readOnly) throws Throwable {
+        DynamicDataSourceContextHolder.setDataSource("slave");
+        try {
+            return joinPoint.proceed();
+        } finally {
+            DynamicDataSourceContextHolder.clearDataSource();
+        }
+    }
+
+    @Around("!@annotation(readOnly) && execution(* com.example.repository.*.*(..))")
+    public Object writeOperation(ProceedingJoinPoint joinPoint) throws Throwable {
+        DynamicDataSourceContextHolder.setDataSource("master");
+        try {
+            return joinPoint.proceed();
+        } finally {
+            DynamicDataSourceContextHolder.clearDataSource();
+        }
+    }
+}
+5️⃣ 雪花算法生成器（SnowflakeIdWorker.java）
+package com.example.util;
+
+import com.github.beyond.snowflake.Snowflake;
+
+import java.io.Serializable;
+
+public class SnowflakeIdWorker implements Serializable {
+
+    private final Snowflake snowflake = new Snowflake(1, 1); // workerId=1, dataCenterId=1
+
+    public long nextId() {
+        return snowflake.nextId();
+    }
+}
+6️⃣ 自定义 ID 生成器（IdGenerator.java）
+package com.example.util;
+
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.IdentifierGenerator;
+
+import java.io.Serializable;
+
+public class IdGenerator implements IdentifierGenerator {
+
+    private final SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker();
+
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+        return snowflakeIdWorker.nextId();
+    }
+}
+配置事务管理器
+@Configuration
+public class SeataConfig {
+
+    @Bean
+    public PlatformTransactionManager seataTransactionManager() {
+        return new JtaTransactionManager();
+    }
+}
+
+7️⃣ 实体类（Order.java）
+package com.example.entity;
+
+import com.example.util.IdGenerator;
+import jakarta.persistence.*;
+import java.io.Serializable;
+
+@Entity
+public class Order implements Serializable {
+
+    @Id
+    @GeneratedValue(generator = "snowflake")
+    @GenericGenerator(name = "snowflake", strategy = "com.example.util.IdGenerator")
+    private Long id;
+
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "create_time")
+    private String createTime;
+
+    // getter/setter
+}
+8️⃣ Repository 接口（OrderRepository.java）
+package com.example.repository;
+
+import com.example.entity.Order;
+import jakarta.persistence.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    @ReadOnly
+    List<Order> findByUserId(Long userId);
+}
+9️⃣ Service 层（OrderService.java）
+@Service
+public class OrderService {
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @GlobalTransactional  // 开启分布式事务
+    public void createOrderWithSeata(Long userId) {
+        // 写库操作（假设调用其他服务）
+        Order order = new Order();
+        order.setId(IdGenerator.nextId());
+        order.setUserId(userId);
+        orderRepository.save(order);
+
+        // 读库操作（跨库查询）
+        List<Order> orders = orderRepository.findByUserId(userId);
+
+        // 模拟异常，触发事务回滚
+        if (userId == 123L) {
+            throw new RuntimeException("分布式事务回滚");
+        }
+    }
+}
+
+🛠 应用入口（Application.java）
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+🔢 配置文件（application.yml）
+spring:
+  application:
+    name: order-service
+  shardingsphere:
+    datasource:
+      names: master,slave0,slave1
+      master:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/master_db
+        username: root
+        password: root
+      slave0:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/slave0_db
+        username: root
+        password: root
+      slave1:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://localhost:5432/slave1_db
+        username: root
+        password: root
+    masterslave:
+      name: ms
+      master-data-source-name: master
+      slave-data-source-names: slave0,slave1
+    sharding:
+      default-database-strategy:
+        standard:
+          sharding-column: user_id  # 分库键为 user_id
+          sharding-algorithm-name: db-algorithm
+      sharding-algorithms:
+        db-algorithm:
+          type: CLASS_BASED
+          props:
+            strategy: STANDARD
+            algorithm-class: com.example.DbShardingAlgorithm
+    props:
+      sql-show: true
+	  
+seata:
+  enabled: true
+  application-id: order-service
+  tx-service-group: my_tx_group  # 与 Seata 服务器配置一致
+  service:
+    vgroup-mapping:
+      my_tx_group: default  # 事务组
+    grouplist:
+      default: 127.0.0.1:8091  # Seata 服务器地址
+🧩 分库分表策略（DbShardingAlgorithm.java）
+package com.example;
+
+import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
+import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+
+@Component
+public class DbShardingAlgorithm implements StandardShardingAlgorithm<Long> {
+
+    @Override
+    public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<Long> shardingValue) {
+        long userId = shardingValue.getValue();  // 以 user_id 为分库键
+        long shardId = userId % 2;  // 分库逻辑
+        for (String each : availableTargetNames) {
+            if (each.endsWith(String.valueOf(shardId))) {
+                return each;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void init(Properties properties) {}
+
+    @Override
+    public Collection<String> doSharding(Collection<String> availableTargetNames, RangeShardingValue<Long> shardingValue) {
+        return availableTargetNames;
+    }
+}
+✅ 说明
+✅ 读写分离：通过 @ReadOnly 注解控制方法是否使用从库。
+✅ 雪花 ID：使用 Twitter Snowflake Java 实现，确保 ID 唯一性。
+✅ 分库分表：通过 user_id 进行分库（2个从库），create_time 分表（未显示）。
+✅ 动态数据源：通过 AOP 切面动态切换数据源。
+✅ 高并发支持：线程安全的雪花算法，支持分布式生成 ID。
+🚀 启动与测试
+创建数据库：
+
+-- 创建 master 数据库
+CREATE DATABASE master_db;
+
+-- 创建 slave0 数据库
+CREATE DATABASE slave0_db;
+
+-- 创建 slave1 数据库
+CREATE DATABASE slave1_db;
+
+创建表结构
+在每个数据库中创建 order 表（支持分表）：
+
+-- 在 master_db, slave0_db, slave1_db 中分别执行
+CREATE TABLE order_202409 (
+    id BIGINT PRIMARY KEY,  -- 雪花ID
+    user_id BIGINT NOT NULL,
+    create_time VARCHAR(10)
+);
+
+-- 如果按时间分表，可创建多个表
+CREATE TABLE order_202410 (
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    create_time VARCHAR(10)
+);
+启动 Spring Boot 应用：
+
+./mvnw spring-boot:run
+调用接口或单元测试验证读写分离和分库分表功能。
+
+
+
+🧪 可选测试代码
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class OrderServiceTest {
+
+    @Autowired
+    private OrderService orderService;
+
+    @Test
+    public void testCreateAndReadOrder() {
+        orderService.createOrder(1001L);
+        List<Order> orders = orderService.getOrdersByUser(1001L);
+        Assert.notEmpty(orders);
+    }
+}
