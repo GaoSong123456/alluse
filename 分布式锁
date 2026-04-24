@@ -192,6 +192,41 @@ public class DistributedLockService {
         }
     }
 }
+
+//为避免在锁的有效时间内业务代码未执行完导致锁时间到期提前释放，可以使用 Redisson 的看门狗机制（Watchdog）
+Redisson 提供了 自动续租锁 的机制（Watchdog），可以避免手动设置租约时间。
+优点：锁会在业务执行期间自动续租，直到业务逻辑完成或显式释放。
+@Service
+public class DistributedLockService {
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    public void performTask(Long id) {
+        String lockKey = "lock:" + id;
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            // 不设置租约时间，启用 Watchdog 自动续租
+            lock.lock();  // 自动开启看门狗
+            System.out.println("成功获取锁，开始执行业务逻辑...");
+
+            // 模拟长时间执行
+            Thread.sleep(40_000);  // 40 秒
+
+            // 正常执行业务逻辑
+        } finally {
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();  // 显式释放锁
+            }
+        }
+    }
+}
+🔍 原理说明
+lock.lock()：Redisson 会为锁开启一个 看门狗线程，默认每 30 秒自动续租一次。
+优点：无需担心租约时间，锁会自动续租，直到业务完成。
+缺点：如果业务逻辑中未显式调用 unlock()，可能会导致锁一直被持有（需依赖超时机制或系统关闭时自动释放）。
+
 4. 调用服务
 在控制器或其他地方调用DistributedLockService中的方法：
 
