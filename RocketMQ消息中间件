@@ -1,0 +1,236 @@
+1. 项目依赖 (pom.xml)
+首先引入必要的依赖。注意使用与 Spring Boot 版本兼容的 rocketmq-spring-boot-starter。
+Xml
+<dependencies>
+    <!-- Spring Boot Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- RocketMQ Spring Boot Starter -->
+    <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-spring-boot-starter</artifactId>
+        <version>2.2.3</version> <!-- 请根据实际 RocketMQ 服务端版本调整 -->
+    </dependency>
+
+    <!-- Lombok (简化代码) -->
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <optional>true</optional>
+    </dependency>
+    
+    <!-- 数据库驱动 (用于幂等性演示，以 MySQL 为例) -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    
+    <!-- MyBatis Plus (简化 DB 操作) -->
+    <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>3.5.2</version>
+    </dependency>
+</dependencies>
+2. 配置文件 (application.yml)
+配置 NameServer 地址、生产者组、消费者组等。
+Yaml
+rocketmq:
+  name-server: 127.0.0.1:9876
+  
+  # 生产者配置
+  producer:
+    group: demo-producer-group
+    send-message-timeout: 3000
+    retry-times-when-send-failed: 2
+
+  # 【补充】消费者全局默认配置 (非必须，注解配置优先级更高)
+  consumer:
+    group: default-consumer-group # 如果注解没写 group，则用这个默认值
+    pull-batch-size: 32           # 每次拉取消息数量
+    flow-control-threshold: 1000  # 流控阈值
+    suspend-current-queue-time-millis: 1000 # 挂起当前队列时间
+    consume-timeout-millis: 15000 # 消费超时时间
+    max-reconsume-times: 16       # 最大重试次数 (也可以在注解中指定)
+
+# 数据库配置 (用于幂等性)
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/rocketmq_demo?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+3. 核心代码实现
+3.1 消息模型 (Message DTO)
+Java
+@Data
+public class OrderMessage {
+    private String orderId;      // 业务唯一ID，用于幂等和顺序
+    private String userId;
+    private BigDecimal amount;
+    private String action;       // 动作：CREATE, PAY, SHIP
+    private long createTime;
+}
+3.2 特性一：幂等性保障 (Idempotency)
+原理：消费者端利用数据库的唯一索引（Unique Key）或 Redis 分布式锁。这里演示数据库唯一索引方案，最可靠。 准备：数据库中创建一张业务表，order_id 设为唯一索引。
+Java
+@Component
+@RocketMQMessageListener(
+    topic = "order-topic",
+    consumerGroup = "order-consumer-group",
+    messageModel = MessageModel.CLUSTERING // 集群模式
+)
+public class IdempotentConsumer implements RocketMQListener<OrderMessage> {
+
+    @Autowired
+    private OrderService orderService;
+
+    @Override
+    public void onMessage(OrderMessage message) {
+        try {
+            // 业务逻辑处理：插入或更新数据库
+            // 如果 order_id 已存在，数据库会抛 DuplicateKeyException，捕获后视为成功或忽略
+            orderService.processOrder(message);
+            System.out.println("消息消费成功: " + message.getOrderId());
+        } catch (DuplicateKeyException e) {
+            // 幂等处理：消息重复，直接忽略
+            System.out.println("检测到重复消息，已忽略: " + message.getOrderId());
+        } catch (Exception e) {
+            // 其他异常抛出，触发 RocketMQ 重试机制
+            throw new RuntimeException("处理失败，准备重试", e);
+        }
+    }
+}
+3.3 特性二：消息顺序性 (Ordering)
+原理：
+发送端：使用 RocketMQTemplate.syncSendOrderly，根据 orderId 选择同一个 MessageQueue。
+消费端：实现 RocketMQListener<OrderMessage> 默认是并发消费，需实现 RocketMQPushConsumerLifecycleListener 或使用 @RocketMQMessageListener(consumeMode = ConsumeMode.ORDERLY)。
+发送端代码：
+Java
+@Service
+public class OrderProducer {
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+
+    public void sendOrderlyMessage(OrderMessage message) {
+        // 第二个参数是 hashKey，RocketMQ 会根据此 key 的 hash 值将消息发送到同一个 Queue
+        SendResult result = rocketMQTemplate.syncSendOrderly(
+            "order-topic", 
+            message, 
+            message.getOrderId() 
+        );
+        System.out.println("顺序消息发送结果: " + result.getSendStatus());
+    }
+}
+消费端代码 (修改上面的 Listener)：
+Java
+// 添加 consumeMode = ConsumeMode.ORDERLY
+@RocketMQMessageListener(
+    topic = "order-topic",
+    consumerGroup = "order-consumer-group-orderly",
+    consumeMode = ConsumeMode.ORDERLY // 关键：有序消费
+)
+public class OrderlyConsumer implements RocketMQListener<OrderMessage> {
+    @Override
+    public void onMessage(OrderMessage message) {
+        // 此时同一个 orderId 的消息会串行执行
+        System.out.println("有序消费: " + message.getAction() + " for Order: " + message.getOrderId());
+        // 如果抛出异常，RocketMQ 会暂停该 Queue 的后续消息，直到当前消息消费成功
+    }
+}
+3.4 特性三：可靠性 (Reliability)
+原理：
+发送可靠：使用同步发送 (syncSend) 并检查 SendStatus.SEND_OK。如果是关键业务，可使用事务消息。
+存储可靠：Broker 端配置 flushDiskType=SYNC_FLUSH (同步刷盘) 和 brokerRole=SYNC_MASTER (同步复制)。
+消费可靠：只有当 onMessage 方法不抛异常且返回 ConsumeResult.SUCCESS 时，Broker 才确认删除消息。
+事务消息示例 (高级可靠性)：
+Java
+@Component
+@RocketMQTransactionListener
+public class OrderTransactionListener implements RocketMQLocalTransactionListener {
+
+    @Autowired
+    private OrderService orderService;
+
+    // 1. 执行本地事务
+    @Override
+    public RocketMQLocalTransactionState executeLocalTransaction(Message msg, Object arg) {
+        OrderMessage order = JSON.parseObject(new String(msg.getBody()), OrderMessage.class);
+        try {
+            orderService.createOrderInDb(order); // 本地 DB 操作
+            return RocketMQLocalTransactionState.COMMIT; // 本地成功，提交消息
+        } catch (Exception e) {
+            return RocketMQLocalTransactionState.ROLLBACK; // 本地失败，回滚消息
+        }
+    }
+
+    // 2. 事务回查 (当 Broker 没收到确认时调用)
+    @Override
+    public RocketMQLocalTransactionState checkLocalTransaction(Message msg) {
+        // 查询本地 DB，如果订单存在则 COMMIT，否则 ROLLBACK
+        return RocketMQLocalTransactionState.COMMIT; 
+    }
+}
+3.5 特性四：延迟队列 (Delayed Queue)
+原理：RocketMQ 不支持任意时间延迟，但支持特定级别的延迟（1s, 5s, 10s, 30s, 1m, 2m, 3m, 4m, 5m, 6m, 7m, 8m, 9m, 10m, 20m, 30m, 1h, 2h）。 场景：订单 30 分钟未支付自动取消。
+发送端：
+Java
+public void sendDelayMessage(OrderMessage message) {
+    // 构建消息
+    Message<String> msg = new Message<>("order-topic", "TAG_DELAY", 
+        message.getOrderId(), 
+        JSON.toJSONString(message));
+    
+    // 设置延迟级别，例如 30 分钟 (对应 level 16，具体视版本配置而定，通常 1-18)
+    // 30m 通常是第 16 级
+    msg.setDelayTimeLevel(16); 
+
+    SendResult result = rocketMQTemplate.getProducer().send(msg);
+    System.out.println("延迟消息发送成功");
+}
+注意：rocketmq-spring-boot-starter 的 syncSend 方法通常不直接支持设置 delayLevel，需获取原生 Producer 对象构建 Message 发送，或使用 RocketMQTemplate.syncSend(String destination, Message<?> message) 重载方法。
+3.6 特性五：死信队列 (Dead Letter Queue)
+原理：当消息消费失败，且重试次数达到上限（默认 16 次），Broker 会将消息投递到死信队列。 命名规则：%DLQ% + 消费者组名。例如：%DLQ%order-consumer-group。
+处理方式：
+自动进入：无需代码干预，只要消费者持续抛出异常，达到重试上限自动进入。
+人工/程序处理：编写一个专门的消费者监听死信队列，进行日志记录、告警或人工补偿。
+Java
+@Component
+@RocketMQMessageListener(
+    topic = "%DLQ%order-consumer-group", // 监听死信队列
+    consumerGroup = "dlq-consumer-group"
+)
+public class DeadLetterConsumer implements RocketMQListener<Message> {
+    @Override
+    public void onMessage(Message message) {
+        String body = new String(message.getBody());
+        System.err.println("收到死信消息，需人工介入: " + body);
+        System.err.println("原始 Topic: " + message.getTopic());
+        System.err.println("重试次数: " + message.getReconsumeTimes());
+        
+        // 这里可以发送告警邮件、存入异常表等
+        // 注意：死信队列的消息通常不再自动重试，需手动处理或重新投递
+    }
+}
+4. 总结与最佳实践建议
+幂等性：必须做。首选数据库唯一索引，其次 Redis (setnx)。
+顺序性：仅在业务强依赖顺序时使用（如订单状态），因为会降低吞吐量。确保发送和消费两端都配置正确。
+可靠性：
+核心链路使用事务消息。
+Broker 配置同步刷盘和同步复制（性能会有损耗，需权衡）。
+消费者逻辑必须幂等，防止重试导致数据错误。
+延迟队列：利用内置的 18 个等级，不要试图实现任意时间延迟（可通过时间轮算法在应用层实现，但复杂）。
+死信队列：必须监控死信队列的大小，一旦有消息进入，说明系统出现了无法自动恢复的异常，需立即告警。
+这个 Demo 结构清晰，覆盖了企业级开发中最关键的五个痛点，你可以直接在此基础上扩展业务逻辑。
+
+
+
+
+
+其他：
+https://github.com/QiaochunStudio/spring-boot-anyDemo/wiki/Rocketmq%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3
+https://jamhihi.blog.csdn.net/article/details/154434013
