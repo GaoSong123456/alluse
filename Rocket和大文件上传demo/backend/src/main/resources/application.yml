@@ -1,1 +1,97 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: enterprise-demo
+  servlet:
+    multipart:
+      # 最大单个文件大小(用于分片, 单片通常 5MB)
+      max-file-size: 20MB
+      # 最大请求大小
+      max-request-size: 50MB
+
+  # ---------- Redis 配置(幂等存储) ----------
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    # Redis 连接超时(ms)
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+
+  # ---------- MySQL 8.0 配置(分片上传元数据持久化) ----------
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 生产环境通过环境变量注入: DB_URL / DB_USERNAME / DB_PASSWORD
+    url: ${DB_URL:jdbc:mysql://localhost:3306/enterprise_demo?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+# ---------- MyBatis-Plus 配置 ----------
+mybatis-plus:
+  configuration:
+    # 开启下划线转驼峰
+    map-underscore-to-camel-case: true
+
+# ================ RocketMQ 配置 ================
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: enterprise-producer-group
+    # 发送超时(ms)
+    send-message-timeout: 3000
+    # 发送失败重试次数
+    retry-times-when-send-failed: 3
+    # 异步发送失败重试次数
+    retry-times-when-send-async-failed: 3
+    # 消息最大 4M
+    max-message-size: 4194304
+  consumer:
+    # 默认消费者组
+    group: enterprise-consumer-group
+  # 是否启用(用于没有 MQ 环境时可关闭避免启动报错)
+  enabled: true
+
+# ================ 业务自定义配置 ================
+enterprise:
+  # 上传文件存储根目录
+  upload-dir: ./upload
+  # 分片大小(字节), 默认 5MB
+  chunk-size: 5242880
+  # 延迟消费演示的延迟级别(1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h)
+  delay-level: 3
+  # 演示用: 是否模拟消息重复(用于幂等性演示)
+  simulate-duplicate: true
+  # 幂等去重保留时间(秒)
+  idempotent-ttl: 300
+
+logging:
+  level:
+    com.example.enterprise: info
+
+# 开发环境才打印 SQL, 生产环境不打印
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 
